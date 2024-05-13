@@ -41,10 +41,10 @@
 
                 <ul style="line-height: 2em;">
                     <li>
-                        <a onclick="showSubmenu('mathematics')"><strong>Mathematics</strong></a>
+                        <a style="color:#000000;" onclick="showSubmenu('mathematics')"><strong>Mathematics</strong></a>
                         <ul class="submenu" id="mathematics-submenu">
                             <li>
-                                <a onclick="showSubsubmenu('NumericalAnalysis')">数值分析</a>
+                                <a style="color:#000000;" onclick="showSubsubmenu('NumericalAnalysis')">数值分析</a>
                                 <ul class="subsubmenu" id="NumericalAnalysis-subsubmenu">
                                     <li><a href="https://illusionna.readthedocs.io/zh/latest/projects/Mathematics/Numerical Analysis/拉格朗日插值/Lagrange.html" target="_blank">拉格朗日插值</a></li>
                                     <li><a href="https://illusionna.readthedocs.io/zh/latest/projects/Mathematics/Numerical Analysis/龙格现象/Runge.html" target="_blank">龙格现象</a></li>
@@ -55,26 +55,70 @@
                                 </ul>
                             </li>
                             <li>
-                                <a onclick="showSubsubmenu('MultivariateStatisticalAnalysis')">多元统计分析</a>
+                                <a style="color:#000000;" onclick="showSubsubmenu('MultivariateStatisticalAnalysis')">多元统计分析</a>
                                 <ul class="subsubmenu" id="MultivariateStatisticalAnalysis-subsubmenu">
                                     <li><a href="https://illusionna.readthedocs.io/zh/latest/projects/Mathematics/Multivariate Statistical Analysis/马尔可夫链/Markov.html" target="_blank">马尔可夫链</a></li>
+                                </ul>
+                            </li>
+                            <li>
+                                <a style="color:#000000;" onclick="showSubsubmenu('cryptography')">密码学</a> &nbsp;&nbsp;→&nbsp;&nbsp; <a href="https://illusionna.github.io/cryptography.github.io" target="_blank">* 主页目录 *</a>
+                                <ul class="subsubmenu" id="cryptography-subsubmenu">
+                                    <li>
+                                        <a style="color:#000000;" onclick="showSubsubsubmenu('md5')">MD5</a>
+                                        <ul class="subsubsubmenu" id="md5-subsubsubmenu">
+                                            <li><a href="https://Illusionna.github.io/cryptography.github.io/templates/cryptography/MD5/MD5.pdf" target="_blank">View PDF</a></li>
+                                            <li><a href="https://illusionna.github.io/cryptography.github.io/templates/cryptography/MD5/MD5Python.html" target="_blank">Python</a></li>
+                                            <li><a href="https://illusionna.github.io/cryptography.github.io/templates/cryptography/MD5/MD5C.html" target="_blank">C</a></li>
+                                            <li><a href="https://illusionna.github.io/cryptography.github.io/templates/cryptography/MD5/jupyter.html" target="_blank">Jupyter</a></li>
+                                        </ul>
+                                    </li>
+                                    <li>
+                                        <a style="color:#000000;" onclick="showSubsubsubmenu('sha1')">SHA-1</a>
+                                        <ul class="subsubsubmenu" id="sha1-subsubsubmenu">
+                                            <li><a href="https://illusionna.github.io/cryptography.github.io/templates/cryptography/SHA1/SHA1Python.html" target="_blank">Python</a></li>
+                                        </ul>
+                                    </li>
+                                    <li>
+                                        <a style="color:#000000;" onclick="showSubsubsubmenu('sha2')">SHA2-256</a>
+                                        <ul class="subsubsubmenu" id="sha2-subsubsubmenu">
+                                            <li><a href="https://illusionna.github.io/cryptography.github.io/templates/cryptography/SHA2/SHA2Python.html" target="_blank">Python</a></li>
+                                        </ul>
+                                    </li>
+                                    <li>
+                                        <a style="color:#000000;" onclick="showSubsubsubmenu('rsa')">RSA</a>
+                                        <ul class="subsubsubmenu" id="rsa-subsubsubmenu">
+                                            <li><a href="https://illusionna.github.io/cryptography.github.io/templates/cryptography/RSA/RSAPython.html" target="_blank">Python</a></li>
+                                        </ul>
+                                    </li>
+                                    <li>
+                                        <a style="color:#000000;" onclick="showSubsubsubmenu('openssl')">OpenSSL</a>
+                                        <ul class="subsubsubmenu" id="openssl-subsubsubmenu">
+                                            <li><a href="https://illusionna.github.io/cryptography.github.io/templates/cryptography/OpenSSL/OpenSSLPython.html" target="_blank">Python</a></li>
+                                        </ul>
+                                    </li>
+                                    <li>
+                                        <a style="color:#000000;" onclick="showSubsubsubmenu('powershell')">PowerShell</a>
+                                        <ul class="subsubsubmenu" id="powershell-subsubsubmenu">
+                                            <li><a href="https://illusionna.github.io/cryptography.github.io/templates/cryptography/PowerShell/PowerShellPython.html" target="_blank">Python</a></li>
+                                        </ul>
+                                    </li>
                                 </ul>
                             </li>
                         </ul>
                     </li>
 
                     <li>
-                        <a onclick="showSubmenu('computer')"><strong>Computer</strong></a>
+                        <a style="color:#000000;" onclick="showSubmenu('computer')"><strong>Computer</strong></a>
                         <ul class="submenu" id="computer-submenu">
                             <li>
-                                <a onclick="showSubsubmenu('Jarvis')">Jarvis</a>
+                                <a style="color:#000000;" onclick="showSubsubmenu('Jarvis')">Jarvis</a>
                                 <ul class="subsubmenu" id="Jarvis-subsubmenu">
                                     <li><a href="https://senu.email" target="_blank">NEUmail</a></li>
                                     <li><a href="https://github.com/Illusionna/LocalTransfer/releases/tag/V1" target="_blank">Local Help</a></li>
                                 </ul>
                             </li>
                             <li>
-                                <a onclick="showSubsubmenu('ComputerVision')">Computer Vision</a>
+                                <a style="color:#000000;" onclick="showSubsubmenu('ComputerVision')">Computer Vision</a>
                                 <ul class="subsubmenu" id="ComputerVision-subsubmenu">
                                     <li><a href="https://github.com/Illusionna/ComputerVision/tree/main/EfficientTransformer" target="_blank">Vision Transformer 实现图像分类任务</a></li>
                                     <li><a href="https://github.com/Illusionna/ComputerVision/tree/main/SiameseNetwork" target="_blank">Siamese Network 实现图像相似度判别</a></li>
@@ -84,7 +128,7 @@
                     </li>
 
                     <li>
-                        <a onclick="showSubmenu('about')"><strong>About me</strong></a>
+                        <a style="color:#000000;" onclick="showSubmenu('about')"><strong>About me</strong></a>
                         <ul class="submenu" id="about-submenu">
                             <li>
                                 <a href="https://illusionna.readthedocs.io/zh/latest/projects/About me/about.html#biography" target="_blank">Biography</a>
@@ -96,16 +140,16 @@
                     </li>
 
                     <li>
-                        <a onclick="showSubmenu('gallery')"><strong>Gallery</strong></a>
+                        <a style="color:#000000;" onclick="showSubmenu('gallery')"><strong>Gallery</strong></a>
                         <ul class="submenu" id="gallery-submenu">
                             <li>
-                                <a onclick="showSubsubmenu('2022')">2022</a>
+                                <a style="color:#000000;" onclick="showSubsubmenu('2022')">2022</a>
                                 <ul class="subsubmenu" id="2022-subsubmenu">
                                     <li><a>青海湖</a></li>
                                 </ul>
                             </li>
                             <li>
-                                <a onclick="showSubsubmenu('2023')">2023</a>
+                                <a style="color:#000000;" onclick="showSubsubmenu('2023')">2023</a>
                                 <ul class="subsubmenu" id="2023-subsubmenu">
                                     <li><a>得尔布干河上的村庄</a></li>
                                     <li><a>女浴灯光</a></li>
@@ -114,7 +158,7 @@
                                 </ul>
                             </li>
                             <li>
-                                <a onclick="showSubsubmenu('2024')">2024</a>
+                                <a style="color:#000000;" onclick="showSubsubmenu('2024')">2024</a>
                                 <ul class="subsubmenu" id="2024-subsubmenu">
                                     <li><a>渤海湾</a></li>
                                 </ul>
