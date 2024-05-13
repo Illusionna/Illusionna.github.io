@@ -16,6 +16,7 @@
         <link rel="stylesheet" type="text/css" href="assets/css/min.css">
         <link rel="stylesheet" type="text/css" href="assets/css/custom.css">
         <script src="assets/js/particles.min.js"></script>
+        <script src="assets/js/custom.js"></script>
         <script defer src="https://vercount.one/js"></script>
     </head>
 
@@ -36,13 +37,92 @@
             <div id="home">
                 <br>
                 <p align="center">Welcome to my website. This page is primarily about my work, with a few hobbies thrown in.</p>
-                <h1>Table of Contents</h1>
+                <h1>Indices: Table of Contents</h1>
+
                 <ul style="line-height: 2em;">
-                    <li><a href="https://github.com/Illusionna/Illusion" target="_blank"><strong>Mathematics</strong></a></li>
-                    <li><a href="https://github.com/Illusionna/Illusion" target="_blank"><strong>Computer</strong></a></li>
-                    <li><a href="https://github.com/Illusionna/Illusion" target="_blank"><strong>About me</strong></a></li>
-                    <li><a href="https://github.com/Illusionna/Illusion" target="_blank"><strong>Gallery</strong></a></li>
+                    <li>
+                        <a onclick="showSubmenu('mathematics')"><strong>Mathematics</strong></a>
+                        <ul class="submenu" id="mathematics-submenu">
+                            <li>
+                                <a onclick="showSubsubmenu('NumericalAnalysis')">数值分析</a>
+                                <ul class="subsubmenu" id="NumericalAnalysis-subsubmenu">
+                                    <li><a href="https://illusionna.readthedocs.io/zh/latest/projects/Mathematics/Numerical Analysis/拉格朗日插值/Lagrange.html" target="_blank">拉格朗日插值</a></li>
+                                    <li><a href="https://illusionna.readthedocs.io/zh/latest/projects/Mathematics/Numerical Analysis/龙格现象/Runge.html" target="_blank">龙格现象</a></li>
+                                    <li><a href="https://illusionna.readthedocs.io/zh/latest/projects/Mathematics/Numerical Analysis/牛顿插值/Newton.html" target="_blank">牛顿插值</a></li>
+                                    <li><a href="https://illusionna.readthedocs.io/zh/latest/projects/Mathematics/Numerical Analysis/三次埃尔米特插值/Hermite.html" target="_blank">三次埃尔米特插值</a></li>
+                                    <li><a href="https://illusionna.readthedocs.io/zh/latest/projects/Mathematics/Numerical Analysis/高次埃尔米特插值示例/demo.html" target="_blank">高次埃尔米特插值示例</a></li>
+                                    <li><a href="https://illusionna.readthedocs.io/zh/latest/projects/Mathematics/Numerical Analysis/三点三次自然样条插值/Spline.html" target="_blank">三点三次自然样条插值</a></li>
+                                </ul>
+                            </li>
+                            <li>
+                                <a onclick="showSubsubmenu('MultivariateStatisticalAnalysis')">多元统计分析</a>
+                                <ul class="subsubmenu" id="MultivariateStatisticalAnalysis-subsubmenu">
+                                    <li><a href="https://illusionna.readthedocs.io/zh/latest/projects/Mathematics/Multivariate Statistical Analysis/马尔可夫链/Markov.html" target="_blank">马尔可夫链</a></li>
+                                </ul>
+                            </li>
+                        </ul>
+                    </li>
+
+                    <li>
+                        <a onclick="showSubmenu('computer')"><strong>Computer</strong></a>
+                        <ul class="submenu" id="computer-submenu">
+                            <li>
+                                <a onclick="showSubsubmenu('Jarvis')">Jarvis</a>
+                                <ul class="subsubmenu" id="Jarvis-subsubmenu">
+                                    <li><a href="https://senu.email" target="_blank">NEUmail</a></li>
+                                    <li><a href="https://github.com/Illusionna/LocalTransfer/releases/tag/V1" target="_blank">Local Help</a></li>
+                                </ul>
+                            </li>
+                            <li>
+                                <a onclick="showSubsubmenu('ComputerVision')">Computer Vision</a>
+                                <ul class="subsubmenu" id="ComputerVision-subsubmenu">
+                                    <li><a href="https://github.com/Illusionna/ComputerVision/tree/main/EfficientTransformer" target="_blank">Vision Transformer 实现图像分类任务</a></li>
+                                    <li><a href="https://github.com/Illusionna/ComputerVision/tree/main/SiameseNetwork" target="_blank">Siamese Network 实现图像相似度判别</a></li>
+                                </ul>
+                            </li>
+                        </ul>
+                    </li>
+
+                    <li>
+                        <a onclick="showSubmenu('about')"><strong>About me</strong></a>
+                        <ul class="submenu" id="about-submenu">
+                            <li>
+                                <a href="https://illusionna.readthedocs.io/zh/latest/projects/About me/about.html#biography" target="_blank">Biography</a>
+                            </li>
+                            <li>
+                                <a href="https://illusionna.readthedocs.io/zh/latest/projects/About me/about.html#background" target="_blank">Background</a>
+                            </li>
+                        </ul>
+                    </li>
+
+                    <li>
+                        <a onclick="showSubmenu('gallery')"><strong>Gallery</strong></a>
+                        <ul class="submenu" id="gallery-submenu">
+                            <li>
+                                <a onclick="showSubsubmenu('2022')">2022</a>
+                                <ul class="subsubmenu" id="2022-subsubmenu">
+                                    <li><a>青海湖</a></li>
+                                </ul>
+                            </li>
+                            <li>
+                                <a onclick="showSubsubmenu('2023')">2023</a>
+                                <ul class="subsubmenu" id="2023-subsubmenu">
+                                    <li><a>得尔布干河上的村庄</a></li>
+                                    <li><a>女浴灯光</a></li>
+                                    <li><a>暮云</a></li>
+                                    <li><a>地球自转</a></li>
+                                </ul>
+                            </li>
+                            <li>
+                                <a onclick="showSubsubmenu('2024')">2024</a>
+                                <ul class="subsubmenu" id="2024-subsubmenu">
+                                    <li><a>渤海湾</a></li>
+                                </ul>
+                            </li>
+                        </ul>
+                    </li>
                 </ul>
+
                 <p><i>Do not disturb love until it is ready! Do not bother me if there's nothing going on! Do not attack my website! Thank you my fried plzzzzz.</i></p>
             </div>
 
