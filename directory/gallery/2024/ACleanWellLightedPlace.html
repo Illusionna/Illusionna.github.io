@@ -15,9 +15,20 @@
         <noscript><link rel="stylesheet" href="../../../assets/css/tagcloud.css"></noscript>
         <script src="../../../assets/js/lazysizes.min.js" async></script>
         <script src="../../../assets/js/aos.js"></script>
+
+        <style>
+            #lang-switch-btn {
+                position: fixed;
+                bottom: 20px;
+                right: 20px;
+                z-index: 1;
+            }
+        </style>
     </head>
 
     <body class="colorscheme-auto">
+        <button class="fas fa-folder" id="lang-switch-btn" onclick="switchLang()">English → 译文</button>
+
         <main class="wrapper">
             <div id="loader" class="loader">
                 <div class="text" style="font-size: 48px; font-family:courier;">Loading...</div>
@@ -90,18 +101,28 @@
 
     <div class="article">
         <div class="article-content heti" data-aos="fade-up" data-aos-duration="1500" data-aos-anchor-placement="top-bottom">
+            <p class="en-content">Tired, very tired. Sort out the supporting materials, and prepare for the final exam. I happen to come across Ernest Miller Hemingway's essay from my freshman year. After reading it again, I try translating it as I understand it.</p>
+            <p class="zh-content" style="display: none;">这几天一边整理资料，一头复习考试，很累，正好看到大一那会海明威的文章，再次阅读后，我尝试按照自己的理解做一次翻译。</p>
             <p><img id="nighthawks" width="75%" alt="Oops?" class="lazyload" loading="lazy"/></p>
             <figcaption>
                 <p>Nighthawks (Edward Hopper, 1942)</p>
             </figcaption>
-            <p>It was very late and everyone had left the cafe except an old man who sat in the shadow the leaves of the tree made against the electric light. In the day time the street was dusty, but at night the dew settled the dust and the old man liked to sit late because he was deaf and now at night it was quiet and he felt the difference. The two waiters inside the cafe knew that the old man was a little drunk, and while he was a good client they knew that if he became too drunk he would leave without paying, so they kept watch on him.</p>
-            <p>"Last week he tried to commit suicide," one waiter said.</p>
-            <p>"Why?"</p>
-            <p>"He was in despair."</p>
-            <p>"What about?"</p>
-            <p>"Nothing."</p>
-            <p>"How do you know it was nothing?"</p>
-            <p>"He has plenty of money."</p>
+            <p class="en-content">It was very late and everyone had left the cafe except an old man who sat in the shadow the leaves of the tree made against the electric light. In the day time the street was dusty, but at night the dew settled the dust and the old man liked to sit late because he was deaf and now at night it was quiet and he felt the difference. The two waiters inside the cafe knew that the old man was a little drunk, and while he was a good client they knew that if he became too drunk he would leave without paying, so they kept watch on him.</p>
+            <p class="zh-content" style="display: none;">夜深了，餐馆里的人都光了。灯光映射下，树影婆娑，还剩个老头在那坐着。白天的街道尘土飞扬，但到了晚上，夜露就压住了灰尘。老头喜欢在那儿坐得很晚，因为他耳聋，（不过）他能感受到现在很安静，一份不同于白天嘈杂的宁静。里面的两个侍者（服务员）看出老头有点儿醉，虽然他们知道老头是个好顾客，但再喝下去，烂醉如泥的他钱都不付就走人，所以他俩紧紧地盯着。</p>
+            <p class="en-content">"Last week he tried to commit suicide," one waiter said.</p>
+            <p class="zh-content" style="display: none;">“上周他想自杀”，老侍者说。</p>
+            <p class="en-content">"Why?"</p>
+            <p class="zh-content" style="display: none;">“为什么啊？”（Illusionna 推测年轻侍者在问）</p>
+            <p class="en-content">"He was in despair."</p>
+            <p class="zh-content" style="display: none;">“他绝望了。”</p>
+            <p class="en-content">"What about?"</p>
+            <p class="zh-content" style="display: none;">“怎么回事？”</p>
+            <p class="en-content">"Nothing."</p>
+            <p class="zh-content" style="display: none;">（叹气~~）“没什么事。”</p>
+            <p class="en-content">"How do you know it was nothing?"</p>
+            <p class="zh-content" style="display: none;">“你怎么知道没事？”</p>
+            <p class="en-content">"He has plenty of money."</p>
+            <p class="zh-content" style="display: none;">“他有钱。”</p>
             <p>They sat together at a table that was close against the wall near the door of the cafe and looked at the terrace where the tables were all empty except where the old man sat in the shadow of the leaves of the tree that moved slightly in the wind. A girl and a soldier went by in the street. The street light shone on the brass number on his collar. The girl wore no head covering and hurried beside him.</p>
             <p>"The guard will pick him up," one waiter said.</p>
             <p>"What does it matter if he gets what he's after?"</p>
@@ -190,6 +211,25 @@
             </div>
         </main>
     </body>
+
+    <script>
+        function switchLang() {
+            var zhContents = document.querySelectorAll('.zh-content');
+            var enContents = document.querySelectorAll('.en-content');
+            var langBtn = document.getElementById('lang-switch-btn');
+            zhContents.forEach(function(zhContent) {
+                zhContent.style.display = zhContent.style.display === 'none'? 'block' : 'none';
+            });
+            enContents.forEach(function(enContent) {
+                enContent.style.display = enContent.style.display === 'none'? 'block' : 'none';
+            });
+            if (zhContents[0].style.display === 'block') {
+                langBtn.innerText = '译文 → English';
+            } else {
+                langBtn.innerText = 'English → 译文';
+            }
+        }
+    </script>
 
     <script src="../../../assets/js/heti-addon.min.js"></script>
 
