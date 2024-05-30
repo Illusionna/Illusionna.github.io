@@ -16,7 +16,19 @@
         <noscript><link rel="stylesheet" href="../../../assets/css/tagcloud.css"></noscript>
         <script src="../../../assets/js/lazysizes.min.js" async></script>
         <script src="../../../assets/js/aos.js"></script>
-        <script type="text/javascript" src="http://cdn.mathjax.org/mathjax/latest/MathJax.js?config=AM_HTMLorMML-full"></script>
+        <!-- <script type="text/javascript" src="http://cdn.mathjax.org/mathjax/latest/MathJax.js?config=AM_HTMLorMML-full"></script> -->
+
+        <script>
+            MathJax = {
+                tex: {
+                    inlineMath: [['$', '$'], ['\\(', '\\)']]
+                }
+            };
+        </script>
+        <script id="MathJax-script" async
+            src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-chtml.js">
+        </script>
+
 
         <style>
             pre {
@@ -109,7 +121,7 @@
             <p><img id="img1" width="45%" alt="Oops?" class="lazyload" loading="lazy"/></p>
             <p>这是游戏<a target="_blank" href="https://github.com/id-Software/Quake-III-Arena/blob/master/code/game/q_math.c">雷神之锤</a>中的一段代码，出自于 John Carmack 之手，在那个硬件受限的年代，这段代码彻底地改变了整个游戏界。</p>
             <p><img id="img2" width="100%" alt="Oops?" class="lazyload" loading="lazy"/></p>
-            <p>"what the fuck?" 这是平方根倒数快速幂算法中作者的注释。如果不借助其他外来库的情况下，我们能想到什么好的方法，让计算机快速求解 `\sqrt{2}\approx1.41421356\ \ ` 的浮点型？夹逼法、连分法、二分法、泰勒展开式？约翰卡马克告诉我们还有极致。</p>
+            <p>"what the fuck?" 这是平方根倒数快速幂算法中作者的注释。如果不借助其他外来库的情况下，我们能想到什么好的方法，让计算机快速求解 $\sqrt{2}\approx1.41421356\ $ 的浮点型？夹逼法、连分法、二分法、泰勒展开式？约翰卡马克告诉我们还有极致。</p>
 
             <h1>1. 夹逼法</h1>
             <p><img id="img3" width="100%" alt="Oops?" class="lazyload" loading="lazy"/></p>
