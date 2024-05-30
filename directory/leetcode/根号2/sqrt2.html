@@ -1,0 +1,337 @@
+
+<!DOCTYPE html>
+<html lang="zh-cn">
+    <head>
+        <meta charset="utf-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+        <title>平方根倒数快速幂</title>
+
+        <link rel="preload" href="https://cdnjs.cloudflare.com/ajax/libs/lxgw-wenkai-webfont/1.7.0/lxgwwenkai-regular.min.css" as="style" onload="this.onload=null;this.rel='stylesheet'">
+        <link rel="stylesheet" href="../../../assets/css/style.css"/>
+        <link rel="stylesheet" href="../../../assets/css/main.css" />
+        <link href="../../../assets/css/aos.css" rel="stylesheet">
+        <link rel="stylesheet" href="../../../assets/css/customBMPI.css" />
+        <noscript><link rel="stylesheet" href="../../../assets/css/lxgwwenkai-regular.min.css"></noscript>
+        <noscript><link rel="stylesheet" href="../../../assets/css/tagcloud.css"></noscript>
+        <script src="../../../assets/js/lazysizes.min.js" async></script>
+        <script src="../../../assets/js/aos.js"></script>
+        <script>
+            MathJax = {
+                tex: {
+                    inlineMath: [['$', '$'], ['\\(', '\\)']]
+                }
+            };
+        </script>
+        <script id="MathJax-script" async src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-chtml.js"></script>
+
+        <style>
+            pre {
+                background-color: #f9f9f9;
+                border: 1px solid #088ff0;
+                padding: 10px;
+                font-size: 14px;
+                white-space: pre;
+                overflow-x: auto;
+            }
+            code {
+                background-color: #f9f9f9;
+                padding: 2px 4px;
+                font-size: 18px;
+                border-radius: 3px;
+            }
+        </style>
+    </head>
+
+    <body class="colorscheme-auto">
+        <main class="wrapper">
+            <div id="loader" class="loader">
+                <div class="text" style="font-size: 48px; font-family:courier;">Loading...</div>
+                <div class="horizontal">
+                  <div class="circlesup">
+                        <div class="circle"></div>
+                        <div class="circle"></div>
+                        <div class="circle"></div>
+                        <div class="circle"></div>
+                        <div class="circle"></div>
+                  </div>
+                  <div class="circlesdwn">
+                        <div class="circle"></div>
+                        <div class="circle"></div>
+                        <div class="circle"></div>
+                        <div class="circle"></div>
+                        <div class="circle"></div>
+                  </div>
+                </div>
+                <div class="vertical">
+                  <div class="circlesup">
+                        <div class="circle"></div>
+                        <div class="circle"></div>
+                        <div class="circle"></div>
+                        <div class="circle"></div>
+                        <div class="circle"></div>
+                  </div>
+                  <div class="circlesdwn">
+                        <div class="circle"></div>
+                        <div class="circle"></div>
+                        <div class="circle"></div>
+                        <div class="circle"></div>
+                        <div class="circle"></div>
+                  </div>
+                </div>
+            </div>
+
+            <div class="content" id="normal-page" style="display: none;">
+                <section class="container post">
+                    <article>
+                        <header>
+                            <nav class="navigation">
+                                <section class="container" align="center">
+                                    <a id="site-title" class="navigation-title" href="../../../index.html" target="_blank" style="font-size: 32px;">
+                                        orzzz.net
+                                    </a>
+                                </section>
+                            </nav>
+
+<div class="post-title heti">
+    <h1 class="title">根号二的艺术</h1>
+</div>
+
+<div class="post-meta">
+    <div class="date">
+        <span class="posted-on">
+            <i class="fas fa-calendar"></i>
+            <time>2024-05-30</time>
+        </span>
+        <span class="reading-time">
+            <i class="fas fa-clock"></i>
+            <time>08:34</time>
+        </span>
+    </div>
+
+    <p></p>
+
+    <div class="article">
+        <div class="article-content heti" data-aos="fade-up" data-aos-duration="1500" data-aos-anchor-placement="top-bottom">
+            <p><img id="img1" width="45%" alt="Oops?" class="lazyload" loading="lazy"/></p>
+            <p>这是游戏<a target="_blank" href="https://github.com/id-Software/Quake-III-Arena/blob/master/code/game/q_math.c">雷神之锤</a>中的一段代码，出自于 John Carmack 之手，在那个硬件受限的年代，这段代码彻底地改变了整个游戏界。</p>
+            <p><img id="img2" width="100%" alt="Oops?" class="lazyload" loading="lazy"/></p>
+            <p>"what the fuck?" 这是平方根倒数快速幂算法中作者的注释。如果不借助其他外来库的情况下，我们能想到什么好的方法，让计算机快速求解 $\sqrt{2}\approx1.41421356\ $ 的浮点型？夹逼法、连分法、二分法、泰勒展开式？约翰卡马克告诉我们还有极致。</p>
+
+            <h1>1. 夹逼法</h1>
+            <p><img id="img3" width="100%" alt="Oops?" class="lazyload" loading="lazy"/></p>
+<pre><code># Python 3.10.0 +
+
+def PinchSqrt2(epoch: int) -> float:
+    """夹逼求解根号二.
+
+    Args:
+        epoch (int): 迭代次数.
+
+    Returns:
+        float: 根号二近似值.
+    """
+    x1 = 1
+    for _ in range(0, epoch, 1):
+        tmp = x1
+        x2 = 2 / tmp
+        x1 = (tmp + x2) / 2
+    return x1
+
+print(PinchSqrt2(epoch=12))</code></pre>
+
+
+            <h1>2. 连分法</h1>
+            <div style="margin: 0 auto; text-align: center;">
+                $\sqrt{2}=1+\dfrac{1}{2+\dfrac{1}{2+\dfrac{1}{2+\cdots}}}$
+            </div>
+<pre><code># Python 3.10.0 +
+
+def ConsecutiveDivisionSqrt2(epoch: int) -> float:
+    """连分求解根号二.
+
+    Args:
+        epoch (int): 迭代次数.
+
+    Returns:
+        float: 根号二近似值.
+    """
+    ans = 0     # 初始化可任取, 别取 -2 就好.
+    for _ in range(0, epoch, 1):
+        ans = 1 / (2 + ans)
+    return ans + 1
+
+print(ConsecutiveDivisionSqrt2(12))</code></pre>
+
+
+            <h1>3. 二分法</h1>
+            <p><img id="img4" width="100%" alt="Oops?" class="lazyload" loading="lazy"/></p>
+<pre><code># Python 3.10.0 +
+
+def BisectionSqrt2(precision: float) -> float:
+    """二分求解根号二
+
+    Args:
+        precision (float): 最终收敛结束精度.
+
+    Returns:
+        float: 根号二近似值.
+    """
+    left = 1
+    right = 2
+    while (right - left) > precision:
+        middle = (left + right) / 2
+        if (middle ** 2) < 2:
+            left = middle
+        else:
+            right = middle
+    return (left + right) / 2
+
+print(BisectionSqrt2(precision=1e-7))</code></pre>
+
+
+            <h1>4. 泰勒级数</h1>
+            <div style="margin: 0 auto; text-align: center; font-size: 20px;">
+                $(1+x)^n=1+\displaystyle\sum_{k=1}^{\infty}\dfrac{\displaystyle\prod\limits_{t=0}^{k-1}(n-t)}{k!}x^k$
+            </div>
+            <br>
+            <div style="margin: 0 auto; text-align: center; font-size: 18px;">
+                $\Rightarrow2^{0.5}=1+\dfrac{1}{2}-\dfrac{1}{8}+\dfrac{1}{16}-\dfrac{5}{128}+\cdots$
+            </div>
+<pre><code># Python 3.10.0 +
+
+def TaylorSqrt2(order: int) -> float:
+    """泰勒级数求解根号二.
+
+    Args:
+        order (int): 展开阶数.
+
+    Returns:
+        float: 根号二近似值.
+    """
+    ans = 1
+    for _ in range(0, order, 1):
+        ans = 1 / ans + 0.5 * ans
+    return ans
+
+print(TaylorSqrt2(7))</code></pre>
+
+
+            <hr><hr><hr>
+            <p>夹逼、连分、二分、泰勒，上面这四种算法都需要进行循环，时间复杂度可以近似看作 $\ O(n)\ $ 或 $\ O(\log n)$，那如果不进行循环，有没有方法能将复杂度降到线性级别，是否还能更快地计算出 $\sqrt{2}\ $ 的近似值呢？卡马克的注释究竟是什么意思？$\rm 0x5f3759df\ $ 这个十六进制幻数代表什么？</p>
+            <p><img id="img5" width="100%" alt="Oops?" class="lazyload" loading="lazy"/></p>
+            <hr><hr><hr>
+            <h1>卡马克平方根倒数快速幂算法</h1>
+            <p>雷神之锤游戏的渲染会经常遇到曲面物体，对于计算机而言，画直线轻而易举，但曲线就会涉及大量的运算，光照射到曲面上，会反射，而要获得到反射光的效果，就需要得知曲面上入射点的单位法向量【<a href="./theory.pdf" target="_blank">点击查看 DezemingFamily 介绍的原理</a>】，这个过程速度越快，游戏的帧率就会越高。</p>
+            <p><img id="img6" width="100%" alt="Oops?" class="lazyload" loading="lazy"/></p>
+            <p>问题的核心抽象为，如何让电脑快速运算平方根倒数？</p>
+            <div style="margin: 0 auto; text-align: center;">
+                $f(x)=\dfrac{1}{\sqrt{x}}$
+            </div>
+            <p>按照前面夹逼、连分、二分、泰勒这四种方法，先求出 $\sqrt{2}\ $ 的浮点型，再取倒数，但这样的速度太慢了，尤其当构成曲面（曲线）的平面（直线）众多时，大量光线照射到墙体，CPU 每次计算单位法向量都要慢一点，累积下来，游戏帧率就会大幅度下降。虽然现在我们有 NVIDIA 的显卡，但在当时，只能依靠 CPU 的算力，平方根倒数算法无疑是让每个人都能畅玩<a href="https://www.idsoftware.com/" target="_blank">雷神之锤</a>这样的 3D 游戏。</p>
+
+
+            <h2>a:) 牛顿迭代法</h2>
+
+            <h2>b:) 线性拟合幻数</h2>
+
+            <h2>c:) 计算机浮点型的存储</h2>
+
+            <h2>d:) 位运算</h2>
+
+
+        </div>
+    </div>
+</div>
+
+<section class="container" align="center">
+    <a id="site-title" class="navigation-title" href="#">Top</a>
+</section>
+                        </header>
+                    </article>
+                </section>
+            </div>
+        </main>
+    </body>
+
+    <script src="../../../assets/js/heti-addon.min.js"></script>
+
+    <script>
+        const heti = new Heti('.heti p, li, a, h1, h2, h3, h4, h5, h6, .title');
+        heti.autoSpacing(); 
+        AOS.init({disable: 'mobile'});
+    </script>
+
+    <script>
+        let loader = document.getElementById('loader');
+        let normalPage = document.getElementById('normal-page');
+        let imgA = document.getElementById('img1');
+        let imgB = document.getElementById('img2');
+        let imgC = document.getElementById('img3');
+        let imgD = document.getElementById('img4');
+
+        let img1Loaded = false;
+        let img2Loaded = false;
+        let img3Loaded = false;
+        let img4Loaded = false;
+
+        let img1 = new Image();
+        img1.src = './triangle.png';
+        img1.onload = function() {
+            imgA.src = './triangle.png';
+            img1Loaded = true;
+            checkLoadStatus();
+        };
+
+        let img2 = new Image();
+        img2.src = './Qrsqrt.png';
+        img2.onload = function() {
+            imgB.src = './Qrsqrt.png';
+            img2Loaded = true;
+            checkLoadStatus();
+        };
+
+        let img3 = new Image();
+        img3.src = './夹逼法.png';
+        img3.onload = function() {
+            imgC.src = './夹逼法.png';
+            img3Loaded = true;
+            checkLoadStatus();
+        };
+
+        let img4 = new Image();
+        img4.src = './二分法.png';
+        img4.onload = function() {
+            imgD.src = './二分法.png';
+            img4Loaded = true;
+            checkLoadStatus();
+        };
+
+        let imgE = document.getElementById('img5');
+        let img5Loaded = false;
+        let img5 = new Image();
+        img5.src = './WhatTheFuck.png';
+        img5.onload = function() {
+            imgE.src = './WhatTheFuck.png';
+            img5Loaded = true;
+            checkLoadStatus();
+        };
+
+        let imgF = document.getElementById('img6');
+        let img6Loaded = false;
+        let img6 = new Image();
+        img6.src = './NormalVector.png';
+        img6.onload = function() {
+            imgF.src = './NormalVector.png';
+            img6Loaded = true;
+            checkLoadStatus();
+        };
+
+        function checkLoadStatus() {
+            if (img1Loaded && img2Loaded && img3Loaded && img4Loaded && img5Loaded && img6Loaded) {
+                loader.style.display = 'none';
+                normalPage.style.display = 'block';
+            }
+        }
+    </script>
+</html>
