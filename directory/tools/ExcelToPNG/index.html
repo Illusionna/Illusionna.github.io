@@ -1,0 +1,173 @@
+<!DOCTYPE html>
+<html lang="zh-cn">
+    <head>
+        <meta charset="utf-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+        <title>Excel 表格转化 PNG 图片</title>
+
+        <link rel="preload" href="https://cdnjs.cloudflare.com/ajax/libs/lxgw-wenkai-webfont/1.7.0/lxgwwenkai-regular.min.css" as="style" onload="this.onload=null;this.rel='stylesheet'">
+        <link rel="stylesheet" href="../../../assets/css/style.css"/>
+        <link rel="stylesheet" href="../../../assets/css/main.css" />
+        <link href="../../../assets/css/aos.css" rel="stylesheet">
+        <link rel="stylesheet" href="../../../assets/css/customBMPI.css" />
+        <noscript><link rel="stylesheet" href="../../../assets/css/lxgwwenkai-regular.min.css"></noscript>
+        <noscript><link rel="stylesheet" href="../../../assets/css/tagcloud.css"></noscript>
+        <script src="../../../assets/js/lazysizes.min.js" async></script>
+        <script src="../../../assets/js/aos.js"></script>
+    </head>
+
+    <body class="colorscheme-auto">
+        <main class="wrapper">
+            <div id="loader" class="loader">
+                <div class="text" style="font-size: 48px; font-family:courier;">Loading...</div>
+                <div class="horizontal">
+                  <div class="circlesup">
+                        <div class="circle"></div>
+                        <div class="circle"></div>
+                        <div class="circle"></div>
+                        <div class="circle"></div>
+                        <div class="circle"></div>
+                  </div>
+                  <div class="circlesdwn">
+                        <div class="circle"></div>
+                        <div class="circle"></div>
+                        <div class="circle"></div>
+                        <div class="circle"></div>
+                        <div class="circle"></div>
+                  </div>
+                </div>
+                <div class="vertical">
+                  <div class="circlesup">
+                        <div class="circle"></div>
+                        <div class="circle"></div>
+                        <div class="circle"></div>
+                        <div class="circle"></div>
+                        <div class="circle"></div>
+                  </div>
+                  <div class="circlesdwn">
+                        <div class="circle"></div>
+                        <div class="circle"></div>
+                        <div class="circle"></div>
+                        <div class="circle"></div>
+                        <div class="circle"></div>
+                  </div>
+                </div>
+            </div>
+
+            <div class="content" id="normal-page" style="display: none;">
+                <section class="container post">
+                    <article>
+                        <header>
+                            <nav class="navigation">
+                                <section class="container" align="center">
+                                    <a id="site-title" class="navigation-title" href="../../../index.html" target="_blank" style="font-size: 32px;">
+                                        orzzz.net
+                                    </a>
+                                </section>
+                            </nav>
+
+<div class="post-title heti">
+    <h1 class="title">xlsx 转 png</h1>
+</div>
+
+<div class="post-meta">
+    <div class="date">
+        <span class="posted-on">
+            <i class="fas fa-calendar"></i>
+            <time>2024-06-09</time>
+        </span>
+        <span class="reading-time">
+            <i class="fas fa-clock"></i>
+            <time>04:28</time>
+        </span>
+        <span style="margin-left: 20px">
+            <i class="fas fa-tag"><a href="./convert.zip" download="convert.zip" target="_blank"><strong>Download</strong></a></i>
+        </span>
+    </div>
+
+    <p></p>
+
+    <div class="article">
+        <div class="article-content heti" data-aos="fade-up" data-aos-duration="1500" data-aos-anchor-placement="top-bottom">
+            <h3>下载后打开终端使用</h3>
+            <p>Windows 10 +</p>
+            <p>>>> main.exe  -i  "Excel 的路径"  -o  "图片的路径"</p>
+            <p>
+                <video class="lazyload" muted autoplay="autoplay" loop="loop" width="100%" height="100%">
+                    <source src="./imgs/demo.mp4" type="video/mp4"></source>
+                </video>
+            </p>
+            <figcaption>
+                <p>演示</p>
+            </figcaption>
+            <p><img id="img1" alt="Oops?" class="lazyload" loading="lazy"/></p>
+            <figcaption>
+                <p>源码</p>
+            </figcaption>
+            <p><img id="img2" alt="Oops?" class="lazyload" loading="lazy"/></p>
+            <figcaption>
+                <p>转化效果</p>
+            </figcaption>
+        </div>
+    </div>
+</div>
+
+<section class="container" align="center">
+    <a id="site-title" class="navigation-title" href="#">Top</a>
+</section>
+                        </header>
+                    </article>
+                </section>
+            </div>
+        </main>
+    </body>
+
+    <script src="../../../assets/js/heti-addon.min.js"></script>
+
+    <script>
+        const heti = new Heti('.heti p, li, a, h1, h2, h3, h4, h5, h6, .title');
+        heti.autoSpacing(); 
+        AOS.init({disable: 'mobile'});
+    </script>
+
+    <script>
+        let loader = document.getElementById('loader');
+        let normalPage = document.getElementById('normal-page');
+        let imgA = document.getElementById('img1');
+        let imgB = document.getElementById('img2');
+        let video = document.querySelector('video');
+
+        let imgLoaded = false;
+        let imgLoaded1 = false;
+        let videoLoaded = false;
+
+        let img = new Image();
+        img.src = './imgs/code.png';
+        img.onload = function() {
+            imgA.src = './imgs/code.png';
+            imgLoaded = true;
+            checkLoadStatus();
+        };
+
+        let img1 = new Image();
+        img1.src = './imgs/result.png';
+        img1.onload = function() {
+            imgB.src = './imgs/result.png';
+            imgLoaded1 = true;
+            checkLoadStatus();
+        };
+
+        video.addEventListener('loadeddata', function() {
+            videoLoaded = true;
+            checkLoadStatus();
+        });
+
+        function checkLoadStatus() {
+            if (imgLoaded && imgLoaded1 && videoLoaded) {
+                loader.style.display = 'none';
+                normalPage.style.display = 'block';
+            }
+        }
+    </script>
+</html>
