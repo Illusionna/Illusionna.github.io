@@ -1,0 +1,594 @@
+/* H1 {
+    margin-bottom: 35px;
+    margin-bottom: 25px;
+    padding: 5px;
+    border-bottom: 2px LightGrey solid;
+    width: 98%;
+    line-height: 150%;
+    color: #666666 !important;
+} */
+
+H2 {
+    margin-bottom: 30px;
+    margin-bottom: 20px;
+    padding: 5px;
+    border-bottom: 1px LightGrey solid;
+    width: 98%;
+    line-height: 150%;
+    color: #666666 !important;
+}
+
+
+H3 {
+    margin-top: 20px;
+    margin-bottom: 10px;
+    /* border-bottom: 1px LightGrey solid; */
+    width: 98%;
+    line-height: 150%;
+    color: #666666 !important;
+}
+
+
+H4 {
+    margin-top: 16px;
+    margin-bottom: 8px;
+    /* border-bottom: 1px LightGrey solid; */
+    width: 98%;
+    line-height: 150%;
+    color: #666666 !important;
+}
+
+H5 {
+    margin-top: 12px;
+    margin-bottom: 4px;
+    /* border-bottom: 1px LightGrey solid; */
+    width: 98%;
+    line-height: 150%;
+    color: #666666 !important;
+}
+
+H6 {
+    margin-top: 8px;
+    margin-bottom: 0px;
+    /* border-bottom: 1px LightGrey solid; */
+    width: 98%;
+    line-height: 150%;
+    color: #666666 !important;
+}
+
+.list {
+    font-family: 'LXGW WenKai',Roboto,STFangSong, Helvetica, Arial, Vernada, Tahoma, STXihei, "Microsoft YaHei", "Songti SC", SimSun, Heiti, sans-serif !important;
+    font-size: 28px !important;
+}
+
+.list .title {
+    font-family: 'LXGW WenKai',Roboto,STFangSong, Helvetica, Arial, Vernada, Tahoma, STXihei, "Microsoft YaHei", "Songti SC", SimSun, Heiti, sans-serif !important;
+    font-size: 24px !important;
+    font-weight: 100 !important;
+}
+
+/* .footer .container {
+    color: #666666;
+    font-size: small;
+} */
+
+.list .title a {
+    color: #428bca !important;
+    text-decoration: none !important;
+}
+
+/* .footnotes {
+    font-size: large;
+} */
+
+.footnotes p {
+    margin: 10px 0;
+}
+
+#references {
+    border-bottom: 1px dashed #FFA500;
+    width: 50%;
+    margin: 0;
+}
+
+[type=checkbox], [type=radio] {
+    margin: 0 10px;
+}
+
+.img svg,
+.img img {
+  margin: 0;
+  width: 100%;
+  height: auto;
+}
+
+.img {
+  position: relative
+}
+
+.img img {
+  position: absolute;
+  top:0;
+  left:0;
+}
+
+.about-social {
+    text-align: left;
+}
+
+.about-social i {
+    animation: animate 3s linear infinite;
+    text-shadow: 0 0 60px #e5b751, 0 0 120px #1677b3, 0 0 170px #cc5595;
+}
+
+@keyframes animate {
+    from {
+      filter: hue-rotate(0deg);
+    }
+    to {
+      filter: hue-rotate(360deg);
+    }
+}  
+
+.about-social li {
+    padding-bottom: 10px;
+}
+
+table {
+    border-collapse: collapse;
+    width: 100%;
+}
+
+th, td {
+    text-align: left;
+    padding: 8px;
+}
+
+table td, table th {
+    border: 1px solid #eee;
+}
+
+table thead tr th {
+    color: #5A4C4C;
+}
+
+p {
+    overflow-wrap: break-word;
+    letter-spacing: .5px;
+}
+
+@font-face {
+    font-family: 'iconfont';
+    src: url('../../assets/fonts/font_2068085_azmc2ixyt2r.ttf') format('truetype'),
+}
+
+.fa,.fab,.fad,.fal,.far,.fas {
+    -moz-osx-font-smoothing: grayscale;
+    -webkit-font-smoothing: antialiased;
+    display: inline-block;
+    font-style: normal;
+    font-variant: normal;
+    text-rendering: auto;
+    line-height: 1
+}
+.fa-twitter:before {
+    animation: animate 3s linear 0.5s infinite;
+    content: '\e9b2';
+}
+.fa-youtube:before {
+    animation: animate 3s linear 0.3s infinite;
+    content: "\e601"; 
+}
+.fa-envelope:before {
+    animation: animate 3s linear 1.3s infinite;
+    content: "\e6eb";
+}
+.fa-github:before {
+    animation: animate 3s linear infinite;
+    content: "\e600";
+}
+.fa-rss:before {
+    animation: animate 3s linear 1.5s infinite;
+    content: "\e602";
+}
+.fa-telegram:before {
+    animation: animate 3s linear 0.7s infinite;
+    content: "\eaf9";
+}
+.fa-weixin:before {
+    animation: animate 3s linear 0.9s infinite;
+    content: "\e68b";
+}
+.fa-zhihu:before {
+    animation: animate 3s linear 1.1s infinite;
+    content: "\f276";
+}
+.fa-dev-to:before {
+    animation: animate 3s linear infinite;
+    content: "\e632";
+}
+.fa-jk:before {
+    animation: animate 3s linear 1.2s infinite;
+    content: "即刻";
+    font-weight: 300;
+}
+li .fa-jk {
+    transform: scale(0.7);
+}
+.about-social li:last-child {
+    margin-left: -10px;
+}
+.fa-calendar:before {
+    content:"\e9de";
+}
+.fa-clock:before {
+    content:"\e6d3";
+}
+.fa-bars:before {
+    content:"\e625";
+}
+.fa-folder:before {
+    content:"\e671";
+}
+.fa-tag:before {
+    content:"\e66c";
+}
+.fab {
+    font-family: "iconfont"
+}
+.fa,.far,.fas {
+    font-family: "iconfont"
+}
+.fa,.fas {
+    font-weight: 900
+}
+.far {
+    font-weight: 400
+}
+
+.badge {
+    /* background-color: beige; */
+    /* color: black; */
+    display: inline-block;
+    /* padding-left: 10px; */
+    /* padding-right: 10px; */
+    text-align: center;
+    border-radius: 100%;
+    font-size: 12px;
+    margin-left: -2px;
+    margin-right: 12px;
+    vertical-align: super;
+}
+
+.tag-cloud {
+    margin-bottom: 15px;
+    word-break: keep-all;
+    display: flex;
+    flex-flow: wrap;
+}
+
+.tooltip {
+    position: relative;
+    display: inline-block;
+    font-size: 1.5em;
+}
+
+.tooltip .tooltiptext {
+    visibility: hidden;
+    width: max-content;
+    background-color: #aaa;
+    color: #fff;
+    text-align: center;
+    border-radius: 6px;
+    padding: 5px 10px;
+    /* Position the tooltip */
+    position: absolute;
+    z-index: 1;
+    top: -5px;
+    left: 105%;
+    font-size: 0.6em;
+}
+
+.tooltip:hover .tooltiptext {
+    visibility: visible;
+}
+
+@media print {
+    .navigation, .post-meta, footer, #article-info, .webpushr-toggle-bell-popup {
+        display: none;
+    }
+
+    .post-title {
+        text-align: center;
+        font-family: "LXGW WenKai","Roboto";
+    }
+
+    article {
+        margin: 40px 40px;
+    }
+
+    h1,.article-content {
+        font-family: "LXGW WenKai","Roboto" !important;
+    }
+
+    .highlight pre code {
+        white-space: pre-wrap !important;
+    }
+
+    .highlight pre {
+        white-space: pre-wrap !important;
+    }
+
+    pre {
+        white-space: pre-wrap !important;
+    }
+
+    img {
+        width: 100%;
+        margin: auto;
+    }
+
+    .adsbygoogle {
+        display: none !important;
+    }
+    div.notices {
+        margin: 2rem 0;
+        position: relative;
+    }
+    .notices p {
+        padding: 15px;
+        display: block;
+        font-size: 1.1rem;
+        margin-top: 0rem;
+        margin-bottom: 0rem;
+        color: #666;
+    }
+    .notices p:first-child:before {
+        position: absolute;
+        top: 2px;
+        color: #fff;
+        font-family: "Font Awesome 5 Free";
+        font-weight: 900;
+        content: "\f06a";
+        left: 10px;
+    }
+    .notices p:first-child:after {
+        position: absolute;
+        top: 2px;
+        color: #fff;
+        left: 2rem;
+    }
+    .notices.info p {
+        border-top: 30px solid #F0B37E;
+        background: #FFF2DB;
+    }
+    .notices.info p:first-child:after {
+        content: 'Info';
+    }
+    .notices.warning p {
+        border-top: 30px solid rgba(217, 83, 79, 0.8);
+        background: #FAE2E2;
+    }
+    .notices.warning p:first-child:after {
+        content: 'Warning';
+    }
+    .notices.note p {
+        border-top: 30px solid #6AB0DE;
+        background: #E7F2FA;
+    }
+    .notices.note p:first-child:after {
+        content: 'Note';
+    }
+    .notices.tip p {
+        border-top: 30px solid rgba(92, 184, 92, 0.8);
+        background: #E6F9E6;
+    }
+    .notices.tip p:first-child:after {
+        content: 'Tip';
+    }
+    
+    .markmap > svg {
+        width: 120%;
+        height: 400px;
+        margin-left: -60px;
+        font-size: .2em;
+        font-family: "LXGW WenKai","Roboto";
+        @media only screen and (max-width : 768px) {
+          height: 230px;
+        }
+    }
+
+    .mermaid {
+        width: 100%;
+        height: auto;
+        text-align: center;
+        border: 1px dashed #ccc;
+    }
+}
+
+#control {
+	--color: #c04851;
+	position: absolute;
+}
+
+#control::before{
+	content: "分享书签";
+	display: block;
+	background-color: var(--color);
+	color: #fff;
+	font-weight: 100;
+	font-size: 0.9em;
+	width: max-content;
+	border-radius: 10px;
+	box-shadow: -16px 0 -1 #eee;
+	display: inline;
+	padding: 5px;
+    will-change: filter;
+	filter: drop-shadow(2px 4px 6px #666);
+    font-family: "LXGW WenKai","Roboto";
+}
+
+/* toast */
+#toast {
+    visibility: hidden;
+    max-width: 50px;
+    height: 50px;
+    line-height: 50px;
+    /*margin-left: -125px;*/
+    margin: auto;
+    background-color: #333;
+    color: #fff;
+    text-align: center;
+    border-radius: 2px;
+    position: fixed;
+    z-index: 1;
+    left: 0;right:0;
+    bottom: 30px;
+    font-size: 17px;
+    white-space: nowrap;
+}
+#toast #img{
+	width: 50px;
+	height: 50px;
+    float: left;
+    padding-top: 16px;
+    padding-bottom: 16px;
+    box-sizing: border-box;
+    background-color: #111;
+    color: #fff;
+}
+#toast #desc{
+    color: #fff;
+    padding: 16px;
+    overflow: hidden;
+	white-space: nowrap;
+}
+
+#toast.show {
+    visibility: visible;
+    -webkit-animation: fadein 0.5s, expand 0.5s 0.5s,stay 3s 1s, shrink 0.5s 2s, fadeout 0.5s 2.5s;
+    animation: fadein 0.5s, expand 0.5s 0.5s,stay 3s 1s, shrink 0.5s 4s, fadeout 0.5s 4.5s;
+}
+
+@-webkit-keyframes fadein {
+    from {bottom: 0; opacity: 0;} 
+    to {bottom: 30px; opacity: 1;}
+}
+
+@keyframes fadein {
+    from {bottom: 0; opacity: 0;}
+    to {bottom: 30px; opacity: 1;}
+}
+
+@-webkit-keyframes expand {
+    from {min-width: 50px} 
+    to {min-width: 350px}
+}
+
+@keyframes expand {
+    from {min-width: 50px}
+    to {min-width: 350px}
+}
+@-webkit-keyframes stay {
+    from {min-width: 350px} 
+    to {min-width: 350px}
+}
+
+@keyframes stay {
+    from {min-width: 350px}
+    to {min-width: 350px}
+}
+@-webkit-keyframes shrink {
+    from {min-width: 350px;} 
+    to {min-width: 50px;}
+}
+
+@keyframes shrink {
+    from {min-width: 350px;} 
+    to {min-width: 50px;}
+}
+
+@-webkit-keyframes fadeout {
+    from {bottom: 30px; opacity: 1;} 
+    to {bottom: 60px; opacity: 0;}
+}
+
+@keyframes fadeout {
+    from {bottom: 30px; opacity: 1;}
+    to {bottom: 60px; opacity: 0;}
+}
+
+code.language-ascii {
+    font-family: monospace !important;
+}
+
+/* The Modal (background) */
+.modal {
+    display: none; /* Hidden by default */
+    position: fixed; /* Stay in place */
+    z-index: 1; /* Sit on top */
+    padding-top: 100px; /* Location of the box */
+    left: 0;
+    top: 0;
+    width: 100%; /* Full width */
+    height: 100%; /* Full height */
+    overflow: auto; /* Enable scroll if needed */
+    background-color: rgb(0,0,0); /* Fallback color */
+    background-color: rgba(0,0,0,0.9); /* Black w/ opacity */
+}
+  
+/* Modal Content (image) */
+.modal-content {
+    margin: auto;
+    display: block;
+    width: 80%;
+    max-width: 700px;
+}
+  
+/* Add Animation */
+.modal-content {  
+    -webkit-animation-name: zoom;
+    -webkit-animation-duration: 0.6s;
+    animation-name: zoom;
+    animation-duration: 0.6s;
+}
+  
+@-webkit-keyframes zoom {
+    from {-webkit-transform:scale(0)} 
+    to {-webkit-transform:scale(1)}
+}
+  
+@keyframes zoom {
+    from {transform:scale(0)} 
+    to {transform:scale(1)}
+}
+  
+/* The Close Button */
+.the-modal-close {
+    position: absolute;
+    top: 15px;
+    right: 35px;
+    color: #f1f1f1;
+    font-size: 40px;
+    font-weight: bold;
+    transition: 0.3s;
+}
+  
+.the-modal-close:hover,
+.the-modal-close:focus {
+    color: #bbb;
+    text-decoration: none;
+    cursor: pointer;
+}
+  
+/* 100% Image Width on Smaller Screens */
+@media only screen and (max-width: 700px){
+    .modal-content {
+      width: 100%;
+    }
+}
+
+.katex-display {
+    overflow-x: scroll;
+    -webkit-overflow-scrolling: touch;
+}
