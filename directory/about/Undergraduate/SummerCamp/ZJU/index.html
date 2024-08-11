@@ -98,6 +98,10 @@
             <figcaption>
                 <p>浙软人工智能钉钉群截图</p>
             </figcaption>
+            <p><img id="SE" alt="Oops?" class="lazyload" loading="lazy"/></p>
+            <figcaption>
+                <p>浙江大学卓越工程学院</p>
+            </figcaption>
         </div>
     </div>
 </div>
@@ -125,9 +129,11 @@
         let normalPage = document.getElementById('normal-page');
         let imgA = document.getElementById('dingding');
         let imgB = document.getElementById('data');
+        let imgC = document.getElementById('SE');
 
         let img1Loaded = false;
         let img2Loaded = false;
+        let img3Loaded = false;
 
         let img1 = new Image();
         img1.src = './dingding.png';
@@ -145,8 +151,16 @@
             checkLoadStatus();
         };
 
+        let img3 = new Image();
+        img3.src = './zjuSE.png';
+        img3.onload = function() {
+            imgC.src = './zjuSE.png';
+            img3Loaded = true;
+            checkLoadStatus();
+        };
+
         function checkLoadStatus() {
-            if (img1Loaded && img2Loaded) {
+            if (img1Loaded && img2Loaded && img3Loaded) {
                 loader.style.display = 'none';
                 normalPage.style.display = 'block';
             }
