@@ -156,7 +156,17 @@
                                 <a style="color:#000000;" onclick="showSubsubmenu('undergraduate')">Undergraduate</a>
                                 <ul class="subsubmenu" id="undergraduate-subsubmenu">
                                     <li>
-                                        <a href="./assets/error/Ghost404.html" target="_blank" onclick="showSubsubsubmenu('SummerCamp')">保研推免夏令营</a>
+                                        <a href="#" target="_blank" onclick="showSubsubsubmenu('SummerCamp'); randomLink()">保研推免夏令营</a>
+                                        <script>
+                                            function randomLink() {
+                                                var links = [
+                                                    "./assets/error/Ghost404A.html",
+                                                    "./assets/error/Ghost404B.html"
+                                                ];
+                                                var randomIndex = Math.floor(Math.random() * links.length);
+                                                window.open(links[randomIndex], '_blank');
+                                            }
+                                        </script>
                                         <!-- <ul class="subsubsubmenu" id="SummerCamp-subsubsubmenu">
                                             <li><a href="./directory/about/Undergraduate/SummerCamp/index.html" target="_blank">index</a></li>
                                             <li><a href="./directory/about/Undergraduate/SummerCamp/preface/index.html" target="_blank">前言</a></li>
