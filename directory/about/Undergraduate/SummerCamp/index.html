@@ -88,8 +88,60 @@
                 </div>
             </div>
             <div class="vertical-line"></div>
+
+            <style>
+                .container {
+                    display: flex;
+                    flex-direction: row;
+                }
+                .left {
+                    width: 66%;
+                    position: relative;
+                }
+                .right {
+                    width: 33%;
+                }
+                .left:after {
+                    content: "";
+                    position: absolute;
+                    top: 0;
+                    right: 0;
+                    width: 3px; /* 竖线的宽度 */
+                    height: 100%;
+                    background-color: #ccc; /* 竖线的颜色 */
+                }
+                .vertical-line {
+                    width: 3px;
+                    height: 100%;
+                    background-color: #ccc;
+                    margin: 0 10px;
+                }
+                .upload-form {
+                    width: 300px;
+                    margin: 40px auto;
+                    padding: 20px;
+                    background-color: #fff;
+                    border: 1px solid #ddd;
+                    border-radius: 10px;
+                    box-shadow: 0 0 10px rgba(0, 0, 0, 0.5);
+                    text-align: center;
+                }
+                .upload-form label {
+                    display: block;
+                    margin-bottom: 10px;
+                }
+                .upload-form input[type="file"] {
+                    padding: 10px;
+                    margin-bottom: 20px;
+                    border: 3px solid #ccc;
+                    border-radius: 5px;
+                }
+            </style>
+
             <div class="right">
-                <p style="font-size: 24px;">乱七八糟的资料，找个时间整理吧。</p>
+                <div class="upload-form">
+                    <p style="font-size: 24px;">乱七八糟的资料<br>找个时间整理吧</p>
+                </div>
             </div>
         </div>
     </body>
