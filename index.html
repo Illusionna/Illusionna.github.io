@@ -49,12 +49,13 @@
                 <h1>Indices: Table of Contents</h1>
 
                 <ul style="line-height: 2em;">
+                    <!-- 首级目录: 数学 -->
                     <li>
-                        <a style="color:#000000;" onclick="showSubmenu('mathematics')"><strong>Mathematics</strong></a>
-                        <ul class="submenu" id="mathematics-submenu">
+                        <a style="color:#000000;" onclick="show2menu('Mathematics')"><strong>Mathematics</strong></a>
+                        <ul class="sub2menu" id="Mathematics-sub2menu">
                             <li>
-                                <a style="color:#000000;" onclick="showSubsubmenu('NumericalAnalysis')">数值分析</a>
-                                <ul class="subsubmenu" id="NumericalAnalysis-subsubmenu">
+                                <a style="color:#000000;" onclick="show3menu('NumericalAnalysis')">数值分析</a>
+                                <ul class="sub3menu" id="NumericalAnalysis-sub3menu">
                                     <li><a href="./directory/leetcode/根号2/sqrt2.html" target="_blank"><math><msqrt><mtext>2</mtext></msqrt></math> 的艺术</a></li>
                                     <li><a href="https://illusionna.readthedocs.io/zh/latest/projects/Mathematics/Numerical Analysis/拉格朗日插值/Lagrange.html" target="_blank">拉格朗日插值</a></li>
                                     <li><a href="https://illusionna.readthedocs.io/zh/latest/projects/Mathematics/Numerical Analysis/龙格现象/Runge.html" target="_blank">龙格现象</a></li>
@@ -64,18 +65,20 @@
                                     <li><a href="https://illusionna.readthedocs.io/zh/latest/projects/Mathematics/Numerical Analysis/三点三次自然样条插值/Spline.html" target="_blank">三点三次自然样条插值</a></li>
                                 </ul>
                             </li>
+
                             <li>
-                                <a style="color:#000000;" onclick="showSubsubmenu('MultivariateStatisticalAnalysis')">多元统计分析</a>
-                                <ul class="subsubmenu" id="MultivariateStatisticalAnalysis-subsubmenu">
+                                <a style="color:#000000;" onclick="show3menu('MultivariateStatisticalAnalysis')">多元统计分析</a>
+                                <ul class="sub3menu" id="MultivariateStatisticalAnalysis-sub3menu">
                                     <li><a href="https://illusionna.readthedocs.io/zh/latest/projects/Mathematics/Multivariate Statistical Analysis/马尔可夫链/Markov.html" target="_blank">马尔可夫链</a></li>
                                 </ul>
                             </li>
+
                             <li>
-                                <a style="color:#000000;" onclick="showSubsubmenu('cryptography')">密码学</a> &nbsp;&nbsp;→&nbsp;&nbsp; <a href="https://illusionna.github.io/cryptography.github.io" target="_blank">* 主页目录 *</a>
-                                <ul class="subsubmenu" id="cryptography-subsubmenu">
+                                <a style="color:#000000;" onclick="show3menu('Cryptography')">密码学</a> &nbsp;&nbsp;→&nbsp;&nbsp; <a href="https://illusionna.github.io/cryptography.github.io" target="_blank">* 一览表 *</a>
+                                <ul class="sub3menu" id="Cryptography-sub3menu">
                                     <li>
-                                        <a style="color:#000000;" onclick="showSubsubsubmenu('md5')">MD5</a>
-                                        <ul class="subsubsubmenu" id="md5-subsubsubmenu">
+                                        <a style="color:#000000;" onclick="show4menu('MD5')">MD5</a>
+                                        <ul class="sub4menu" id="MD5-sub4menu">
                                             <li><a href="https://Illusionna.github.io/cryptography.github.io/templates/cryptography/MD5/MD5.pdf" target="_blank">View PDF</a></li>
                                             <li><a href="https://illusionna.github.io/cryptography.github.io/templates/cryptography/MD5/MD5Python.html" target="_blank">Python</a></li>
                                             <li><a href="https://illusionna.github.io/cryptography.github.io/templates/cryptography/MD5/MD5C.html" target="_blank">C</a></li>
@@ -83,32 +86,32 @@
                                         </ul>
                                     </li>
                                     <li>
-                                        <a style="color:#000000;" onclick="showSubsubsubmenu('sha1')">SHA-1</a>
-                                        <ul class="subsubsubmenu" id="sha1-subsubsubmenu">
+                                        <a style="color:#000000;" onclick="show4menu('SHA1')">SHA-1</a>
+                                        <ul class="sub4menu" id="SHA1-sub4menu">
                                             <li><a href="https://illusionna.github.io/cryptography.github.io/templates/cryptography/SHA1/SHA1Python.html" target="_blank">Python</a></li>
                                         </ul>
                                     </li>
                                     <li>
-                                        <a style="color:#000000;" onclick="showSubsubsubmenu('sha2')">SHA2-256</a>
-                                        <ul class="subsubsubmenu" id="sha2-subsubsubmenu">
+                                        <a style="color:#000000;" onclick="show4menu('SHA2')">SHA2-256</a>
+                                        <ul class="sub4menu" id="SHA2-sub4menu">
                                             <li><a href="https://illusionna.github.io/cryptography.github.io/templates/cryptography/SHA2/SHA2Python.html" target="_blank">Python</a></li>
                                         </ul>
                                     </li>
                                     <li>
-                                        <a style="color:#000000;" onclick="showSubsubsubmenu('rsa')">RSA</a>
-                                        <ul class="subsubsubmenu" id="rsa-subsubsubmenu">
+                                        <a style="color:#000000;" onclick="show4menu('RSA')">RSA</a>
+                                        <ul class="sub4menu" id="RSA-sub4menu">
                                             <li><a href="https://illusionna.github.io/cryptography.github.io/templates/cryptography/RSA/RSAPython.html" target="_blank">Python</a></li>
                                         </ul>
                                     </li>
                                     <li>
-                                        <a style="color:#000000;" onclick="showSubsubsubmenu('openssl')">OpenSSL</a>
-                                        <ul class="subsubsubmenu" id="openssl-subsubsubmenu">
+                                        <a style="color:#000000;" onclick="show4menu('OpenSSL')">OpenSSL</a>
+                                        <ul class="sub4menu" id="OpenSSL-sub4menu">
                                             <li><a href="https://illusionna.github.io/cryptography.github.io/templates/cryptography/OpenSSL/OpenSSLPython.html" target="_blank">Python</a></li>
                                         </ul>
                                     </li>
                                     <li>
-                                        <a style="color:#000000;" onclick="showSubsubsubmenu('powershell')">PowerShell</a>
-                                        <ul class="subsubsubmenu" id="powershell-subsubsubmenu">
+                                        <a style="color:#000000;" onclick="show4menu('PowerShell')">PowerShell</a>
+                                        <ul class="sub4menu" id="PowerShell-sub4menu">
                                             <li><a href="https://illusionna.github.io/cryptography.github.io/templates/cryptography/PowerShell/PowerShellPython.html" target="_blank">Python</a></li>
                                         </ul>
                                     </li>
@@ -117,35 +120,39 @@
                         </ul>
                     </li>
 
+                    <!-- 首级目录: 计算机科学 -->
                     <li>
-                        <a style="color:#000000;" onclick="showSubmenu('computer')"><strong>Computer</strong></a>
-                        <ul class="submenu" id="computer-submenu">
+                        <a style="color:#000000;" onclick="show2menu('Computer')"><strong>Computer</strong></a>
+                        <ul class="sub2menu" id="Computer-sub2menu">
                             <li>
-                                <a style="color:#000000;" onclick="showSubsubmenu('Jarvis')">Jarvis</a>
-                                <ul class="subsubmenu" id="Jarvis-subsubmenu">
+                                <a style="color:#000000;" onclick="show3menu('Jarvis')">Jarvis</a>
+                                <ul class="sub3menu" id="Jarvis-sub3menu">
                                     <li><a href="https://senu.email" target="_blank">NEUmail</a></li>
                                     <li><a href="https://github.com/Illusionna/LocalTransfer" target="_blank">Local Transfer</a></li>
                                 </ul>
                             </li>
+
                             <li>
-                                <a style="color:#000000;" onclick="showSubsubmenu('ComputerVision')">Computer Vision</a>
-                                <ul class="subsubmenu" id="ComputerVision-subsubmenu">
+                                <a style="color:#000000;" onclick="show3menu('ComputerVision')">Computer Vision</a>
+                                <ul class="sub3menu" id="ComputerVision-sub3menu">
                                     <li><a href="https://github.com/Illusionna/ComputerVision/tree/main/EfficientTransformer" target="_blank">Vision Transformer 实现图像分类任务</a></li>
                                     <li><a href="https://github.com/Illusionna/ComputerVision/tree/main/SiameseNetwork" target="_blank">Siamese Network 实现图像相似度判别</a></li>
                                 </ul>
                             </li>
+
                             <li>
-                                <a style="color:#000000;" onclick="showSubsubmenu('NaturalLanguageProcessing')">Natural Language Processing</a>
-                                <ul class="subsubmenu" id="NaturalLanguageProcessing-subsubmenu">
+                                <a style="color:#000000;" onclick="show3menu('NaturalLanguageProcessing')">Natural Language Processing</a>
+                                <ul class="sub3menu" id="NaturalLanguageProcessing-sub3menu">
                                     <li><a href="./directory/leetcode/transformer/index.html" target="_blank">PyTorch 搭建 Transformer 模型</a></li>
                                 </ul>
                             </li>
                         </ul>
                     </li>
 
+                    <!-- 首级目录: 关于我 -->
                     <li>
-                        <a style="color:#000000;" onclick="showSubmenu('about')"><strong>About me</strong></a>
-                        <ul class="submenu" id="about-submenu">
+                        <a style="color:#000000;" onclick="show2menu('AboutMe')"><strong>About me</strong></a>
+                        <ul class="sub2menu" id="AboutMe-sub2menu">
                             <li>
                                 <a href="./directory/about/biography.html" target="_blank">Biography</a>
                             </li>
@@ -153,54 +160,55 @@
                                 <a href="./directory/about/background.html" target="_blank">Background</a>
                             </li>
                             <li>
-                                <a style="color:#000000;" onclick="showSubsubmenu('undergraduate')">Undergraduate</a>
-                                <ul class="subsubmenu" id="undergraduate-subsubmenu">
+                                <a style="color:#000000;" onclick="show3menu('Undergraduate')">Undergraduate</a>
+                                <ul class="sub3menu" id="Undergraduate-sub3menu">
                                     <li>
-                                        <a href="#" target="_blank" onclick="randomLink(); showSubsubsubmenu('SummerCamp')">ACM</a>
-                                        <script>
-                                            function randomLink() {
-                                                var links = [
-                                                    "./assets/error/Ghost404A.html",
-                                                    "./assets/error/Ghost404B.html"
-                                                ];
-                                                var randomIndex = Math.floor(Math.random() * links.length);
-                                                window.open(links[randomIndex], '_blank');
-                                            }
-                                        </script>
-                                        <!-- <ul class="subsubsubmenu" id="SummerCamp-subsubsubmenu">
-                                            <li><a href="./directory/about/Undergraduate/SummerCamp/index.html" target="_blank">index</a></li>
-                                            <li><a href="./directory/about/Undergraduate/SummerCamp/preface/index.html" target="_blank">前言</a></li>
-                                            <li><a href="./directory/about/Undergraduate/SummerCamp/XJTU/index.html" target="_blank">第一营：西安交通大学</a></li>
-                                            <li><a href="./directory/about/Undergraduate/SummerCamp/MeatyXJTU/index.html" target="_blank">干货：西安交通大学计算机系</a></li>
-                                            <li><a href="./directory/about/Undergraduate/SummerCamp/NPU/index.html" target="_blank">第一站：西北工业大学</a></li>
-                                            <li><a href="./directory/about/Undergraduate/SummerCamp/MeatyNPU/index.html" target="_blank">干货：西北工业大学计算机系</a></li>
-                                            <li><a href="./directory/about/Undergraduate/SummerCamp/SIAT/index.html" target="_blank">第二站：中国科学院</a></li>
-                                            <li><a href="./directory/about/Undergraduate/SummerCamp/MeatySIAT/index.html" target="_blank">干货：中国科学院数字所</a></li>
-                                            <li><a href="./directory/about/Undergraduate/SummerCamp/USTC/index.html" target="_blank">第一个承诺：中国科学技术大学</a></li>
-                                            <li><a href="./directory/about/Undergraduate/SummerCamp/MeatyUSTC/index.html" target="_blank">干货：中国科学技术大学人工智能系</a></li>
-                                            <li><a href="./directory/about/Undergraduate/SummerCamp/NEU/index.html" target="_blank">第一个电话：东北大学计算机系</a></li>
-                                            <li><a href="./directory/about/Undergraduate/SummerCamp/ZJU/index.html" target="_blank">第一次放弃：浙江大学软件工程系</a></li>
-                                            <li><a href="./directory/about/Undergraduate/SummerCamp/JLU/index.html" target="_blank">第二次放弃：吉林大学人工智能系</a></li>
-                                            <li><a href="./directory/about/Undergraduate/SummerCamp/epilogue/index.html" target="_blank">尾声</a></li>
-                                        </ul> -->
+                                        <a style="color:#000000;" onclick="show4menu('PostgraduateRecommendation')">推免保研</a>
+                                        <ul class="sub4menu" id="PostgraduateRecommendation-sub4menu">
+                                            <li><a href="./directory/about/Undergraduate/PostgraduateRecommendation/index.html" target="_blank">Index</a></li>
+                                            <li><a href="./directory/about/Undergraduate/PostgraduateRecommendation/preface/index.html" target="_blank">前言</a></li>
+                                            <li>
+                                                <a style="color:#000000;" onclick="show5menu('SummerCamp')">夏令营</a>
+                                                <ul class="sub5menu" id="SummerCamp-sub5menu">
+                                                    <li><a href="./directory/about/Undergraduate/PostgraduateRecommendation/SummerCamp/preface/index.html" target="_blank">前言</a></li>
+                                                    <li><a href="./directory/about/Undergraduate/PostgraduateRecommendation/SummerCamp/MeatyXJTU/index.html" target="_blank">干货：西安交通大学计算机系</a></li>
+                                                    <li><a href="./directory/about/Undergraduate/PostgraduateRecommendation/SummerCamp/MeatyNPU/index.html" target="_blank">干货：西北工业大学计算机系</a></li>
+                                                    <li><a href="./directory/about/Undergraduate/PostgraduateRecommendation/SummerCamp/MeatySIAT/index.html" target="_blank">干货：中国科学院数字所</a></li>
+                                                    <li><a href="./directory/about/Undergraduate/PostgraduateRecommendation/SummerCamp/MeatyUSTC/index.html" target="_blank">干货：中国科学技术大学人工智能系</a></li>
+                                                    <li><a href="./directory/about/Undergraduate/PostgraduateRecommendation/SummerCamp/XJTU/index.html" target="_blank">游记：西安交通大学</a></li>
+                                                    <li><a href="./directory/about/Undergraduate/PostgraduateRecommendation/SummerCamp/NPU/index.html" target="_blank">游记：西北工业大学</a></li>
+                                                    <li><a href="./directory/about/Undergraduate/PostgraduateRecommendation/SummerCamp/SIAT/index.html" target="_blank">游记：中国科学院大学</a></li>
+                                                    <li><a href="./directory/about/Undergraduate/PostgraduateRecommendation/SummerCamp/USTC/index.html" target="_blank">游记：中国科学技术大学</a></li>
+                                                    <li><a href="./directory/about/Undergraduate/PostgraduateRecommendation/SummerCamp/NEU/index.html" target="_blank">放弃：东北大学计算机系</a></li>
+                                                    <li><a href="./directory/about/Undergraduate/PostgraduateRecommendation/SummerCamp/ZJU/index.html" target="_blank">放弃：浙江大学软件工程系</a></li>
+                                                    <li><a href="./directory/about/Undergraduate/PostgraduateRecommendation/SummerCamp/JLU/index.html" target="_blank">放弃：吉林大学人工智能系</a></li>
+                                                    <li><a href="./directory/about/Undergraduate/PostgraduateRecommendation/SummerCamp/epilogue/index.html" target="_blank">尾声</a></li>
+                                                </ul>
+                                            </li>
+                                            <li>预推免</li>
+                                            <li><a href="./directory/about/Undergraduate/PostgraduateRecommendation/SeptemberRecommendation/index.html" target="_blank">九推</a></li>
+                                            <li><a href="./directory/about/Undergraduate/PostgraduateRecommendation/epilogue/index.html" target="_blank">尾声</a></li>
+                                        </ul>
                                     </li>
                                 </ul>
                             </li>
                         </ul>
                     </li>
 
+                    <!-- 首级目录: 画廊 -->
                     <li>
-                        <a style="color:#000000;" onclick="showSubmenu('gallery')"><strong>Gallery</strong></a>
-                        <ul class="submenu" id="gallery-submenu">
+                        <a style="color:#000000;" onclick="show2menu('Gallery')"><strong>Gallery</strong></a>
+                        <ul class="sub2menu" id="Gallery-sub2menu">
                             <li>
-                                <a style="color:#000000;" onclick="showSubsubmenu('2024')">2024</a>
-                                <ul class="subsubmenu" id="2024-subsubmenu">
+                                <a style="color:#000000;" onclick="show3menu('2024')">2024</a>
+                                <ul class="sub3menu" id="2024-sub3menu">
                                     <li><a href="./directory/gallery/2024/ACleanWellLightedPlace.html" target="_blank">一个干净明亮的地方（海明威）</a></li>
                                 </ul>
                             </li>
+
                             <li>
-                                <a style="color:#000000;" onclick="showSubsubmenu('2023')">2023</a>
-                                <ul class="subsubmenu" id="2023-subsubmenu">
+                                <a style="color:#000000;" onclick="show3menu('2023')">2023</a>
+                                <ul class="sub3menu" id="2023-sub3menu">
                                     <li><a href="./directory/gallery/2023/赤.html" target="_blank">赤</a></li>
                                     <li><a href="./directory/gallery/2023/得尔布干河上的村庄.html" target="_blank">得尔布干河上的村庄</a></li>
                                     <li><a href="./directory/gallery/2023/女浴灯光.html" target="_blank">女浴灯光</a></li>
@@ -209,9 +217,10 @@
                                     <li><a href="./directory/gallery/2023/下弦月.html" target="_blank">下弦月</a></li>
                                 </ul>
                             </li>
+
                             <li>
-                                <a style="color:#000000;" onclick="showSubsubmenu('2022')">2022</a>
-                                <ul class="subsubmenu" id="2022-subsubmenu">
+                                <a style="color:#000000;" onclick="show3menu('2022')">2022</a>
+                                <ul class="sub3menu" id="2022-sub3menu">
                                     <li><a href="./directory/gallery/2022/青海湖.html" target="_blank">青海湖仙女湾</a></li>
                                     <li><a href="./directory/gallery/2022/驴友.html" target="_blank">驴友</a></li>
                                     <li><a href="./directory/gallery/2022/二郎剑.html" target="_blank">二郎剑</a></li>
@@ -223,6 +232,7 @@
                             </li>
                         </ul>
                     </li>
+
                 </ul>
 
                 <p><i>Do not disturb love until it is ready! Do not bother me if there's nothing going on! Do not attack my website for boring testing! Thank you my friends plzzzzz.💗</i></p>
