@@ -1,0 +1,170 @@
+
+
+<!DOCTYPE html>
+<html>
+    <head>
+        <meta charset='utf-8'> 
+        <title>数学跨保计算机索引页</title>
+        <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+
+        <style>
+            *{margin:0;padding:0;outline:0}body{padding:80px 100px;font:13px "Helvetica Neue","Lucida Grande","Arial";background:#ECE9E9 -webkit-gradient(linear,0% 0%,0% 100%,from(#fff),to(#ECE9E9));background:#ECE9E9 -moz-linear-gradient(top,#fff,#ECE9E9);background-repeat:no-repeat;color:#555;-webkit-font-smoothing:antialiased}h1,h2,h3{font-size:22px;color:#343434}h1 em,h2 em{padding:0 5px;font-weight:normal}h1{font-size:60px}h2{margin-top:10px}h3{margin:5px 0 10px 0;padding-bottom:5px;border-bottom:1px solid #eee;font-size:18px}ul li{list-style:none}ul li:hover{cursor:pointer;color:#2e2e2e}ul li .path{padding-left:5px;font-weight:bold}ul li .line{padding-right:5px;font-style:italic}ul li:first-child .path{padding-left:0}p{line-height:1.5}a{color:#555;text-decoration:none}a:hover{color:#303030}#stacktrace{margin-top:15px}.directory h1{margin-bottom:15px;font-size:18px}ul#files{width:100%;height:100%;overflow:hidden}ul#files li{float:left;width:30%;line-height:25px;margin:1px}ul#files li a{display:block;height:25px;border:1px solid transparent;-webkit-border-radius:5px;-moz-border-radius:5px;border-radius:5px;overflow:hidden;white-space:nowrap}ul#files li a:focus,ul#files li a:hover{background:rgba(255,255,255,0.65);border:1px solid #ececec}ul#files li a.highlight{-webkit-transition:background .4s ease-in-out;background:#ffff4f;border-color:#E9DC51}#search{display:block;position:fixed;top:30px;right:20px;left:100px;width:90px;-webkit-transition:width ease 0.2s,opacity ease 0.4s;-moz-transition:width ease 0.2s,opacity ease 0.4s;-webkit-border-radius:32px;-moz-border-radius:32px;-webkit-box-shadow:inset 0px 0px 3px rgba(0,0,0,0.25),inset 0px 1px 3px rgba(0,0,0,0.7),0px 1px 0px rgba(255,255,255,0.03);-moz-box-shadow:inset 0px 0px 3px rgba(0,0,0,0.25),inset 0px 1px 3px rgba(0,0,0,0.7),0px 1px 0px rgba(255,255,255,0.03);-webkit-font-smoothing:antialiased;text-align:left;font:13px "Helvetica Neue",Arial,sans-serif;padding:4px 10px;border:none;background:transparent;margin-bottom:0;outline:none;opacity:0.7;color:#888}#search:focus{width:500px;opacity:1.0}#files span{display:inline-block;overflow:hidden;text-overflow:ellipsis;text-indent:10px}#files .name{background-repeat:no-repeat}#files .icon .name{text-indent:28px}.view-tiles .name{width:100%;background-position:8px 5px}.view-tiles .size,.view-tiles .date{display:none}ul#files.view-details li{float:none;display:block;width:90%}ul#files.view-details li.header{height:25px;background:#000;color:#fff;font-weight:bold}.view-details .header{border-radius:5px}.view-details .name{width:60%;background-position:8px 5px}.view-details .size{width:10%}.view-details .date{width:30%}.view-details .size,.view-details .date{text-align:right;direction:rtl}@media (max-width:768px){body{font-size:13px;line-height:16px;padding:0}#search{position:static;width:100%;font-size:2em;line-height:1.8em;text-indent:10px;border:0;border-radius:0;padding:10px 0;margin:0}#search:focus{width:100%;border:0;opacity:1}.directory h1{font-size:2em;line-height:1.5em;color:#fff;background:#000;padding:15px 10px;margin:0}ul#files{border-top:1px solid #cacaca}ul#files li{float:none;width:auto !important;display:block;border-bottom:1px solid #cacaca;font-size:2em;line-height:1.2em;text-indent:0;margin:0}ul#files li:nth-child(odd){background:#e0e0e0}ul#files li a{height:auto;border:0;border-radius:0;padding:15px 10px}ul#files li a:focus,ul#files li a:hover{border:0}#files .header,#files .size,#files .date{display:none !important}#files .name{float:none;display:inline-block;width:100%;text-indent:0;background-position:0 50%}#files .icon .name{text-indent:41px}}
+
+            #files .icon-directory .name{background-image:url(data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABAAAAAQCAMAAAAoLQ9TAAAABGdBTUEAALGPC/xhBQAAAWtQTFRFAAAA/PPQ9Nhc2q402qQ12qs2/PTX2pg12p81+/LM89NE9dto2q82+/fp2rM22qY39d6U+/bo2qo2/frx/vz32q812qs12qE279SU8c4w9NZP+/LK//367s9y7s925cp0/vzw9t92//342po2/vz25s1579B6+OSO2bQ0/v799NyT8tE79dld8Msm+OrC/vzx79KA2IYs7s6I9d6R4cJe9+OF/PLI/fry79OF/v30//328tWB89RJ8c9p8c0u9eCf//7+9txs6sts5Mdr+++5+u2z/vrv+/fq6cFz8dBs8tA57cpq+OaU9uGs27Y8//799NdX/PbY9uB89unJ//z14sNf+emh+emk+vDc+uys9+OL8dJy89NH+eic8tN5+OaV+OWR9N2n9dtl9t529+KF9+GB9Nue9NdU8tR/9t5y89qW9dpj89iO89eG/vvu2pQ12Y4z/vzy2Ict/vvv48dr/vzz4sNg///+2Igty3PqwQAAAAF0Uk5TAEDm2GYAAACtSURBVBjTY2AgA2iYlJWVhfohBPg0yx38y92dS0pKVOVBAqIi6sb2vsWWpfrFeTI8QAEhYQEta28nCwM1OVleZqCAmKCEkUdwYWmhQnFeOStQgL9cySqkNNDHVJGbiY0FKCCuYuYSGRsV5KgjxcXIARRQNncNj09JTgqw0ZbkZAcK5LuFJaRmZqfHeNnpSucDBQoiEtOycnIz4qI9bfUKQA6pKKqAgqIKQyK8BgAZ5yfODmnHrQAAAABJRU5ErkJggg==)}#files .icon-default .name{background-image:url(data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABAAAAAQCAQAAAC1+jfqAAAABGdBTUEAAK/INwWK6QAAABl0RVh0U29mdHdhcmUAQWRvYmUgSW1hZ2VSZWFkeXHJZTwAAAC4SURBVCjPdZFbDsIgEEWnrsMm7oGGfZrohxvU+Iq1TyjU60Bf1pac4Yc5YS4ZAtGWBMk/drQBOVwJlZrWYkLhsB8UV9K0BUrPGy9cWbng2CtEEUmLGppPjRwpbixUKHBiZRS0p+ZGhvs4irNEvWD8heHpbsyDXznPhYFOyTjJc13olIqzZCHBouE0FRMUjA+s1gTjaRgVFpqRwC8mfoXPPEVPS7LbRaJL2y7bOifRCTEli3U7BMWgLzKlW/CuebZPAAAAAElFTkSuQmCC)}#files .icon-bat .name,#files .icon-sh .name{background-image:url(data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABAAAAAQCAYAAAAf8/9hAAAABGdBTUEAAK/INwWK6QAAABl0RVh0U29mdHdhcmUAQWRvYmUgSW1hZ2VSZWFkeXHJZTwAAAGNSURBVDjLpVM9SwNBEJ297J1FQBtzjQj2dgppYiP4A1KZRoiFrYWt9rHyH6QUPBDTCimtLNSAnSB26YKg4EdMdsd5611cjwsIWRhmZ3f2zZuPVcxMsyx9fPF0NRfS2vM7lx2WtcQiJHvDRvZMluXMGNHstJH7+Wj09jHkOy1+tc3VxeC+P6TXT1sYZX2hT7cvS6lepv3zHUp2T8vXNw81dXT2yGwEGeERSbSVCC5qysYa+3vm9sJGmLFojceXJ9uklCqUIAic5G3IytahAAhqqVSiwWDwx6nogW9XKhWphaGAvC50Oh1qtVr/7oAdCwBQwjB00mg0qFqtUr1ed3YURZM7X7TWTqM2Gm3CASRJEur1etTtdp1DnrafFtJGMbVNGSBas9l0DrAzR6x8DdwASUB0RqNNGS2/gH7EInvCwMhkZTnlnX0GsP09tJER0BgMoAEAa1rETDIQvBkjBZeHMIjjuNB5Ggg0/oZWPGrHGwd7Fp9F2CAlgHKqf0aYXb6Y2mzE8d/IfrXVrN/5G81p6oa2mIEUAAAAAElFTkSuQmCC)}#files .icon-bin .name,#files .icon-exe .name{background-image:url(data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABAAAAAQCAYAAAAf8/9hAAAABGdBTUEAAK/INwWK6QAAABl0RVh0U29mdHdhcmUAQWRvYmUgSW1hZ2VSZWFkeXHJZTwAAAE8SURBVDjLpVM9SwNREJzTpx4JaGMn/oJrRMtU/g2xsLD1F/gDbK0lpaAgNmJnI1YWasBOELs0QgQDfsQ4Mxb3vEvgipwuLAsLszszb19iG/+JsHf6dDU3g9WXdzdtABIsAQZowjJkwSRkwyQoYX52+PYx8F0w0FrPFqfuuwP0P1W5ZW2hi9vXpViXsXOyieOtw+b1zUMr2T16tGnYBizYhqR8a2QjquxRkAjJsIhgGhsrg4q9CYDpmGWMerZ//oxgC1mW/clAnl0gIE6UqvXbLlIqJTYaDeibCBRrAX97ACAKwXIt4KgHEhEUGdQBlgOE4Khd0sTAMQZkzoDkxMBiAI1g5gzSNK39jJYQJKHT6SBN00KGpDFGVfJ6vR5kIyQetg8uh9tiH+IIMNb8hPOzNV2cuATAX+3kv9/5B7T5iPkmloFJAAAAAElFTkSuQmCC)}#files .icon-csv .name,#files .icon-xls .name,#files .icon-xlsx .name{background-image:url(data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABAAAAAQCAYAAAAf8/9hAAAABGdBTUEAAK/INwWK6QAAABl0RVh0U29mdHdhcmUAQWRvYmUgSW1hZ2VSZWFkeXHJZTwAAAIpSURBVDjLjZNPSFRRFMZ/9707o0SOOshM0x/JFtUmisKBooVEEUThsgi3KS0CN0G2lagWEYkSUdsRWgSFG9sVFAW1EIwQqRZiiDOZY804b967954249hUpB98y/PjO5zzKREBQCm1E0gDPv9XHpgTEQeAiFCDHAmCoBhFkTXGyL8cBIGMjo7eA3YDnog0ALJRFNlSqSTlcrnulZUVWV5elsXFRTHGyMLCgoyNjdUhanCyV9ayOSeIdTgnOCtY43DWYY3j9ulxkskkYRjinCOXy40MDAzcZXCyVzZS38MeKRQKf60EZPXSXInL9y+wLZMkCMs0RR28mJ2grSWJEo+lH9/IpNPE43GKxSLOOYwxpFIpAPTWjiaOtZ+gLdFKlJlD8u00xWP8lO/M5+e5efEB18b70VqjlMJai++vH8qLqoa+nn4+fJmiNNPCvMzQnIjzZuo1V88Ns3/HAcKKwfd9tNZorYnFYuuAMLDMfJ3m+fQznr7L0Vk9zGpLmezB4zx++YggqhAFEZ7n4ft+HVQHVMoB5++cJNWaRrQwMjHM9qCLTFcnJJq59WSIMLAopQDwfR/P8+oAbaqWK2eGSGxpxVrDnvQ+3s++4tPnj4SewYscUdUgIiilcM41/uXZG9kNz9h9aa+EYdjg+hnDwHDq+iGsaXwcZ6XhsdZW+FOqFk0B3caYt4Bic3Ja66NerVACOGttBXCbGbbWrgJW/VbnXbU6e5tMYIH8L54Xq0cq018+AAAAAElFTkSuQmCC)}#files .icon-ppt .name,#files .icon-pptx .name{background-image:url(data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABAAAAAQCAYAAAAf8/9hAAAABGdBTUEAAK/INwWK6QAAABl0RVh0U29mdHdhcmUAQWRvYmUgSW1hZ2VSZWFkeXHJZTwAAAHeSURBVDjLjZO/i1NBEMc/u+/lBYxiLkgU7vRstLEUDyxtxV68ykIMWlocaGHrD1DxSAqxNf4t115jo6DYhCRCEsk733s7u2PxkuiRoBkYdmGZz3xndsaoKgDGmC3gLBDxbxsA31U1AKCqzCBXsywbO+e8iOgqz7JM2+32W+AiYFX1GGDHOeen06mmabrwyWSio9FI+/2+ioj2ej3tdDoLiJm+bimAhgBeUe9RmbkrT5wgT97RaDQoioIQAt1ud7/Var1h+uq+/s9+PLilw+FwqSRgJ1YpexHSKenHF4DFf/uC3b7CydsPsafraO5IkoTxeEwIARGh2WwCYNUJAOmHZ5y4eY/a7h4hPcIdHvDz/fMSnjviOCZJEiqVCtVqdfEl8RygHkz9DLZWQzOHisd9OizfckcURRhjMMbMm14CQlEC/NfPjPd2CSJQCEEEDWYBsNZijFkaCqu5Ky+blwl5geaOUDg0c8TnNssSClkER1GEtXYZcOruI6ILl1AJqATirW02Hr8sFThBVZfklyXMFdQbbDzdXzm78z4Bx7KXTcwdgzs3yizuzxAhHvVh4avqBzAzaQa4JiIHgGE9C3EcX7ezhVIgeO9/AWGdYO/9EeDNX+t8frbOdk0FHhj8BvUsfP0TH5dOAAAAAElFTkSuQmCC)}#files .icon-pdf .name{background-image:url(data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABAAAAAQCAYAAAAf8/9hAAAABGdBTUEAAK/INwWK6QAAABl0RVh0U29mdHdhcmUAQWRvYmUgSW1hZ2VSZWFkeXHJZTwAAAHhSURBVDjLjZPLSxtRFIfVZRdWi0oFBf+BrhRx5dKVYKG4tLhRqlgXPmIVJQiC60JCCZYqFHQh7rrQlUK7aVUUfCBRG5RkJpNkkswrM5NEf73n6gxpHujAB/fOvefjnHM5VQCqCPa1MNoZnU/Qxqhx4woE7ZZlpXO53F0+n0c52Dl8Pt/nQkmhoJOCdUWBsvQJ2u4ODMOAwvapVAqSJHGJKIrw+/2uxAmuJgFdMDUVincSxvEBTNOEpmlIp9OIxWJckMlkoOs6AoHAg6RYYNs2kp4RqOvfuIACVFVFPB4vKYn3pFjAykDSOwVta52vqW6nlEQiwTMRBKGygIh9GEDCMwZH6EgoE+qHLMuVBdbfKwjv3yE6Ogjz/PQ/CZVDPSFRRYE4/RHy1y8wry8RGWGSqyC/nM1meX9IQpQV2JKIUH8vrEgYmeAFwuPDCHa9QehtD26HBhCZnYC8ucGzKSsIL8wgsjiH1PYPxL+vQvm5B/3sBMLyIm7GhhCe90BaWykV/Gp+VR9oqPVe9vfBTsruM1HtBKVPmFIUNusBrV3B4ev6bsbyXlPdkbr/u+StHUkxruBPY+0KY8f38oWX/byvNAdluHNLeOxDB+uyQQfPCWZ3NT69BYJWkjxjnB1o9Fv/ASQ5s+ABz8i2AAAAAElFTkSuQmCC)}#files .icon-doc .name,#files .icon-docx .name{background-image:url(data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABAAAAAQCAYAAAAf8/9hAAAABGdBTUEAAK/INwWK6QAAABl0RVh0U29mdHdhcmUAQWRvYmUgSW1hZ2VSZWFkeXHJZTwAAAIdSURBVDjLjZO7a5RREMV/9/F9yaLBzQY3CC7EpBGxU2O0EBG0sxHBUitTWYitYCsiiJL0NvlfgoWSRpGA4IMsm43ZXchmv8e9MxZZN1GD5MCBW8yce4aZY1QVAGPMaWAacPwfm8A3VRUAVJWhyIUsy7plWcYQgh7GLMt0aWnpNTADWFX9Q2C+LMu4s7Oj/X5/xF6vp51OR1utloYQtNls6vLy8kjE3Huz9qPIQjcUg/GZenVOokIEiSBBCKUSQ+TFwwa1Wo2iKBARVlZW3iwuLr7izssPnwZ50DLIoWz9zPT+s/fabrf/GQmY97GIIXGWp28/08si5+oV1jcGTCSO6nHH2pddYqmkaUq320VECCFQr9cBsBIVBbJcSdXQmK7Q6Qsnq54sj2gBplS896RpSpIkjI2NjVZitdh7jAOSK6trXcpC2GjlfP1esHD+GDYozjm893jvSZJkXyAWe+ssc6W5G9naLqkaw/pGxBrl1tVpJCrWWpxzI6GRgOQKCv2BYHPl5uUatROeSsVy7eIkU9UUiYoxBgDnHNbagw4U6yAWwpmphNvXT6HAhAZuLNRx1iDDWzHG/L6ZEbyJVLa2c54/PgsKgyzw5MHcqKC9nROK/aaDvwN4KYS7j959DHk2PtuYnBUBFUEVVBQRgzX7I/wNM7RmgEshhFXAcDSI9/6KHQZKAYkxDgA5SnOMcReI5kCcG8M42yM6iMDmL261eaOOnqrOAAAAAElFTkSuQmCC)}#files .icon-ico .name,#files .icon-gif .name,#files .icon-webp .name,#files .icon-jpeg .name,#files .icon-jpg .name,#files .icon-png .name{background-image:url(data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABAAAAAQCAYAAAAf8/9hAAAABGdBTUEAAK/INwWK6QAAABl0RVh0U29mdHdhcmUAQWRvYmUgSW1hZ2VSZWFkeXHJZTwAAAGWSURBVBgZpcE/a1NhGMbh3/OeN56cKq2Dp6AoCOKmk4uCn8DNycEOIojilr2TaBfRzVnESQR3Bz+FFDoWA2IjtkRqmpyc97k9qYl/IQV7XSaJw4g0VlZfP0m13dwepPbuiH85fyhyWCx4/ubxjU6kkdxWHt69VC6XpZlFBAhwJgwJJHAmRKorbj94ewvoRBrbuykvT5R2/+lLTp05Tp45STmEJYJBMAjByILxYeM9jzr3GCczGpHGYAQhRM6fO8uFy1fJQoaUwCKYEcwwC4QQaGUBd36KTDmQ523axTGQmEcIEBORKQfG1ZDxcA/MkBxXwj1ggCQyS9TVAMmZiUxJ8Ln/kS+9PmOvcSW+jrao0mmMH5bzHfa+9UGBmciUBJ+2Fmh1h+yTQCXSkJkdCrpd8btIwwEJQnaEkOXMk7XaiF8CUxL/JdKQOwb0Ntc5SG9zHXQNd/ZFGsaEeLa2ChjzXQcqZiKNxSL0vR4unVwwMENMCATib0ZdV+QtE41I42geXt1Ze3dlMNZFdw6Ut6CIvKBhkjiM79Pyq1YUmtkKAAAAAElFTkSuQmCC)}#files .icon-webm .name,#files .icon-avi .name,#files .icon-mov .name,#files .icon-mp4 .name{background-image:url(data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABAAAAAQCAYAAAAf8/9hAAAABGdBTUEAAK/INwWK6QAAABl0RVh0U29mdHdhcmUAQWRvYmUgSW1hZ2VSZWFkeXHJZTwAAAIfSURBVDjLpZNPaBNBGMXfbrubzBqbg4kL0lJLgiVKE/AP6Kl6UUFQNAeDIAjVS08aELx59GQPAREV/4BeiqcqROpRD4pUNCJSS21OgloISWMEZ/aPb6ARdNeTCz92mO+9N9/w7RphGOJ/nsH+olqtvg+CYJR8q9VquThxuVz+oJTKeZ63Uq/XC38E0Jj3ff8+OVupVGLbolkzQw5HOqAxQU4wXWWnZrykmYD0QsgAOJe9hpEUcPr8i0GaJ8n2vs/sL2h8R66TpVfWTdETHWE6GRGKjGiiKNLii5BSLpN7pBHpgMYhMkm8tPUWz3sL2D1wFaY/jvnWcTTaE5DyjMfTT5J0XIAiTRYn3ASwZ1MKbTmN7z+KaHUOYqmb1fcPiNa4kQBuyvWAHYfcHGzDgYcx9NKrwJYHCAyF21JiPWBnXMAQOea6bmn+4ueYGZi8gtymNVobF7BG5prNpjd+eW6X4BSUD0gOdCpzA8MpA/v2v15kl4+pK0emwHSbjJGBlz+vYM1fQeDrYOBTdzOGvDf6EFNr+LYjHbBgsaCLxr+moNQjU2vYhRXpgIUOmSWWnsJRfjlOZhrexgtYDZ/gWbetNRbNs6QT10GJglNk64HMaGgbAkoMo5fiFNy7CKDQUGqE5r38YktxAfSqW7Zt33l66WtkAkACjuNsaLVaDxlw5HdJ/86aYrG4WCgUZD6fX+jv/U0ymfxoWVZomuZyf+8XqfGP49CCrBUAAAAASUVORK5CYII=)}#files .icon-c .name{background-image:url(data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABAAAAAQCAYAAAAf8/9hAAAABGdBTUEAAK/INwWK6QAAABl0RVh0U29mdHdhcmUAQWRvYmUgSW1hZ2VSZWFkeXHJZTwAAAHdSURBVDjLjZNLS+NgFIad+R0KwuzcSQddunTWXraKA4KCuFKcWYqgVbE4TKJWNyqC2oHKoDBeEBF04UpFUVQqUoemSVOTJr2lrb5+5xsTUy+jgYdc3yfnnOQrAVBCsK2U4WFUvUE546OTcwk82WxWz+fzt4VCAS/B7kMQhB9uiVtQReFkMolUKuWQSCSgaRpkWeYSSZIgiqIjscMfSEAPZDIZWJbF94RpmtB1HYqicEE6nQa9xO/3/5OQoM57/qm2a3PGtyzDtxzF/FYMe6c6F1DAMAzEYrFnLfGZ1A9devqC8o2wpmL8jwJhRcbw7ygGAxJYS7xvuxVVVXklkUjkUdAshgP+DRVfureXbPPcuoKe2b/QDKtIQpXQPOLx+KOgf0nGCCu9smHiu7u8IGuDBHRsS6gdmgmJHEHfLwn9wSgqagc6Xvt8RC6X48MlCeEI2ibDIS8TVDYGBHfAO3ONowvTOacqSEBQNY6gpvOkp3cxgq8/Q8ZxyISWsDAwfY32sSscnhk8SFAFBIWLBPQZq1sOvjX5LozOqTBaxSu0jF5iYVV+FnZTJLB/pN0DDTv7WlHvtuQpLwrYxbv/DfIJt47gQfKZDShFN94TZs+afPW6BGUkecdytqGlX3YPTr7momspN0YAAAAASUVORK5CYII=)}#files .icon-cpp .name{background-image:url(data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABAAAAAQCAYAAAAf8/9hAAAABGdBTUEAAK/INwWK6QAAABl0RVh0U29mdHdhcmUAQWRvYmUgSW1hZ2VSZWFkeXHJZTwAAAH/SURBVDjLjZPNaxNRFMWrf4cFwV13JVKXLuta61apIChIV0rblUqhjYpRcUaNboxIqxFTQgVti4hQQTe1C7FFSUmnmvmM85XJzCSpx3efzmTSRtqBw7yZ9+5v7rl3bg+AHhK7DjClmAZ20UGm/XFcApAKgsBqNptbrVYL3cT2IQjCnSQkCRig4FqtBs/zYtm2DdM0oaoqh8iyDFEUY0gUvI8AdMD3fYRhyO8k13VhWRY0TeOAer0O+kg2m/0LIcDx9LdDgxff5jJzKjJzCmbe6fi0anEABTiOA13Xd1jiNTlxfT01UVB/CfMG7r/WILxScaOo4FpeBrPEfUdWDMPgmVQqlTbgtCjls4sGjl16PxuRny5oGH3yA7oZoPjR4BDbqeHlksLrUa1W24DJWRU3Wer9Qw/Gk+kVmA2lGuDKtMQzsVwfl6c3eE3IUgyYeCFjsqCgb3DqQhJwq/gTY7lyV61Jdhtw7qFUSjNA/8m8kASkc5tYXnN4BvTs1kO23uAdIksx4OjI19Grzys4c7fkfCm5MO0QU483cf5eGcurNq8BWfD8kK11HtwBoDYeGV4ZO5X57ow8knBWLGP49jqevVF5IKnRaOxQByD6kT6smFj6bHb0OoJsV1cAe/n7f3PQRVsx4B/kMCuQRxt7CWZnXT69CUAvQfYwzpFo9Hv/AD332dKni9XnAAAAAElFTkSuQmCC)}#files .icon-h .name{background-image:url(data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABAAAAAQCAYAAAAf8/9hAAAABGdBTUEAAK/INwWK6QAAABl0RVh0U29mdHdhcmUAQWRvYmUgSW1hZ2VSZWFkeXHJZTwAAAHtSURBVDjLjZNLS9xQFMe138C9A/0OynyBUjeFQjduROi2MMtCEalS0ToLEdQMdEShoKDWRymKigWxII7PhaB9aBFUJjHJpHlnnvbfe27NJcVIDfwIyT3nd885cOoA1BHsaWQ0MZL/4SHjgciLCJpKpZJVrVava7Ua4mDnkCRpKCqJCpKU7HkefN8X2LYN0zShqiqXKIqCTCYjJGFyPQkooFgsolwu8zfhui4sy4KmaVwQBAHokmw2+1cSClpSUmr12MP7LQunii8klOA4DnRdv9USn0koePRiJDW+aTGBjcOLgAewlnjfYSuFQoFXIsvybQF9jG2avIKFPQtzOyZmcyZMtywkVAnNwzCMeMG7jV+YyFmQ1g30L2kYWitAWtZFJdQOzYREsYLhzwZGGF+OHez/9PD2k4aeeYUHVyoVPheSELGCwRUdA+zG/VMPeycu3iyo6J5WxDxIQFA1QtCauUwPrOpIPh/vSC+qSC/qPHn3u4uu2Su8nsrzZKqAoOR/BO2j+Q+DTPC0/2CdSu79qOLVlIyXk3l0zsjomJYxv6ELQYgQPOk7a2jpOnmcaG57tvuD3fzNxc5XB9sEm0XuyMb5VcCriBI7A/bz9117EMO1ENxImtmAfDq4TzKLdfn2RgQJktxjnUNo9RN/AFmTwlP7TY1uAAAAAElFTkSuQmCC)}#files .icon-iso .name{background-image:url(data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABAAAAAQCAYAAAAf8/9hAAAABGdBTUEAAK/INwWK6QAAABl0RVh0U29mdHdhcmUAQWRvYmUgSW1hZ2VSZWFkeXHJZTwAAAIzSURBVDjLhZNbbtpQEIazgaygG4nUjXRH3QAySvvSKokEgeaBSBGFXJqAQkMxYCA03EJMzcWxCb6AAYP9d46BhqRURfqw5Zn5z5y5bAHYWufd++hbwkdkCYUYEBXCz2yv/dcDtwmOsL/yIkotHU11irY5g9QfIp5tgdmWPtsvBJbB0YOLCuaOC0kHjtIGvhQMfO9PMSYnh2A25sN8VyIrAY4ZNBvezyTvvUsNn66fIGgOXPpGD+jOwr4U4TwBetkhHLFvYy+loqounE74MfxnKupDeBn06M+k55ThukzAYbHe6TG630lBx8dLBbsXCooSUOsBqapJ15mgPwFkEtAplcEcMIjYoiYcE8gLoobPyUcSkOH/JiOS1XGYqDOHLiOcbMCkoDZlU30ChPYcgqgze54JqLfSiE6WsUvBH0jkpmEyY4d4s6RT6U0QoaKGMppHUbKYj/pHwH8ugzvtwXfaRfr+b4HiLwshXsf+zYDoo7AmkM8/DMCdd73gIKlXVRcs7dUVDhMNJBssgyGOSxai5RFyzecreEW8vh9DkIGWBTQMQgMqjxOUOhOkmjOEciPs02wEMiYSJLZeRK+NNrVGph7dDQC+C1yJQLw+x/HtFOG8hQBv4eCHiSBvkrD93Mb1QVKoXYICJCg4VnMRKc8QFsYIZhfBAd5AWrRfDtLrUZYMFznKIF6bI1JcnH4k0C7cWfgp25tHedMyZR90lLtTrwYZKgj79s9l+s86K8t336Z1/g2YLh6PHfCmogAAAABJRU5ErkJggg==)}#files .icon-css .name,#files .icon-html .name,#files .icon-js .name{background-image:url(data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABAAAAAQCAYAAAAf8/9hAAAABGdBTUEAAK/INwWK6QAAABl0RVh0U29mdHdhcmUAQWRvYmUgSW1hZ2VSZWFkeXHJZTwAAAHdSURBVDjLjZNPaxNBGIdrLwURLznWgkcvIrQhRw9FGgy01IY0TVsQ0q6GFkT0kwjJId9AP4AHP4Q9FO2hJ7El2+yf7OzMbja7Sf0578QdNybFLjwszLu/Z2femZkDMEfI54FkRVL4Dw8l8zqXEawMBgM2HA6vR6MRZiHraDabH7KSrKBA4SAIEIahxvd9eJ6HbrerJKZpotVqaUkavkMC+iCKIsRxrN6EEAKMMViWpQT9fh/0k3a7PZZkBUPmqXAKCSjAOYdt21NLUj1JBYW7C6vi6BC8vKWKQXUXQcNA5Nh6KY7jqJl0Op1JwY/Hi7mLp/lT/uoA/OX2WLC3C9FoQBwfILKulIRmQv1wXfevwHmyuMPXS5Fv1MHrFSTmhSomnUvw/Spo3C+vg3/+pJZDPSGRFvilNV+8PUZvoziKvn+d3LZvJ/BelMDevIZXK2EQCiUhtMDM53bY5rOIGXtwjU3EVz/HM5Az8eplqPFKEfzLR91cOg8TPTgr3MudFx+d9owK7KMNVfQOtyQ1OO9qiHsWkiRRUHhKQLuwfH9+1XpfhVVfU0V3//k4zFwdzjIlSA/Sv8jTOZObBL9uugczuNaCP5K8bFBIhduE5bdC3d6MYIkkt7jOKXT1l34DkIu9e0agZjoAAAAASUVORK5CYII=)}#files .icon-tex .name,#files .icon-m .name,#files .icon-py .name{background-image:url(data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABAAAAAQCAYAAAAf8/9hAAAABGdBTUEAAK/INwWK6QAAABl0RVh0U29mdHdhcmUAQWRvYmUgSW1hZ2VSZWFkeXHJZTwAAAHtSURBVDjLjZM9T9tQFIYpQ5eOMBKlW6eWIQipa8RfQKQghEAKqZgKFQgmFn5AWyVDCipVQZC2EqBWlEqdO2RCpAssQBRsx1+1ndix8wFvfW6wcUhQsfTI0j33PD7n+N4uAF2E+/S5RFwG/8Njl24/LyCIOI6j1+v1y0ajgU64cSSTybdBSVAwSMmmacKyLB/DMKBpGkRRZBJBEJBKpXyJl/yABLTBtm1Uq1X2JsrlMnRdhyRJTFCpVEAfSafTTUlQoFs1luxBAkoolUqQZbmtJTYTT/AoHInOfpcwtVtkwcSBgrkDGYph+60oisIq4Xm+VfB0+U/P0Lvj3NwPGfHPTcHMvoyFXwpe7UmQtAqTUCU0D1VVbwTPVk5jY19Fe3ZfQny7CE51WJDXqpjeEUHr45ki9rIqa4dmQiJfMLItGEs/FcQ2ucbRmdnSYy5vYWyLx/w3EaMfLmBaDpMQvuDJ65PY8Dpnz3wpYmLtApzcrIAqmfrEgdZH1grY/a36w6Xz0DKD8ES25/niYS6+wWE8mWfByY8cXmYEJFYLkHUHtVqNQcltAvoLD3v7o/FUHsNvzlnwxfsCEukC/ho3yUHaBN5Buo17Ojtyl+DqrnvQgUtfcC0ZcAdkUeA+ye7eMru9AUGIJPe4zh509UP/AAfNypi8oj/mAAAAAElFTkSuQmCC)}#files .icon-cfg .name,#files .icon-dll .name,#files .icon-ini .name{background-image:url(data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABAAAAAQCAQAAAC1+jfqAAAABGdBTUEAAK/INwWK6QAAABl0RVh0U29mdHdhcmUAQWRvYmUgSW1hZ2VSZWFkeXHJZTwAAAEkSURBVCjPbdE9S0IBGIbhxxobWxP8D8r5I60RLg0NNTS21VBRQwg1aA4VOAWBpBVCFhKUtkVJtPQx9GFFWh49x3P0bvAjjsWzXrzvcAtpREEZfQtoACEkpKBVdpouv7NYi3SJkAynWcXExKTCJ6+4PLPeIZJPhksdmzp1vilTwqVGlWhEgR6wsbGpU+OLt94rGfJ1gIOLi4OFSYV3Sjx5QXdtkiHFx//gjiwlTshyT5LV3T8gwy3HFLnhkCuWmB3qA0Uu2WGOZVIUmN/ru5CiwAsLNLCI8cg+i3hAggMeiNOgwQbXRJnwghoX5DkiTow0OcLJ8HAbtLpkkzwJCuTY4pQppgeFFLJNtxMrzSRFtlnhvDXO6Fk7ll8hb+wZxpChoPzoB6aiXIYcSLDWAAAAAElFTkSuQmCC)}#files .icon-yml .name,#files .icon-xml .name,#files .icon-json .name,#files .icon-log .name,#files .icon-md .name,#files .icon-txt .name{background-image:url(data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABAAAAAQCAQAAAC1+jfqAAAABGdBTUEAAK/INwWK6QAAABl0RVh0U29mdHdhcmUAQWRvYmUgSW1hZ2VSZWFkeXHJZTwAAADoSURBVBgZBcExblNBGAbA2ceegTRBuIKOgiihSZNTcC5LUHAihNJR0kGKCDcYJY6D3/77MdOinTvzAgCw8ysThIvn/VojIyMjIyPP+bS1sUQIV2s95pBDDvmbP/mdkft83tpYguZq5Jh/OeaYh+yzy8hTHvNlaxNNczm+la9OTlar1UdA/+C2A4trRCnD3jS8BB1obq2Gk6GU6QbQAS4BUaYSQAf4bhhKKTFdAzrAOwAxEUAH+KEM01SY3gM6wBsEAQB0gJ+maZoC3gI6iPYaAIBJsiRmHU0AALOeFC3aK2cWAACUXe7+AwO0lc9eTHYTAAAAAElFTkSuQmCC)}#files .icon-tar .name,#files .icon-7z .name,#files .icon-gz .name,#files .icon-xz .name,#files .icon-rar .name,#files .icon-zip .name{background-image:url(data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABAAAAAQCAYAAAAf8/9hAAAABGdBTUEAAK/INwWK6QAAABl0RVh0U29mdHdhcmUAQWRvYmUgSW1hZ2VSZWFkeXHJZTwAAAG9SURBVDjLpZO9apRREIafDVuIhMjGhPwJukashNjoNdgIqQQbG8U7ECy0i4UXIMQLEKxtrCwsRMRKbBSCoBhQwRjwZ3e/M/O+FufbTYRYZWA45wznnXk4Z6Zjm8PYFIe0LsDDG/1pm03jy5gpAzbIxga3q2wMv2Q/uPXo8wZAZ/P6qVmbrd7iyd7cUh86HWhFMvvcpKBE4fv2B358+7Rx+/H23a7Nq+PL/d7c8ipf3r+kjH6jhDSkTAjCRoISZmbhNDMLq4S4c+/K8rmu8fzahYu8fvaEwc+dKm5FIZMJIVMSIsXu1ltmhw1nzq6x8/XjeteG+ZVF1q/dRKMhVqBInElG4igoApXxPlEJpo4t8eaF6drgEIPdd6j5g0KoqCYpSRShkq0LlZps+ugJZOjWxxEuSQ6zVohETZIh1LTiNqYQGTVmtwQqiUZBjgKVICfVsj0Ll7GwpYvcI1AkOSyUYTkQN4twCjWB0jgryYTAjYhRkIPyH1zVilETOV19QlCSHAQ5bA7GTaEUDuFxZ9EmsCGLOLJyvv5AGmvvstVWlGt/7zNjOvevrjy1uST90+8Hz4HBVYkrwfPOYcf5L9lR/9+EMK8xAAAAAElFTkSuQmCC)}#files .icon-wav .name,#files .icon-mp3 .name{background-image:url(data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABEAAAASCAYAAAC9+TVUAAAAAXNSR0IArs4c6QAAAARnQU1BAACxjwv8YQUAAAAJcEhZcwAAEnQAABJ0Ad5mH3gAAAHMSURBVDhPY/wPBAwEAEjJ21evGV69eMnw4ukzhpfPXzC8fPYcjF18PBmwGrJh+SqGG5evQhQCNYA0//3zByqLCqJTk7Ab4qhtDGURBlGpiQxMUDbRQERMlEFJTRXKY2BgBEIWKBsr0NTVYXDz92aQlpVlkJCWZJCQkWZgZWUFywXbuzG8e/OWgZGRAb9LPAJ9GQIiwxhMbSwZZBUV4AaAADMLxP5/wNAg2TvYAH0NAUXxgZ27GVrLaxgK4lMZPrx9BxYHBSxRhoAMKEnNZmgsqmDYs2U7w8Uz5xh+//4NlWWAxM6vnz8Z9m7byXDy0BEGfkFBsAQy2LV5G8OFU2egPFQAih2WH9++M2RGxDE8uHsPKowJrl28DGVhB0wrFyzGawAIcPPwQFmYQBiY+JhAeQQXYAS5FQh8QgMZ2NjYwGxkwMPHy+Do4cbAxMXNBRXCBEIiwmBaRl6OoWVKH4O0nAyYDwKqmhoMvXOmA8NQgIFx3/ad/5uKK6FSCMDBycGw9uAuBi5ubqgIBDx+8BDoPW6gBSJQEWCYgJzjFeQP5UIAGzs7Q3VnC4YBICCrII9iAAjAi4Jnj54wnDpyjEFIVITB2NIMb2CiAgYGAKDgkvdw3ogzAAAAAElFTkSuQmCC)}#files .icon-woff .name,#files .icon-ttf .name,#files .icon-otf .name{background-image:url(data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABAAAAAPCAYAAADtc08vAAAAAXNSR0IArs4c6QAAAARnQU1BAACxjwv8YQUAAAAJcEhZcwAAEnQAABJ0Ad5mH3gAAADlSURBVDhP1VPBDYMwDHSrLgFr8GAIeGQIPgyBeDBEHjAEj5AhkGAJJFgCiXImjpQ++mg/7UnGF8dxzo647ft+0Be4O/8xfrBAmqZs8zy7yHsEBYwxjhF1XefYhW3bqG1bapomKB68glKKE5MkoXVdqe97juNAWZYURRGvAdkjFICN43icB4+6rj2Hl73zAPNlWYI938IwDOyhQOSLhxprLSuESQzwBaZpcuwC5EoS+ga01lRVFXPBAx/0iJvzPPcJ0jcGJzPBkF+HywpwO5KKouAgAAWIASiaZZnniMdxzOu//xeInkv1l5kopiKsAAAAAElFTkSuQmCC)}
+        </style>
+
+        <script>
+            function $(id){var el='string'==typeof id?document.getElementById(id):id;el.on=function(event,fn){if('content loaded'==event){event=window.attachEvent?"load":"DOMContentLoaded"}el.addEventListener?el.addEventListener(event,fn,false):el.attachEvent("on"+event,fn)};el.all=function(selector){return $(el.querySelectorAll(selector))};el.each=function(fn){for(var i=0,len=el.length;i<len;++i){fn($(el[i]),i)}};el.getClasses=function(){return this.getAttribute('class').split(/\s+/)};el.addClass=function(name){var classes=this.getAttribute('class');el.setAttribute('class',classes?classes+' '+name:name)};el.removeClass=function(name){var classes=this.getClasses().filter(function(curr){return curr!=name});this.setAttribute('class',classes.join(' '))};return el}function search(){var str=$('search').value.toLowerCase();var links=$('files').all('a');links.each(function(link){var text=link.textContent.toLowerCase();if('..'==text)return;if(str.length&&~text.indexOf(str)){link.addClass('highlight')}else{link.removeClass('highlight')}})}$(window).on('content loaded',function(){$('search').on('keyup',search)});
+        </script>
+
+        <style>
+            .container {
+                display: flex;
+                flex-direction: row;
+            }
+            .left {
+                width: 66%;
+                position: relative;
+            }
+            .right {
+                width: 33%;
+            }
+            .left:after {
+                content: "";
+                position: absolute;
+                top: 0;
+                right: 0;
+                width: 3px;
+                height: 100%;
+                background-color: #ccc;
+            }
+            .vertical-line {
+                width: 3px;
+                height: 100%;
+                background-color: #ccc;
+                margin: 0 10px;
+            }
+        </style>
+    </head>
+
+    <body class="directory">
+        <h1>
+            <a style="color: rgb(255, 0, 0);" href="../../../../index.html" target="_blank">Orzzz ~</a>
+            /
+        </h1>
+
+        <hr><br>
+        <input id="search" type="text" placeholder=">>> Search" autocomplete="off" />
+
+        <div class="container">
+            <div class="left">
+                <div id="wrapper">
+                    <ul id="files" class="view-tiles">
+                        <li><a href="./preface/index.html" target="_blank" class="icon icon-html icon-default"><span class="name">1. 推免保研前言.html</span></a></li>
+                        <li><a href="./SummerCamp/preface/index.html" target="_blank" class="icon icon-html icon-default"><span class="name">2. 夏令营前言.html</span></a></li>
+                        <li><a href="./SummerCamp/MeatyXJTU/index.html" target="_blank" class="icon icon-html icon-default"><span class="name">3. 干货-西安交通计算机.html</span></a></li>
+                        <li><a href="./SummerCamp/MeatyNPU/index.html" target="_blank" class="icon icon-html icon-default"><span class="name">4. 干货-西北工业大学计算机.html</span></a></li>
+                        <li><a href="./SummerCamp/MeatySIAT/index.html" target="_blank" class="icon icon-html icon-default"><span class="name">5. 干货-中国科学院数字所.html</span></a></li>
+                        <li><a href="./SummerCamp/MeatyUSTC/index.html" target="_blank" class="icon icon-html icon-default"><span class="name">6. 干货-中科大人工智能.html</span></a></li>
+                        <li><a href="./SummerCamp/XJTU/index.html" target="_blank" class="icon icon-html icon-default"><span class="name">7. 游记-西安交通大学.html</span></a></li>
+                        <li><a href="./SummerCamp/NPU/index.html" target="_blank" class="icon icon-html icon-default"><span class="name">8. 游记-西北工业大学.html</span></a></li>
+                        <li><a href="./SummerCamp/SIAT/index.html" target="_blank" class="icon icon-html icon-default"><span class="name">9. 游记-中国科学院大学.html</span></a></li>
+                        <li><a href="./SummerCamp/USTC/index.html" target="_blank" class="icon icon-html icon-default"><span class="name">10. 游记-中国科学技术大学.html</span></a></li>
+                        <li><a href="./SummerCamp/NEU/index.html" target="_blank" class="icon icon-html icon-default"><span class="name">11. 游记-东北大学计算机.html</span></a></li>
+                        <li><a href="./SummerCamp/ZJU/index.html" target="_blank" class="icon icon-html icon-default"><span class="name">12. 游记-浙江大学软件工程.html</span></a></li>
+                        <li><a href="./SummerCamp/JLU/index.html" target="_blank" class="icon icon-html icon-default"><span class="name">13. 游记-吉林大学人工智能.html</span></a></li>
+                        <li><a href="./SummerCamp/epilogue/index.html" target="_blank" class="icon icon-html icon-default"><span class="name">14. 游夏令营尾声.html</span></a></li>
+                        <li><a href="./PrePostgraduateRecommendation/preface/index.html" target="_blank" class="icon icon-html icon-default"><span class="name">15. 预推免前言.html</span></a></li>
+                        <li><a href="./PrePostgraduateRecommendation/time/index.html" target="_blank" class="icon icon-html icon-default"><span class="name">16. 预推免时间线.html</span></a></li>
+                        <li><a href="./PrePostgraduateRecommendation/epilogue/index.html" target="_blank" class="icon icon-html icon-default"><span class="name">17. 预推免尾声.html</span></a></li>
+                        <li><a href="./SeptemberRecommendation/index.html" target="_blank" class="icon icon-html icon-default"><span class="name">18. 九推.html</span></a></li>
+                        <li><a href="./epilogue/index.html" target="_blank" class="icon icon-html icon-default"><span class="name">19. 推免保研尾声.html</span></a></li>
+
+                        <li><a href="#" id="randomLink" class="icon icon-directory"><span class="name">【惊喜】随机开盲盒！</span></a></li>
+                        <script>
+                            const links = [
+                                "/assets/error/Couple404.html",
+                                "/assets/error/Ghost404A.html",
+                                "/assets/error/Ghost404B.html",
+                                "/assets/error/Screen500.html",
+                                "/assets/error/Unicorn500.html",
+                            ];
+                            document.getElementById("randomLink").addEventListener("click", function(event) {
+                                event.preventDefault();
+                                const randomUrl = links[Math.floor(Math.random() * links.length)];
+                                window.open(randomUrl, '_blank');
+                            });
+                        </script>
+                        <li><a href="https://latex-project.org" class="icon icon-iso icon-default" target="_blank"><span class="name">LaTeX.iso</span></a></li>
+
+                        <li><a href="https://github.com/CS-BAOYAN" target="_blank" class="icon icon-html icon-default"><span class="name">20. 绿群链接.html</span></a></li>
+                        <li><a href="https://cs-baoyan.github.io/CS-BAOYAN-2025" target="_blank" class="icon icon-html icon-default"><span class="name">21. 2024年计算机保研帖.html</span></a></li>
+                        <li><a href="./preface/resources/推免服务系统操作流程.docx" download="推免系统申报流程.docx" class="icon icon-docx icon-default"><span class="name">22. 推免系统申报流程.docx</span></a></li>
+                        <li><a href="./preface/resources/code.zip" download="code.zip" class="icon icon-sh icon-default"><span class="name">23. 批量联系老师的代码.zip</span></a></li>
+                        <li><a href="./PrePostgraduateRecommendation/epilogue/old.png" download="圣经.png" class="icon icon-png icon-default"><span class="name">24. 保研圣经.png</span></a></li>
+                        <li><a href="./preface/resources/算法基础课模板小全.pdf" download="算法基础课模板小全.pdf" class="icon icon-pdf icon-default"><span class="name">25. 算法基础模版小全.pdf</span></a></li>
+                    </ul>
+                </div>
+            </div>
+            <div class="vertical-line"></div>
+
+            <style>
+                .container {
+                    display: flex;
+                    flex-direction: row;
+                }
+                .left {
+                    width: 66%;
+                    position: relative;
+                }
+                .right {
+                    width: 33%;
+                }
+                .left:after {
+                    content: "";
+                    position: absolute;
+                    top: 0;
+                    right: 0;
+                    width: 3px;
+                    height: 100%;
+                    background-color: #ccc;
+                }
+                .vertical-line {
+                    width: 3px;
+                    height: 100%;
+                    background-color: #ccc;
+                    margin: 0 10px;
+                }
+                .upload-form {
+                    width: 300px;
+                    margin: 40px auto;
+                    padding: 20px;
+                    background-color: #fff;
+                    border: 1px solid #ddd;
+                    border-radius: 10px;
+                    box-shadow: 0 0 10px rgba(0, 0, 0, 0.5);
+                    text-align: center;
+                }
+                .upload-form label {
+                    display: block;
+                    margin-bottom: 10px;
+                }
+                .upload-form input[type="file"] {
+                    padding: 10px;
+                    margin-bottom: 20px;
+                    border: 3px solid #ccc;
+                    border-radius: 5px;
+                }
+            </style>
+
+            <div class="right">
+                <div class="upload-form">
+                    <h1>数学跨保计算机</h1>
+                    <p style="font-size: 16px;">嗨👋，你好，我是 Illusionna，很高兴观光我的保研索引页😊，如果你已经考虑清楚推免保研，并为此做好准备，我希望这个栏目对你有所帮助，加油，祝你好运！</p>
+                    <br>
+                    <p style="font-size: 16px;">我的服务器节点位于海外，使用魔法加载网页、下载资料速度会更快哟。</p>
+                </div>
+            </div>
+        </div>
+    </body>
+</html>
