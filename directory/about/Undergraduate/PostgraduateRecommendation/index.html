@@ -1,11 +1,10 @@
-
-
 <!DOCTYPE html>
 <html>
     <head>
         <meta charset='utf-8'> 
         <title>数学跨保计算机索引页</title>
         <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+        <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/driver.js@0.9.8/dist/driver.min.css">
 
         <style>
             *{margin:0;padding:0;outline:0}body{padding:80px 100px;font:13px "Helvetica Neue","Lucida Grande","Arial";background:#ECE9E9 -webkit-gradient(linear,0% 0%,0% 100%,from(#fff),to(#ECE9E9));background:#ECE9E9 -moz-linear-gradient(top,#fff,#ECE9E9);background-repeat:no-repeat;color:#555;-webkit-font-smoothing:antialiased}h1,h2,h3{font-size:22px;color:#343434}h1 em,h2 em{padding:0 5px;font-weight:normal}h1{font-size:60px}h2{margin-top:10px}h3{margin:5px 0 10px 0;padding-bottom:5px;border-bottom:1px solid #eee;font-size:18px}ul li{list-style:none}ul li:hover{cursor:pointer;color:#2e2e2e}ul li .path{padding-left:5px;font-weight:bold}ul li .line{padding-right:5px;font-style:italic}ul li:first-child .path{padding-left:0}p{line-height:1.5}a{color:#555;text-decoration:none}a:hover{color:#303030}#stacktrace{margin-top:15px}.directory h1{margin-bottom:15px;font-size:18px}ul#files{width:100%;height:100%;overflow:hidden}ul#files li{float:left;width:30%;line-height:25px;margin:1px}ul#files li a{display:block;height:25px;border:1px solid transparent;-webkit-border-radius:5px;-moz-border-radius:5px;border-radius:5px;overflow:hidden;white-space:nowrap}ul#files li a:focus,ul#files li a:hover{background:rgba(255,255,255,0.65);border:1px solid #ececec}ul#files li a.highlight{-webkit-transition:background .4s ease-in-out;background:#ffff4f;border-color:#E9DC51}#search{display:block;position:fixed;top:30px;right:20px;left:100px;width:90px;-webkit-transition:width ease 0.2s,opacity ease 0.4s;-moz-transition:width ease 0.2s,opacity ease 0.4s;-webkit-border-radius:32px;-moz-border-radius:32px;-webkit-box-shadow:inset 0px 0px 3px rgba(0,0,0,0.25),inset 0px 1px 3px rgba(0,0,0,0.7),0px 1px 0px rgba(255,255,255,0.03);-moz-box-shadow:inset 0px 0px 3px rgba(0,0,0,0.25),inset 0px 1px 3px rgba(0,0,0,0.7),0px 1px 0px rgba(255,255,255,0.03);-webkit-font-smoothing:antialiased;text-align:left;font:13px "Helvetica Neue",Arial,sans-serif;padding:4px 10px;border:none;background:transparent;margin-bottom:0;outline:none;opacity:0.7;color:#888}#search:focus{width:500px;opacity:1.0}#files span{display:inline-block;overflow:hidden;text-overflow:ellipsis;text-indent:10px}#files .name{background-repeat:no-repeat}#files .icon .name{text-indent:28px}.view-tiles .name{width:100%;background-position:8px 5px}.view-tiles .size,.view-tiles .date{display:none}ul#files.view-details li{float:none;display:block;width:90%}ul#files.view-details li.header{height:25px;background:#000;color:#fff;font-weight:bold}.view-details .header{border-radius:5px}.view-details .name{width:60%;background-position:8px 5px}.view-details .size{width:10%}.view-details .date{width:30%}.view-details .size,.view-details .date{text-align:right;direction:rtl}@media (max-width:768px){body{font-size:13px;line-height:16px;padding:0}#search{position:static;width:100%;font-size:2em;line-height:1.8em;text-indent:10px;border:0;border-radius:0;padding:10px 0;margin:0}#search:focus{width:100%;border:0;opacity:1}.directory h1{font-size:2em;line-height:1.5em;color:#fff;background:#000;padding:15px 10px;margin:0}ul#files{border-top:1px solid #cacaca}ul#files li{float:none;width:auto !important;display:block;border-bottom:1px solid #cacaca;font-size:2em;line-height:1.2em;text-indent:0;margin:0}ul#files li:nth-child(odd){background:#e0e0e0}ul#files li a{height:auto;border:0;border-radius:0;padding:15px 10px}ul#files li a:focus,ul#files li a:hover{border:0}#files .header,#files .size,#files .date{display:none !important}#files .name{float:none;display:inline-block;width:100%;text-indent:0;background-position:0 50%}#files .icon .name{text-indent:41px}}
@@ -49,7 +48,7 @@
 
     <body class="directory">
         <h1>
-            <a style="color: rgb(255, 0, 0);" href="../../../../index.html" target="_blank">Orzzz ~</a>
+            <a id="step1" style="color: rgb(255, 0, 0);" href="../../../../index.html" target="_blank">Orzzz ~</a>
             /
         </h1>
 
@@ -60,7 +59,7 @@
             <div class="left">
                 <div id="wrapper">
                     <ul id="files" class="view-tiles">
-                        <li><a href="./preface/index.html" target="_blank" class="icon icon-html icon-default"><span class="name">1. 推免保研前言.html</span></a></li>
+                        <li id="step3"><a href="./preface/index.html" target="_blank" class="icon icon-html icon-default"><span class="name">1. 推免保研前言.html</span></a></li>
                         <li><a href="./SummerCamp/preface/index.html" target="_blank" class="icon icon-html icon-default"><span class="name">2. 夏令营前言.html</span></a></li>
                         <li><a href="./SummerCamp/MeatyXJTU/index.html" target="_blank" class="icon icon-html icon-default"><span class="name">3. 干货-西安交通计算机.html</span></a></li>
                         <li><a href="./SummerCamp/MeatyNPU/index.html" target="_blank" class="icon icon-html icon-default"><span class="name">4. 干货-西北工业大学计算机.html</span></a></li>
@@ -75,12 +74,12 @@
                         <li><a href="./SummerCamp/JLU/index.html" target="_blank" class="icon icon-html icon-default"><span class="name">13. 游记-吉林大学人工智能.html</span></a></li>
                         <li><a href="./SummerCamp/epilogue/index.html" target="_blank" class="icon icon-html icon-default"><span class="name">14. 游夏令营尾声.html</span></a></li>
                         <li><a href="./PrePostgraduateRecommendation/preface/index.html" target="_blank" class="icon icon-html icon-default"><span class="name">15. 预推免前言.html</span></a></li>
-                        <li><a href="./PrePostgraduateRecommendation/time/index.html" target="_blank" class="icon icon-html icon-default"><span class="name">16. 预推免时间线.html</span></a></li>
+                        <li id="step4"><a href="./PrePostgraduateRecommendation/time/index.html" target="_blank" class="icon icon-html icon-default"><span class="name">16. 预推免时间线.html</span></a></li>
                         <li><a href="./PrePostgraduateRecommendation/epilogue/index.html" target="_blank" class="icon icon-html icon-default"><span class="name">17. 预推免尾声.html</span></a></li>
-                        <li><a href="./SeptemberRecommendation/index.html" target="_blank" class="icon icon-html icon-default"><span class="name">18. 九推.html</span></a></li>
+                        <li id="step5"><a href="./SeptemberRecommendation/index.html" target="_blank" class="icon icon-html icon-default"><span class="name">18. 九推.html</span></a></li>
                         <li><a href="./epilogue/index.html" target="_blank" class="icon icon-html icon-default"><span class="name">19. 推免保研尾声.html</span></a></li>
 
-                        <li><a href="#" id="randomLink" class="icon icon-directory"><span class="name">【惊喜】随机开盲盒！</span></a></li>
+                        <li id="step6"><a href="#" id="randomLink" class="icon icon-directory"><span class="name">【惊喜】随机开盲盒！</span></a></li>
                         <script>
                             const links = [
                                 "/assets/error/Couple404.html",
@@ -157,7 +156,7 @@
                 }
             </style>
 
-            <div class="right">
+            <div id="step2" class="right">
                 <div class="upload-form">
                     <h1>数学跨保计算机</h1>
                     <p style="font-size: 16px;">嗨👋，你好，我是 Illusionna，很高兴观光我的保研索引页😊，如果你已经考虑清楚推免保研，并为此做好准备，我希望这个栏目对你有所帮助，加油，祝你好运！</p>
@@ -166,5 +165,61 @@
                 </div>
             </div>
         </div>
+
+        <script src="https://cdn.jsdelivr.net/npm/driver.js@0.9.8/dist/driver.min.js"></script>
+        <script>
+            const driver = new Driver();
+            driver.defineSteps([
+                {
+                    element: '#step1',
+                    popover: {
+                        title: '根',
+                        description: '这是我网站 https://orzzz.net 的主页',
+                        position: 'bottom'
+                    }
+                },
+                {
+                    element: '#step2',
+                    popover: {
+                        title: '小贴士',
+                        description: '其实也没什么想说的啦 ：）',
+                        position: 'left'
+                    }
+                },
+                {
+                    element: '#step3',
+                    popover: {
+                        title: '保研前言',
+                        description: '包括我的个人情况、文书资料、感悟心得',
+                        position: 'bottom'
+                    }
+                },
+                {
+                    element: '#step4',
+                    popover: {
+                        title: '预推免过程',
+                        description: '以时间线的形式呈现，阅读更佳',
+                        position: 'bottom'
+                    }
+                },
+                {
+                    element: '#step5',
+                    popover: {
+                        title: '928',
+                        description: '全国推免系统开放日，填上心仪的院校，保研至此结束，祝你前程似锦',
+                        position: 'bottom'
+                    }
+                },
+                {
+                    element: '#step6',
+                    popover: {
+                        title: '占位符',
+                        description: '为了凑位置的，不要点哟~',
+                        position: 'bottom'
+                    }
+                }
+            ]);
+            driver.start();
+        </script>
     </body>
 </html>
