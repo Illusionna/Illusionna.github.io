@@ -1,0 +1,407 @@
+<!DOCTYPE html>
+<html lang="zh-cn">
+    <head>
+        <meta charset="utf-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+        <title>聚类性能度量指标</title>
+
+        <link rel="preload" href="https://cdnjs.cloudflare.com/ajax/libs/lxgw-wenkai-webfont/1.7.0/lxgwwenkai-regular.min.css" as="style" onload="this.onload=null;this.rel='stylesheet'">
+        <link rel="stylesheet" href="../../../../assets/css/style.css"/>
+        <link rel="stylesheet" href="../../../../assets/css/main.css" />
+        <link href="../../../../assets/css/aos.css" rel="stylesheet">
+        <link rel="stylesheet" href="../../../../assets/css/customBMPI.css" />
+        <noscript><link rel="stylesheet" href="../../../../assets/css/lxgwwenkai-regular.min.css"></noscript>
+        <noscript><link rel="stylesheet" href="../../../../assets/css/tagcloud.css"></noscript>
+        <script src="../../../../assets/js/lazysizes.min.js" async></script>
+        <script src="../../../../assets/js/aos.js"></script>
+        <script>
+            MathJax = {
+                tex: {
+                    inlineMath: [['$', '$'], ['\\(', '\\)']]
+                }
+            };
+        </script>
+        <script id="MathJax-script" async src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-chtml.js"></script>
+        <style>
+            td {
+                text-align: center;
+            }
+        </style>
+        <link href="../../../../assets/css/prism.css" rel="stylesheet" />
+    	<script src="../../../../assets/js/prism.js"></script>
+    </head>
+
+    <body class="colorscheme-auto">
+        <main class="wrapper">
+            <div id="loader" class="loader">
+                <div class="text" style="font-size: 48px; font-family:courier;">Loading...</div>
+                <div class="horizontal">
+                  <div class="circlesup">
+                        <div class="circle"></div>
+                        <div class="circle"></div>
+                        <div class="circle"></div>
+                        <div class="circle"></div>
+                        <div class="circle"></div>
+                  </div>
+                  <div class="circlesdwn">
+                        <div class="circle"></div>
+                        <div class="circle"></div>
+                        <div class="circle"></div>
+                        <div class="circle"></div>
+                        <div class="circle"></div>
+                  </div>
+                </div>
+                <div class="vertical">
+                  <div class="circlesup">
+                        <div class="circle"></div>
+                        <div class="circle"></div>
+                        <div class="circle"></div>
+                        <div class="circle"></div>
+                        <div class="circle"></div>
+                  </div>
+                  <div class="circlesdwn">
+                        <div class="circle"></div>
+                        <div class="circle"></div>
+                        <div class="circle"></div>
+                        <div class="circle"></div>
+                        <div class="circle"></div>
+                  </div>
+                </div>
+            </div>
+
+            <div class="content" id="normal-page" style="display: none;">
+                <section class="container post">
+                    <article>
+                        <header>
+                            <nav class="navigation">
+                                <section class="container" align="center">
+                                    <a id="site-title" class="navigation-title" href="/" target="_blank" style="font-size: 32px;">
+                                        orzzz.net
+                                    </a>
+                                </section>
+                            </nav>
+
+<div class="post-title heti">
+    <h1 class="title">聚类性能度量指标</h1>
+</div>
+
+<div class="post-meta">
+    <div class="date">
+        <span class="posted-on">
+            <i class="fas fa-calendar"></i>
+            <time>2024-10-09</time>
+        </span>
+        <span class="reading-time">
+            <i class="fas fa-clock"></i>
+            <time>13:39</time>
+        </span>
+        <span style="margin-left: 20px">
+            <i class="fas fa-tag"><a href="./resources/原文.zip" download="原文.zip"><strong>Download</strong></a></i>
+        </span>
+    </div>
+
+    <p></p>
+
+    <div class="article">
+        <div class="article-content heti" data-aos="fade-up" data-aos-duration="1500" data-aos-anchor-placement="top-bottom">
+            <h2>1. 度量指标的核心思想</h2>
+            <p>聚类后的簇，簇与簇之间的距离远，簇内点列的距离近。即异类排斥，同类聚拢。</p>
+            <h2>2. 预备数学定义</h2>
+            <p>摘自于 <a href="#cite1">Arbelaitz et al. (2003) [1]</a>：</p>
+            <div style="text-align: center;">
+            $n$ 个样本 $p$ 维度变量的数据集 $X=\left[\begin{matrix}
+            x_{11} & x_{12} & \cdots & x_{1p} \\
+            x_{21} & x_{22} & \cdots & x_{2p} \\
+            \vdots & \vdots & \ddots & \vdots \\
+            x_{n1} & x_{n2} & \cdots & x_{np} \\
+            \end{matrix}\right]\subseteq\mathfrak{R}^{p}$
+            </div>
+            <p>把 $X$ 的 $n$ 个样本划分成一系列不相干的簇（类），譬如 $K$ 组：</p>
+            <div style="text-align: center;">
+                $\mathbb{C}=\{C_1, C_2,\ldots,C_K\}$
+            </div>
+            <p></p>
+            <div style="text-align: center;">
+                $s.t.\quad\forall i\neq j,\ \underset{C_i\in\mathbb{C}}{\bigcup}C_i=X,\ \ C_i\bigcap C_j=\varnothing$
+            </div>
+            <p>例如 <a href="./resources/iris.csv" download="iris.csv">iris.csv</a> 鸢尾花 $150\times4$ 的数据集：</p>
+            <table>
+                <thead>
+                    <tr>
+                        <th>SepalLengthCm</th>
+                        <th>SepalWidthCm</th>
+                        <th>PetalLengthCm</th>
+                        <th>PetalWidthCm</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td>5.1</td>
+                        <td>3.5</td>
+                        <td>1.4</td>
+                        <td>0.2</td>
+                    </tr>
+                    <tr>
+                        <td>4.9</td>
+                        <td>3.0</td>
+                        <td>1.4</td>
+                        <td>0.2</td>
+                    </tr>
+                    <tr>
+                        <td>...</td>
+                        <td>...</td>
+                        <td>...</td>
+                        <td>...</td>
+                    </tr>
+                    <tr>
+                        <td>5.9</td>
+                        <td>3.0</td>
+                        <td>5.1</td>
+                        <td>1.8</td>
+                    </tr>
+                </tbody>
+            </table>
+            <p>我们划分成 $K=3$ 组，分别标记为 setosa、versicolor、virginica，则：</p>
+            <div style="text-align: center;">
+                $\mathbb{C}=\{C_{\rm setosa},\ C_{\rm versicolor},\ C_{\rm virginica}\}$
+            </div>
+            <p>其中像 setosa 簇：</p>
+            <div style="text-align: center;">
+                $C_{\rm setosa}=\left[\begin{matrix}
+                5.1 & 3.5 & 1.4 & 0.2 \\
+                4.9 & 3.0 & 1.4 & 0.2 \\
+                \vdots & \vdots & \vdots & \vdots \\
+                5.0 & 3.3 & 1.4 & 0.2 \\
+                \end{matrix}\right]_{50\times4}$
+            </div>
+            <p>约定：</p>
+            <ul>
+                <li>簇 $C_i$ 的样本量，代表含有多少样本，即矩阵的行数</li>
+                <div style="text-align: center;">
+                    $\Vert C_i \Vert$
+                </div>
+                <p></p>
+                <li>簇 $C_i$ 的重心是一个向量，代表簇内样本在每个维度下的均值</li>
+                <div style="text-align: center;">
+                    $\begin{align}\overline{C_{\rm setosa}}&=[\dfrac{5.1+4.9+\cdots+5.0}{50},\ldots,\dfrac{0.2+0.2+\cdots+0.2}{50}]\\ &=[5.0,\ 3.4,\ 1.5,\ 0.2]\end{align}$
+                </div>
+                <p></p>
+                <li>数据集 $X$ 的重心是一个向量，代表所有样本在每个维度下的均值</li>
+                <div style="text-align: center;">
+                    $\overline{X}=[\dfrac{\displaystyle\sum\limits_{i=1}^{n}x_{i1}}{n},\ \dfrac{\displaystyle\sum\limits_{i=1}^{n}x_{i2}}{n},\ldots,\dfrac{\displaystyle\sum\limits_{i=1}^{n}x_{ip}}{n}]$
+                </div>
+                <p></p>
+                <li>实空间 $\mathfrak{R}^{p}$ 上的欧几里得距离，衡量两个样本的远近</li>
+                <div style="text-align: center;">
+                    $d(a,\ b)=\sqrt{\displaystyle\sum\limits_{t=1}^{p}(x_{at}-x_{bt})^2}$
+                </div>
+            </ul>
+            <h2>3. Davies-Bouldin Index <a href="#cite2">[2]</a></h2>
+            <p>DBI 数值越小聚类性能越好，取值范围 $[0,+\infty]$。它反映簇内所有样本到簇心的距离（凝聚力），并反映与其他簇心之间的距离（离散力）。</p>
+            <div style="text-align: center;">
+                ${\rm DBI}(\mathbb{C})=\dfrac{1}{K}\displaystyle\sum\limits_{i=1,\ C_i\in\mathbb{C}}^{K}\max\limits_{C_j\in\mathbb{C}\backslash C_i}\left\{ \dfrac{\dfrac{\displaystyle\sum\limits_{t=1,\ c_t\in C_i}^{\Vert C_i \Vert}d(c_t,\overline{C_i})}{\Vert C_i \Vert} + \dfrac{\displaystyle\sum\limits_{t=1,\ c_t\in C_j}^{\Vert C_j \Vert}d(c_t,\overline{C_j})}{\Vert C_j \Vert}}{d(\overline{C_i},\ \overline{C_j})} \right\}$
+            </div>
+            <p>其中，$c_t$ 代表簇的某个样本，$\mathbb{C}\backslash C_i$ 代表 $\mathbb{C}$ 排除 $C_i$ 之后的集合。</p>
+            <p><img id="DBI" alt="Oops?" class="lazyload" loading="lazy"/></p>
+            <p><a href="./resources/DBI.zip" download="DBI.zip">点击下载完整加速代码</a>，核心 Python 3.10.0 代码如下：</p>
+<pre id="code"><code class="language-python">def MinkowskiDistance(a: list, b: list, p: int = 2) -> float:
+    return sum([abs(i - j) ** p for i, j in zip(a, b)]) ** (1 / p)
+
+def Centroid(C: list[list]) -> list:
+    return list(map(lambda c: sum(c) / len(c), zip(*C)))
+
+def Cohesion(C: list[list]) -> float:
+    centroid = Centroid(C)
+    return sum(MinkowskiDistance(c, centroid) for c in C) / len(C)
+
+def DaviesBouldinIndex(C: list[list[list]]) -> float:
+    return sum(
+        max(
+            (Cohesion(Ci) + Cohesion(Cj))
+            /
+            MinkowskiDistance(Centroid(Ci), Centroid(Cj))
+            for Cj in C if Ci != Cj
+        )
+        for Ci in C
+    ) / len(C)
+
+if __name__ == '__main__':
+    C = [
+        [
+            [5.1, 3.5, 1.4, 0.2],
+            [4.9, 3.0, 1.4, 0.2],
+            [5.0, 3.3, 1.4, 0.2]
+        ],
+
+        [
+            [4.9, 2.4, 3.3, 1.0],
+            [6.6, 2.9, 4.6, 1.3]
+        ],
+
+        [
+            [6.5, 3.0, 5.5, 1.8],
+            [7.7, 3.8, 6.7, 2.2],
+            [7.2, 3.2, 6.0, 1.8],
+            [6.4, 2.8, 5.6, 2.1]
+        ]
+    ]
+    print('Illusionna DBI:\t%.16f' % DaviesBouldinIndex(C))
+    # --------------------------------------------------------------
+    from sklearn.metrics import davies_bouldin_score
+    matrix = [sample for cluster in C for sample in cluster]
+    labels = [i for i in range(len(C)) for _ in range(len(C[i]))]
+    print('sklearn DBI:\t%.16f' % davies_bouldin_score(matrix, labels))</code></pre>
+            <h2>4. Dunn Index <a href="#cite3">[3]</a></h2>
+            <p>DI 数值越大聚类性能越好，取值范围 $[0,+\infty]$。这是一个比率型指数，它的凝聚力由最近邻距离估计，它的离散力由簇的最大直径估计。</p>
+            <div style="text-align: center;">
+                ${\rm DI}(\mathbb{C})=\dfrac{\min\limits_{C_i\in\mathbb{C}}\left\{\min\limits_{C_j\in\mathbb{C}\backslash C_i}\left[\min\limits_{c_s\in C_i}\min\limits_{c_t\in C_j}d(c_s,c_t)\right] \right\}}{\max\limits_{C_i\in\mathbb{C}}\left\{\max\limits_{c_s,c_t\in C_i}d(c_s,c_t) \right\}}$
+            </div>
+            <p>其中，$c_s$ 代表簇 $C_i$ 的某个样本，$c_t$ 代表簇 $C_j$ 的某个样本。</p>
+            <p>仔细观察，不难发现，分子表示任意两个簇的样本最近距离，分母表示所有簇中最大直径。因此也印证了 DI 值越大性能越好。</p>
+            <p>核心 Python 3.10.0 代码如下，请注意，虽然笔者已使用列表推导式、匿名函数以及可迭代对象来加速，但这种暴力循环的时间复杂度依然很高。</p>
+<pre id="code"><code class="language-python">def DunnIndex(C: list[list[list]]) -> float:
+    Euclidean = lambda a, b: sum([abs(i - j) ** 2 for i, j in zip(a, b)]) ** (1 / 2)
+    return min(
+        min(Euclidean(cs, ct) for cs in Ci for ct in Cj)
+        for i, Ci in enumerate(C) for j, Cj in enumerate(C) if i < j
+    ) / max(
+        max(Euclidean(cs, ct) for cs in Ci for ct in Ci)
+        for Ci in C
+    )
+
+if __name__ == '__main__':
+    C = [
+        [[5.1, 3.5, 1.4, 0.2],
+         [4.9, 3.0, 1.4, 0.2],
+         [5.0, 3.3, 1.4, 0.2]],
+
+        [[4.9, 2.4, 3.3, 1.0],
+         [6.6, 2.9, 4.6, 1.3]],
+
+        [[6.5, 3.0, 5.5, 1.8],
+         [7.7, 3.8, 6.7, 2.2],
+         [7.2, 3.2, 6.0, 1.8],
+         [6.4, 2.8, 5.6, 2.1]]
+    ]
+    print(DunnIndex(C))</code></pre>
+
+            <h2>5. Silhouette Index <a href="#cite4">[4]</a></h2>
+            <p>Sil 数值越大聚类性能越好，取值范围 $[-1,+1]$。它是一个归一化的求和指数，它的凝聚力是同一个簇的所有样本之间的距离来估计，它的离散力是最近邻距离来衡量。</p>
+            <div style="text-align: center;">
+                $\small{\rm Sil}(\mathbb{C})=\dfrac{1}{n}\displaystyle\sum\limits_{i=1,\ C_i\in\mathbb{C}}^{K}\displaystyle\sum\limits_{s=1,\ c_s\in C_i}^{\Vert C_i\Vert}\dfrac{\min\limits_{C_j\in\mathbb{C}\backslash C_i}\left[\dfrac{\displaystyle\sum\limits_{t=1,\ c_t\in C_j}^{\Vert C_j\Vert}d(c_s,c_t)}{\Vert C_j\Vert} \right]-\dfrac{\displaystyle\sum\limits_{t=1,\ c_t\in C_i}^{\Vert C_i\Vert}d(c_s,c_t)}{\Vert C_i\Vert-1}}{\max\left\{\min\limits_{C_j\in\mathbb{C}\backslash C_i}\left[\dfrac{\displaystyle\sum\limits_{t=1,\ c_t\in C_j}^{\Vert C_j\Vert}d(c_s,c_t)}{\Vert C_j\Vert}\right],\quad \dfrac{\displaystyle\sum\limits_{t=1,\ c_t\in C_i}^{\Vert C_i\Vert}d(c_s,c_t)}{\Vert C_i\Vert-1}\right\}}$
+            </div>
+            <p>第一项是簇中某个样本与其他簇的所有样本平均距离的最小值，第二项是簇中某个样本与该簇其他所有样本的平均距离。</p>
+            <p><img id="Sil" alt="Oops?" class="lazyload" loading="lazy"/></p>
+            <p>核心 Python 3.10.0 代码如下：</p>
+<pre id="code"><code class="language-python">cache = dict()
+Euclidean = lambda a, b: sum(abs(i - j) ** 2 for i, j in zip(a, b)) ** 0.5
+
+# 计算样本到簇的平均距离, 可哈希缓存处理, 使用列表推导式不必重复运算.
+def Cohesion(cs: list, cluster: list[list], nums: int) -> float:
+    key = (tuple(cs), tuple(tuple(c) for c in cluster))
+    if key in cache:
+        return cache[key]
+    result = sum(Euclidean(cs, ct) for ct in cluster) / nums
+    cache[key] = result
+    return result
+
+def SilhouetteIndex(C: list[list[list]]) -> float:
+    return sum(
+        (
+            min(Cohesion(cs, Cj, len(Cj)) for Cj in C if Cj != Ci)
+            -
+            Cohesion(cs, Ci, len(Ci) - 1)
+        )
+        /
+        max(
+            min(Cohesion(cs, Cj, len(Cj)) for Cj in C if Cj != Ci)
+            ,
+            Cohesion(cs, Ci, len(Ci) - 1)
+        )
+        for Ci in C for cs in Ci
+    ) / sum(len(Ci) for Ci in C)
+
+if __name__ == '__main__':
+    C = [
+        [[5.1, 3.5, 1.4, 0.2],
+         [4.9, 3.0, 1.4, 0.2],
+         [5.0, 3.3, 1.4, 0.2]],
+
+        [[4.9, 2.4, 3.3, 1.0],
+         [6.6, 2.9, 4.6, 1.3]],
+
+        [[6.5, 3.0, 5.5, 1.8],
+         [7.7, 3.8, 6.7, 2.2],
+         [7.2, 3.2, 6.0, 1.8],
+         [6.4, 2.8, 5.6, 2.1]]
+    ]
+    print('Illusionna Sil:\t%.16f' % SilhouetteIndex(C))
+    # --------------------------------------------------------------
+    from sklearn.metrics import silhouette_score
+    matrix = [sample for cluster in C for sample in cluster]
+    labels = [i for i in range(len(C)) for _ in range(len(C[i]))]
+    print('sklearn Sil:\t%.16f' % silhouette_score(matrix, labels))</code></pre>
+
+
+            <h2>References</h2>
+            <p id="cite1">[1] Arbelaitz, Olatz, et al. "An extensive comparative study of cluster validity indices." Pattern recognition 46.1 (2013): 243-256.</p>
+            <p id="cite2">[2] Davies, David L., and Donald W. Bouldin. "A cluster separation measure." IEEE transactions on pattern analysis and machine intelligence 2 (1979): 224-227.</p>
+            <p id="cite3">[3] Dunn, Joseph C. "A fuzzy relative of the ISODATA process and its use in detecting compact well-separated clusters." (1973): 32-57.</p>
+            <p id="cite4">[4] Rousseeuw, Peter J. "Silhouettes: a graphical aid to the interpretation and validation of cluster analysis." Journal of computational and applied mathematics 20 (1987): 53-65.</p>
+            <p><a href="https://permetrics.readthedocs.io/en/latest/pages/clustering.html" target="_blank"><strong>[Redirect to Read the Docs]</strong></a></p>
+        </div>
+    </div>
+</div>
+
+<section class="container" align="center">
+    <a id="site-title" class="navigation-title" href="#">Top</a>
+</section>
+                        </header>
+                    </article>
+                </section>
+            </div>
+        </main>
+    </body>
+
+    <script src="../../../../assets/js/heti-addon.min.js"></script>
+
+    <script>
+        const heti = new Heti('.heti h6, .title');
+        heti.autoSpacing(); 
+        AOS.init({disable: 'mobile'});
+    </script>
+
+    <script>
+        let loader = document.getElementById('loader');
+        let normalPage = document.getElementById('normal-page');
+        let imgA = document.getElementById('DBI');
+        let imgB = document.getElementById('Sil');
+
+        let img1Loaded = false;
+        let img2Loaded = false;
+
+        let img1 = new Image();
+        img1.src = './resources/DBI.png';
+        img1.onload = function() {
+            imgA.src = './resources/DBI.png';
+            img1Loaded = true;
+            checkLoadStatus();
+        };
+
+        let img2 = new Image();
+        img2.src = './resources/Sil.png';
+        img2.onload = function() {
+            imgB.src = './resources/Sil.png';
+            img2Loaded = true;
+            checkLoadStatus();
+        };
+
+        function checkLoadStatus() {
+            if (img1Loaded && img2Loaded) {
+                loader.style.display = 'none';
+                normalPage.style.display = 'block';
+            }
+        }
+    </script>
+</html>
