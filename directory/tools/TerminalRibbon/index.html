@@ -1,0 +1,308 @@
+<!DOCTYPE html>
+<html lang="zh-cn">
+    <head>
+        <meta charset="utf-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+        <title>终端色带</title>
+
+        <link rel="preload" href="https://cdnjs.cloudflare.com/ajax/libs/lxgw-wenkai-webfont/1.7.0/lxgwwenkai-regular.min.css" as="style" onload="this.onload=null;this.rel='stylesheet'">
+        <link rel="stylesheet" href="../../../assets/css/style.css"/>
+        <link rel="stylesheet" href="../../../assets/css/main.css" />
+        <link href="../../../assets/css/aos.css" rel="stylesheet">
+        <link rel="stylesheet" href="../../../assets/css/customBMPI.css" />
+        <noscript><link rel="stylesheet" href="../../../assets/css/lxgwwenkai-regular.min.css"></noscript>
+        <noscript><link rel="stylesheet" href="../../../assets/css/tagcloud.css"></noscript>
+        <script src="../../../assets/js/lazysizes.min.js" async></script>
+        <script src="../../../assets/js/aos.js"></script>
+
+        <link href="../../../assets/css/prism.css" rel="stylesheet" />
+    	<script src="../../../assets/js/prism.js"></script>
+    </head>
+
+    <body class="colorscheme-auto">
+        <main class="wrapper">
+            <div id="loader" class="loader">
+                <div class="text" style="font-size: 48px; font-family:courier;">Loading...</div>
+                <div class="horizontal">
+                  <div class="circlesup">
+                        <div class="circle"></div>
+                        <div class="circle"></div>
+                        <div class="circle"></div>
+                        <div class="circle"></div>
+                        <div class="circle"></div>
+                  </div>
+                  <div class="circlesdwn">
+                        <div class="circle"></div>
+                        <div class="circle"></div>
+                        <div class="circle"></div>
+                        <div class="circle"></div>
+                        <div class="circle"></div>
+                  </div>
+                </div>
+                <div class="vertical">
+                  <div class="circlesup">
+                        <div class="circle"></div>
+                        <div class="circle"></div>
+                        <div class="circle"></div>
+                        <div class="circle"></div>
+                        <div class="circle"></div>
+                  </div>
+                  <div class="circlesdwn">
+                        <div class="circle"></div>
+                        <div class="circle"></div>
+                        <div class="circle"></div>
+                        <div class="circle"></div>
+                        <div class="circle"></div>
+                  </div>
+                </div>
+            </div>
+
+            <div class="content" id="normal-page" style="display: none;">
+                <section class="container post">
+                    <article>
+                        <header>
+                            <nav class="navigation">
+                                <section class="container" align="center">
+                                    <a id="site-title" class="navigation-title" href="/" target="_blank" style="font-size: 32px;">
+                                        orzzz.net
+                                    </a>
+                                </section>
+                            </nav>
+
+<div class="post-title heti">
+    <h1 class="title">终端色带</h1>
+</div>
+
+<div class="post-meta">
+    <div class="date">
+        <span class="posted-on">
+            <i class="fas fa-calendar"></i>
+            <time>2023-12-18</time>
+        </span>
+        <span class="reading-time">
+            <i class="fas fa-clock"></i>
+            <time>18:59</time>
+        </span>
+    </div>
+
+    <p></p>
+
+    <div class="article">
+        <div class="article-content heti" data-aos="fade-up" data-aos-duration="1500" data-aos-anchor-placement="top-bottom">
+            <h2>1. Windows、Linux、macOS</h2>
+            <pre id="code"><code class="language-python">ribbon = ''.join(f'\033[38;5;{idx}m#' for idx in range(0, 256, 1))
+print(ribbon)</code></pre>
+            <p><img id="img1" alt="Oops?" class="lazyload" loading="lazy"/></p>
+            <figcaption>
+                <p>终端彩虹</p>
+            </figcaption>
+
+            <h2>2. 十六进制颜色映射 RGB 三基色</h2>
+            <pre id="code"><code class="language-python"># 十六进制基础调色板.
+based_palette = [f'{idx:02x}' for idx in range(0, 16, 1)]
+
+# 十六进制彩色调色板.
+colored_palette = [
+    f'{r:02x}/{g:02x}/{b:02x}'
+    for r in [0] + [0x5f + 40 * n for n in range(0, 5, 1)]
+    for g in [0] + [0x5f + 40 * n for n in range(0, 5, 1)]
+    for b in [0] + [0x5f + 40 * n for n in range(0, 5, 1)]
+]
+
+# 十六进制灰度调色板.
+grayscale_palette = [
+    f'{idx:02x}/{idx:02x}/{idx:02x}'
+    for idx in [0x08 + 10 * n for n in range(0, 24, 1)]
+]
+
+color_256 = based_palette + colored_palette + grayscale_palette
+color_dict = {color: idx for idx, color in enumerate(color_256)}
+print(f"\033[38;5;{color_dict['ff/d7/5f']}m【测试颜色】\033[0m")</code></pre>
+
+            <h2>3. 打印 C 语言数组</h2>
+            <p><img id="img2" alt="Oops?" class="lazyload" loading="lazy"/></p>
+            <figcaption>
+                <p>格式化且带有颜色的数组</p>
+            </figcaption>
+            <pre id="code"><code class="language-c"># include &lt;stdio.h&gt;
+# include &lt;stdlib.h&gt;
+
+// 打印 double 型三维数组.
+void PrintDouble3D(double*** arr, int dim1, int dim2, int dim3) {
+    printf("\033[32m{\033[0m");
+    int i;
+    for (i = 0; i < dim1 - 1; ++i) {
+        printf("\033[33m{\033[0m");
+        int j;
+        for (j = 0; j < dim2 - 1; ++j) {
+            printf("\033[31m{\033[0m");
+            int k;
+            for (k = 0; k < dim3 - 1; ++k) {
+                printf("%lf, ", arr[i][j][k]);
+            }
+            printf("%lf\033[31m}\033[0m, ", arr[i][j][k]);
+        }
+        printf("\033[31m{\033[0m");
+        int k;
+        for (k = 0; k < dim3 - 1; ++k) {
+            printf("%lf, ", arr[i][j][k]);
+        }
+        printf("%lf\033[31m}\033[0m\033[33m}\033[0m, ", arr[i][j][k]);
+    }
+    printf("\033[33m{\033[0m");
+    int j;
+    for (j = 0; j < dim2 - 1; ++j) {
+        printf("\033[31m{\033[0m");
+        int k;
+        for (k = 0; k < dim3 - 1; ++k) {
+            printf("%lf, ", arr[i][j][k]);
+        }
+        printf("%lf\033[31m}\033[0m, ", arr[i][j][k]);
+    }
+    printf("\033[31m{\033[0m");
+    int k;
+    for (k = 0; k < dim3 - 1; ++k) {
+        printf("%lf, ", arr[i][j][k]);
+    }
+    printf("%lf\033[31m}\033[0m\033[33m}\033[0m\033[32m}\033[0m\n", arr[i][j][k]);
+}
+
+// 打印 double 型二维数组.
+void PrintDouble2D(double** arr, int dim1, int dim2) {
+    for (int i = 0; i < dim1; ++i) {
+        for (int j = 0; j < dim2; ++j) {
+            printf("%lf\t", arr[i][j]);
+        }
+        printf("\n");
+    }
+}
+
+// 打印 double 型一维数组.
+void PrintDouble1D(double* arr, int dim1) {
+    printf("{");
+    for (int i = 0; i < dim1 - 1; ++i) printf("%lf, ", arr[i]);
+    printf("%lf}\n", arr[dim1 - 1]);
+}
+
+
+int main(int argc, char* argv[], char** env) {
+    system("");
+    // 打印一维数组.
+    // ---------------------------------------------------
+    double C1[4] = {1.2, 3.4, 2.8, 12};
+    printf("---------------------------------------------------\n");
+    printf("1D Array is:\t");
+    PrintDouble1D(C1, 4);
+    printf("---------------------------------------------------\n");
+    // 打印二维数组.
+    // ---------------------------------------------------
+    int rows = 2;
+    int cols = 4;
+    double C2[2][4] = {
+        {1, 2, 3, 4.8},
+        {5.6, 6, 7, 8}
+    };
+    double* matrix[rows];
+    for (int i = 0; i < rows; ++i) matrix[i] = C2[i];
+    printf("2D Array is:\n");
+    PrintDouble2D(matrix, 2, 4);
+    printf("---------------------------------------------------\n");
+    // 打印三维数组.
+    // ---------------------------------------------------
+    int dim1 = 3, dim2 = 4, dim3 = 4;
+    double C[3][4][4] = {
+        {
+            {5.1, 3.5, 1.4, 0.2},
+            {4.9, 3.0, 1.4, 0.2},
+            {5.0, 3.3, 1.4, 0.2}
+        },
+        {
+            {4.9, 2.4, 3.3, 1.0},
+            {6.6, 2.9, 4.6, 1.3}
+        },
+        {
+            {6.5, 3.0, 5.5, 1.8},
+            {7.7, 3.8, 6.7, 2.2},
+            {7.2, 3.2, 6.0, 1.8},
+            {6.4, 2.8, 5.6, 2.1}
+        }
+    };
+    double*** ptr = (double***) malloc(dim1 * sizeof(double**));
+    for (int i = 0; i < dim1; ++i) {
+        ptr[i] = (double**) malloc(dim2 * sizeof(double*));
+        for (int j = 0; j < dim2; ++j) {
+            ptr[i][j] = (double*) malloc(dim3 * sizeof(double));
+            for (int k = 0; k < dim3; ++k) {
+                ptr[i][j][k] = C[i][j][k];
+            }
+        }
+    }
+    printf("3D Array is:\t");
+    PrintDouble3D(ptr, dim1, dim2, dim3);
+    printf("---------------------------------------------------\n");
+    for (int i = 0; i < dim1; ++i) {
+        for (int j = 0; j < dim2; ++j) {
+            free(ptr[i][j]);
+        }
+        free(ptr[i]);
+    }
+    free(ptr);
+    return 0;
+}</code></pre>
+
+        </div>
+    </div>
+</div>
+
+<section class="container" align="center">
+    <a id="site-title" class="navigation-title" href="#">Top</a>
+</section>
+                        </header>
+                    </article>
+                </section>
+            </div>
+        </main>
+    </body>
+
+    <script src="../../../assets/js/heti-addon.min.js"></script>
+
+    <script>
+        const heti = new Heti('.heti h5, h6, .title');
+        heti.autoSpacing(); 
+        AOS.init({disable: 'mobile'});
+    </script>
+
+    <script>
+        let loader = document.getElementById('loader');
+        let normalPage = document.getElementById('normal-page');
+        let imgA = document.getElementById('img1');
+        let imgB = document.getElementById('img2');
+
+        let imgLoaded = false;
+        let imgLoaded1 = false;
+
+        let img = new Image();
+        img.src = './imgs/ribbon.png';
+        img.onload = function() {
+            imgA.src = './imgs/ribbon.png';
+            imgLoaded = true;
+            checkLoadStatus();
+        };
+
+        let img1 = new Image();
+        img1.src = './imgs/cArray.png';
+        img1.onload = function() {
+            imgB.src = './imgs/cArray.png';
+            imgLoaded1 = true;
+            checkLoadStatus();
+        };
+
+        function checkLoadStatus() {
+            if (imgLoaded && imgLoaded1) {
+                loader.style.display = 'none';
+                normalPage.style.display = 'block';
+            }
+        }
+    </script>
+</html>
