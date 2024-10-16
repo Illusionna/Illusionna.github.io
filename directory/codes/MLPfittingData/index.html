@@ -1,0 +1,264 @@
+
+<!DOCTYPE html>
+<html lang="zh-cn">
+    <head>
+        <meta charset="utf-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+        <title>MLP</title>
+
+        <link rel="preload" href="https://cdnjs.cloudflare.com/ajax/libs/lxgw-wenkai-webfont/1.7.0/lxgwwenkai-regular.min.css" as="style" onload="this.onload=null;this.rel='stylesheet'">
+        <link rel="stylesheet" href="../../../assets/css/style.css"/>
+        <link rel="stylesheet" href="../../../assets/css/main.css" />
+        <link href="../../../assets/css/aos.css" rel="stylesheet">
+        <link rel="stylesheet" href="../../../assets/css/customBMPI.css" />
+        <noscript><link rel="stylesheet" href="../../../assets/css/lxgwwenkai-regular.min.css"></noscript>
+        <noscript><link rel="stylesheet" href="../../../assets/css/tagcloud.css"></noscript>
+        <script src="../../../assets/js/lazysizes.min.js" async></script>
+        <script src="../../../assets/js/aos.js"></script>
+        <link href="../../../assets/css/prism.css" rel="stylesheet" />
+    	<script src="../../../assets/js/prism.js"></script>
+    </head>
+
+    <body class="colorscheme-auto">
+        <main class="wrapper">
+            <div id="loader" class="loader">
+                <div class="text" style="font-size: 48px; font-family:courier;">Loading...</div>
+                <div class="horizontal">
+                  <div class="circlesup">
+                        <div class="circle"></div>
+                        <div class="circle"></div>
+                        <div class="circle"></div>
+                        <div class="circle"></div>
+                        <div class="circle"></div>
+                  </div>
+                  <div class="circlesdwn">
+                        <div class="circle"></div>
+                        <div class="circle"></div>
+                        <div class="circle"></div>
+                        <div class="circle"></div>
+                        <div class="circle"></div>
+                  </div>
+                </div>
+                <div class="vertical">
+                  <div class="circlesup">
+                        <div class="circle"></div>
+                        <div class="circle"></div>
+                        <div class="circle"></div>
+                        <div class="circle"></div>
+                        <div class="circle"></div>
+                  </div>
+                  <div class="circlesdwn">
+                        <div class="circle"></div>
+                        <div class="circle"></div>
+                        <div class="circle"></div>
+                        <div class="circle"></div>
+                        <div class="circle"></div>
+                  </div>
+                </div>
+            </div>
+
+            <div class="content" id="normal-page" style="display: none;">
+                <section class="container post">
+                    <article>
+                        <header>
+                            <nav class="navigation">
+                                <section class="container" align="center">
+                                    <a id="site-title" class="navigation-title" href="../../../index.html" target="_blank" style="font-size: 32px;">
+                                        orzzz.net
+                                    </a>
+                                </section>
+                            </nav>
+
+<div class="post-title heti">
+    <h1 class="title">神经网络拟合数据</h1>
+</div>
+
+<div class="post-meta">
+    <div class="date">
+        <span class="posted-on">
+            <i class="fas fa-calendar"></i>
+            <time>2023-10-07</time>
+        </span>
+        <span class="reading-time">
+            <i class="fas fa-clock"></i>
+            <time>10:21</time>
+        </span>
+    </div>
+
+    <p></p>
+
+    <div class="article">
+        <div class="article-content heti" data-aos="fade-up" data-aos-duration="1500" data-aos-anchor-placement="top-bottom">
+            <div style="display: grid; place-items: center;">
+                <object type="image/svg+xml" data="./formula.svg" width="50%"></object>
+            </div>
+            <p>我们在函数上取一些点列，作为数据。</p>
+            <p><img id="img1" width="75%" alt="Oops?" class="lazyload" loading="lazy"/></p>
+            <p>譬如以下点列：</p>
+            <table>
+                <thead>
+                    <tr>
+                        <th>x</th>
+                        <th>y</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td>-2.5</td>
+                        <td>5.312000023</td>
+                    </tr>
+                    <tr>
+                        <td>-2.236842105</td>
+                        <td>4.589010204</td>
+                    </tr>
+                    <tr>
+                        <td>....</td>
+                        <td>....</td>
+                    </tr>
+                    <tr>
+                        <td>2.5</td>
+                        <td>7.187999977</td>
+                    </tr>
+                </tbody>
+            </table>
+            <p>然后利用 Python 3.10.0 的 PyTorch 库搭建经典的 MLP 神经网络：</p>
+            <pre id="code"><code class="language-python">import torch
+import matplotlib.pyplot as plt
+
+X = [-2.5, -2.236842105, -1.973684211, -1.710526316, -1.447368421, -1.184210526, -0.921052632, -0.657894737, -0.394736842, -0.131578947, 0.131578947, 0.394736842, 0.657894737, 0.921052632, 1.184210526, 1.447368421, 1.710526316, 1.973684211, 2.236842105, 2.5]
+Y = [5.312000023, 4.589010204, 4.249698758, 3.839319217, 3.027100058, 1.801916503, 0.478871519, -0.487107075, -0.770384531, -0.367252262, 0.401878301, 1.08201888, 1.352758045, 1.217804382, 1.002792638, 1.162650635, 2.012481337, 3.541159968, 5.417915003, 7.187999977]
+
+class MLP(torch.nn.Module):
+    def __init__(
+        self, *args,
+        input_layer: int, hidden_layers: tuple[int, int, int], output_layer: int,
+        **kwargs
+    ) -> None:
+        super().__init__(*args, **kwargs)
+        self.input_layer = input_layer
+        self.INPUT = torch.nn.Linear(input_layer, hidden_layers[0], bias=True)
+        self.FC1 = torch.nn.Linear(hidden_layers[0], hidden_layers[1], bias=True)
+        self.FC2 = torch.nn.Linear(hidden_layers[1], hidden_layers[2], bias=True)
+        self.OUTPUT = torch.nn.Linear(hidden_layers[2], output_layer, bias=True)
+        
+    def forward(self, x: torch.Tensor) -> torch.Tensor:
+        y = torch.nn.functional.relu(self.INPUT(x))
+        y = torch.nn.functional.relu(self.FC1(y))
+        y = torch.nn.functional.sigmoid(self.FC2(y))
+        return self.OUTPUT(y)
+
+class Fit:
+    def __init__(
+        self, X: list, Y: list,
+        epoch: int, model: object,
+        optimizer: torch.optim, loss: torch.nn.modules.loss,
+        device: str = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
+    ) -> None:
+        self.tensorX = torch.Tensor(X).unsqueeze(dim=1)
+        self.tensorY = torch.Tensor(Y).unsqueeze(dim=1)
+        self.epoch = epoch
+        self.optimizer = optimizer
+        self.loss = loss
+        self.model = model.to(device)
+        self.__Train()
+
+    def __Train(self) -> None:
+        plt.ion()
+        plt.show()
+        for idx in range(1, self.epoch + 1, 1):
+            prediction = self.model(self.tensorX)
+            MSE = self.loss(prediction, self.tensorY)
+            self.optimizer.zero_grad()
+            MSE.backward()
+            self.optimizer.step()
+            if ((idx % 5) == 0):
+                self.__Show(idx, MSE.data, prediction)
+        plt.ioff()
+        plt.show()
+
+    def __Show(self, idx: int, mse: torch.Tensor, prediction: torch.Tensor) -> None:
+        plt.cla()
+        plt.title(
+            label = 'Progress: %.2f%% -- Loss: %.9f' % (100 * idx / self.epoch, mse),
+            fontdict = {'family': 'Times New Roman', 'size': 15}
+        )
+        plt.xticks(fontproperties = 'Times New Roman', size = 12)
+        plt.yticks(fontproperties = 'Times New Roman', size = 12)
+        plt.scatter(
+            self.tensorX.cpu().data.numpy(),
+            self.tensorY.cpu().data.numpy(),
+            marker='*'
+        )
+        tempX = list()
+        tempY = list()
+        for t in range(0, len(self.tensorX), 1):
+            temp = self.tensorX.cpu().data.numpy().tolist()
+            tempX.append(temp[t][0])
+            temp = prediction.cpu().data.numpy().tolist()
+            tempY.append(temp[t][0])
+        plt.plot(tempX, tempY, 'r-.', lw=1.5)
+        plt.pause(0.025)
+
+if __name__ == '__main__':
+    net = MLP(input_layer=1, hidden_layers=(10, 7, 5), output_layer=1)
+    Fit(
+        X = X, Y = Y,
+        epoch = 2400,
+        model = net,
+        optimizer = torch.optim.SGD(
+            params = net.parameters(),
+            lr = 1e-2,
+            momentum = 0.75
+        ),
+        loss = torch.nn.MSELoss()
+    )</code></pre>
+            <p>最后动画演示神经网络的拟合，发现神经网络能力很强大。</p>
+            <video class="lazyload" muted autoplay="autoplay" loop="loop" width="100%" height="100%">
+                <source src="./demo.mp4" type="video/mp4"></source>
+            </video>
+        </div>
+    </div>
+</div>
+
+<section class="container" align="center">
+    <a id="site-title" class="navigation-title" href="#">Top</a>
+</section>
+                        </header>
+                    </article>
+                </section>
+            </div>
+        </main>
+    </body>
+
+    <script src="../../../assets/js/heti-addon.min.js"></script>
+
+    <script>
+        const heti = new Heti('.heti h4, h5, h6, .title');
+        heti.autoSpacing(); 
+        AOS.init({disable: 'mobile'});
+    </script>
+
+    <script>
+        let loader = document.getElementById('loader');
+        let normalPage = document.getElementById('normal-page');
+        let imgA = document.getElementById('img1');
+
+        let img1Loaded = false;
+
+        let img1 = new Image();
+        img1.src = './desmos.png';
+        img1.onload = function() {
+            imgA.src = './desmos.png';
+            img1Loaded = true;
+            checkLoadStatus();
+        };
+
+        function checkLoadStatus() {
+            if (img1Loaded) {
+                loader.style.display = 'none';
+                normalPage.style.display = 'block';
+            }
+        }
+    </script>
+</html>
