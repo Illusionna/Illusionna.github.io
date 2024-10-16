@@ -1,0 +1,361 @@
+
+<!DOCTYPE html>
+<html lang="zh-cn">
+    <head>
+        <meta charset="utf-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+        <title>二值化图像去噪</title>
+
+        <link rel="preload" href="https://cdnjs.cloudflare.com/ajax/libs/lxgw-wenkai-webfont/1.7.0/lxgwwenkai-regular.min.css" as="style" onload="this.onload=null;this.rel='stylesheet'">
+        <link rel="stylesheet" href="../../../assets/css/style.css"/>
+        <link rel="stylesheet" href="../../../assets/css/main.css" />
+        <link href="../../../assets/css/aos.css" rel="stylesheet">
+        <link rel="stylesheet" href="../../../assets/css/customBMPI.css" />
+        <noscript><link rel="stylesheet" href="../../../assets/css/lxgwwenkai-regular.min.css"></noscript>
+        <noscript><link rel="stylesheet" href="../../../assets/css/tagcloud.css"></noscript>
+        <script src="../../../assets/js/lazysizes.min.js" async></script>
+        <script src="../../../assets/js/aos.js"></script>
+        <link href="../../../assets/css/prism.css" rel="stylesheet" />
+    	<script src="../../../assets/js/prism.js"></script>
+        <script>
+            MathJax = {
+                tex: {
+                    inlineMath: [['$', '$'], ['\\(', '\\)']]
+                }
+            };
+        </script>
+        <script id="MathJax-script" async src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-chtml.js"></script>
+    </head>
+
+    <body class="colorscheme-auto">
+        <main class="wrapper">
+            <div id="loader" class="loader">
+                <div class="text" style="font-size: 48px; font-family:courier;">Loading...</div>
+                <div class="horizontal">
+                  <div class="circlesup">
+                        <div class="circle"></div>
+                        <div class="circle"></div>
+                        <div class="circle"></div>
+                        <div class="circle"></div>
+                        <div class="circle"></div>
+                  </div>
+                  <div class="circlesdwn">
+                        <div class="circle"></div>
+                        <div class="circle"></div>
+                        <div class="circle"></div>
+                        <div class="circle"></div>
+                        <div class="circle"></div>
+                  </div>
+                </div>
+                <div class="vertical">
+                  <div class="circlesup">
+                        <div class="circle"></div>
+                        <div class="circle"></div>
+                        <div class="circle"></div>
+                        <div class="circle"></div>
+                        <div class="circle"></div>
+                  </div>
+                  <div class="circlesdwn">
+                        <div class="circle"></div>
+                        <div class="circle"></div>
+                        <div class="circle"></div>
+                        <div class="circle"></div>
+                        <div class="circle"></div>
+                  </div>
+                </div>
+            </div>
+
+            <div class="content" id="normal-page" style="display: none;">
+                <section class="container post">
+                    <article>
+                        <header>
+                            <nav class="navigation">
+                                <section class="container" align="center">
+                                    <a id="site-title" class="navigation-title" href="/" target="_blank" style="font-size: 32px;">
+                                        orzzz.net
+                                    </a>
+                                </section>
+                            </nav>
+
+<div class="post-title heti">
+    <h1 class="title">二值化图像去噪</h1>
+</div>
+
+<div class="post-meta">
+    <div class="date">
+        <span class="posted-on">
+            <i class="fas fa-calendar"></i>
+            <time>2023-11-25</time>
+        </span>
+        <span class="reading-time">
+            <i class="fas fa-clock"></i>
+            <time>21:59</time>
+        </span>
+        <span style="margin-left: 20px">
+            <i class="fas fa-tag"><a href="./BinarizationErrorProcess.pdf" download="Osrrceoy-Algorithm.pdf" target="_blank"><strong>Download</strong></a></i>
+        </span>
+    </div>
+
+    <p></p>
+
+    <div class="article">
+        <div class="article-content heti" data-aos="fade-up" data-aos-duration="1500" data-aos-anchor-placement="top-bottom">
+            <h2>1. 前言</h2>
+            <p>该算法由 <a href="https://github.com/Osrrceoy" target="_blank">@Osrrceoy</a> 提供，Illusionna 试将其实现。</p>
+            <h2>2. 原理</h2>
+            <p>已知二值化处理后的图像 $X$ 仅有 0-1 元素构成像素矩阵，譬如：</p>
+            <div style="text-align: center;">
+                $X=\left[\begin{matrix}
+                1 & 0 & 0 & 1 \\
+                0 & 1 & 0 & 0 \\
+                1 & 0 & 1 & 0 \\
+                0 & 0 & 0 & 1 \\
+                \end{matrix}\right]$
+            </div>
+            <p>按照行拉直，得到 ${\rm vec}(X)=[1001010010100001]$ 向量。</p>
+            <p>统计向量 ${\rm vec}(X)$ 连续的 0 元素分布个数：</p>
+            <div style="text-align: center;">
+                $M(X)=[2,\ 1,\ 2,\ 1,\ 4]$
+            </div>
+            <p>从小到大排序：</p>
+            <div style="text-align: center;">
+                $N(X)={\rm sort}\{M(X)\}=[1,\ 1,\ 2,\ 2,\ 4]$
+            </div>
+            <p>定义图像 $X$ 的最小文本长度 $\rm MLT$ 如下：</p>
+            <div style="text-align: center;">
+                ${\rm MLT}(X)=\dfrac{\displaystyle\sum_{i=1}^{p}N_i(X)}{p},\quad p=\lfloor r\times{\rm Length}(N(X))\rfloor$
+            </div>
+            <p>其中 $r\in(0,1)$，高斯函数表示下取整。例如 $r=0.6，则有：$</p>
+            <div style="text-align: center;">
+                $p=\lfloor 0.6\times5\rfloor=3$
+            </div>
+            <p></p>
+            <div style="text-align: center;">
+                ${\rm MLT}(X)=\dfrac{1+1+2}{3}\approx1.333$
+            </div>
+            <p>从 ${\rm vec}(X)$ 数组取任意子数组，要求子数组端点为 1 元素，中间全为 0 元素，记零元素个数为 $m$ 个，如下子数组 $m=4$：</p>
+            <div style="text-align: center;">
+                $[\cdots1\underbrace{0000}_{4\ zeros} 1\cdots]$
+            </div>
+            <p>对 $m$ 个连续的零元素进行新变化，规则如下，其中 $i\in [1,m]$：</p>
+            <div style="text-align: center;">
+                $y_{i}=\begin{cases}
+                1,\quad m\leqslant {\rm MLT}(X)
+                \\
+                x_i,\quad m>{\rm MLT}(X)
+                \end{cases}$
+            </div>
+            <p>每个子数组都进行这样的变化，可得到：</p>
+            <div style="text-align: center;">
+                $[1\underbrace{00}_{2\ zeros} 1],\quad [1\underbrace{\color[rgb]{1,0,0}1}_{\color[rgb]{1,0,0}\rm changed} 1],\quad [1\underbrace{00}_{2\ zeros} 1],\quad [1\underbrace{\color[rgb]{1,0,0} 1}_{\color[rgb]{1,0,0}\rm changed} 1],\quad [1\underbrace{0000}_{4\ zeros} 1]$
+            </div>
+            <p>按照 ${\rm vec}(X)$ 顺序合并所有子数组，得到新的 ${\rm vec}^{'}(X)$ 如下：</p>
+            <div style="text-align: center;">
+                ${\rm vec}^{'}(X)=[1001{\color[rgb]{1,0,0}1}1001{\color[rgb]{1,0,0}1}100001]$
+            </div>
+            <p>压缩向量，还原矩阵：</p>
+            <div style="text-align: center;">
+                $X^{'}=\left[\begin{matrix}
+                1 & 0 & 0 & 1 \\
+                {\color[rgb]{1,0,0}1} & 1 & 0 & 0 \\
+                1 & {\color[rgb]{1,0,0}1} & 1 & 0 \\
+                0 & 0 & 0 & 1 \\
+                \end{matrix}\right]$
+            </div>
+            <h2>3. 代码</h2>
+            <p><img id="img1" width="75%" alt="Oops?" class="lazyload" loading="lazy"/></p>
+            <pre id="code"><code class="language-c"># include &lt;stdio.h&gt;
+# include &lt;stdlib.h&gt;
+
+void PrintInt2D(int** arr, int dim1, int dim2) {
+    for (int i = 0; i < dim1; ++i) {
+        for (int j = 0; j < dim2; ++j) {
+            printf("%d\t", arr[i][j]);
+        }
+        printf("\n");
+    }
+}
+
+int AscendingOrder(const void * a, const void * b) {
+    return *(int*)a - *(int*)b;
+}
+
+int** BinaryErrorProcess(int** matrix, int dim1, int dim2, float r) {
+    // 矩阵拉直.
+    int* vectorX = (int*)malloc(dim1 * dim2 * sizeof(int));
+    for (int i=0; i < dim1; ++i) {
+        for (int j=0; j < dim2; ++j) {
+            vectorX[i * dim2 + j] = matrix[i][j];
+        }
+    }
+
+    // 寻找第一个 1 元素和最后一个 1 元素的索引.
+    int first_one = -1;
+    int last_one = -1;
+    for (int i = 0; i < dim1 * dim2; ++i) {
+        if (vectorX[i] == 1) {
+            first_one = i;
+            break;
+        }
+    }
+    for (int i = dim1 * dim2 - 1; i >= 0; i--) {
+        if (vectorX[i] == 1) {
+            last_one = i;
+            break;
+        }
+    }
+    if (first_one >= last_one) {
+        // 矩阵保持不动, 直接返回原矩阵.
+        return matrix;
+    }
+
+    // 统计连续零元素分布个数.
+    int* MX = NULL;
+    int MX_size = 0;
+    int zero_nums = 0;
+    for (int i=0; i <= dim1 * dim2; ++i) {
+        if ((i == dim1 * dim2) || (vectorX[i] != 0)) {
+            if (zero_nums > 0) {
+                MX = (int*)realloc(MX, (MX_size + 1) * sizeof(int));
+                MX[MX_size++] = zero_nums;
+            }
+            zero_nums = 0;
+        } else {
+            ++zero_nums;
+        }
+    }
+
+    //  连续零元素数组从小到大排序.
+    int* NX = (int*)malloc(MX_size * sizeof(int));
+    for (int i=0; i < MX_size; ++i) NX[i] = MX[i];
+    qsort(NX, MX_size, sizeof(int), AscendingOrder);
+
+    // 计算最小文本长度.
+    float MLT = 0;
+    for (int i=0; i < (int) (r * MX_size); ++i) {
+        MLT = MLT + NX[i];
+    }
+    MLT = MLT / (int) (r * MX_size);
+
+    // 计算新的 vec'(X) 向量.
+    int pos = 0;
+    while (++first_one <= last_one) {
+        if (vectorX[first_one] == 0) {
+            int m = MX[pos++];
+            int skip = m;
+            if (m <= MLT) {
+                while (m-- > 0) {
+                    vectorX[first_one + m] = 1;
+                }
+                first_one = first_one + skip;
+            } else {
+                first_one = first_one + m;
+            }
+        }
+    }
+
+    // 向量压缩还原矩阵.
+    for (int i=0; i < dim1; ++i) {
+        for (int j=0; j < dim2; ++j) {
+            matrix[i][j] = vectorX[i * dim2 + j];
+        }
+    }
+
+    free(MX);
+    free(NX);
+    free(vectorX);
+    return matrix;
+}
+
+
+int main() {
+    int rows = 4;
+    int cols = 4;
+    int X[4][4] = {
+        {1, 0, 0, 1},
+        {1, 1, 0, 0},
+        {1, 0, 1, 0},
+        {0, 0, 0, 1}
+    };
+
+    int** matrix = (int**)malloc(rows * sizeof(int*));
+    for (int i=0; i < rows; ++i) {
+        matrix[i] = (int*)malloc(cols * sizeof(int));
+        for (int j=0; j < cols; ++j) matrix[i][j] = X[i][j];
+    }
+
+    printf("Original Matrix:\n");
+    PrintInt2D(matrix, rows, cols);
+
+    matrix = BinaryErrorProcess(matrix, rows, cols, 0.6);
+
+    printf("Processed Matrix:\n");
+    PrintInt2D(matrix, rows, cols);
+
+    for (int i=0; i < rows; ++i) free(matrix[i]);
+    free(matrix);
+    return 0;
+}</code></pre>
+
+        <h2>4. 应用</h2>
+        <div style="display: flex;">
+            <img src="./HighNoise.png" width="45%" alt="Oops?">
+            <img src="./HighNoiseResult.png" width="45%" alt="Oops?">
+        </div>
+        <figcaption>
+            <p>高噪声图像前后对比</p>
+        </figcaption>
+        <div style="display: flex;">
+            <img src="./LowNoise.png" width="45%" alt="Oops?">
+            <img src="./LowNoiseResult.png" width="45%" alt="Oops?">
+        </div>
+        <figcaption>
+            <p>低噪声图像前后对比</p>
+        </figcaption>
+
+        </div>
+    </div>
+</div>
+
+<section class="container" align="center">
+    <a id="site-title" class="navigation-title" href="#">Top</a>
+</section>
+                        </header>
+                    </article>
+                </section>
+            </div>
+        </main>
+    </body>
+
+    <script src="../../../assets/js/heti-addon.min.js"></script>
+
+    <script>
+        const heti = new Heti('.heti h4, h5, h6, .title');
+        heti.autoSpacing(); 
+        AOS.init({disable: 'mobile'});
+    </script>
+
+    <script>
+        let loader = document.getElementById('loader');
+        let normalPage = document.getElementById('normal-page');
+        let imgA = document.getElementById('img1');
+
+        let img1Loaded = false;
+
+        let img1 = new Image();
+        img1.src = './demo.png';
+        img1.onload = function() {
+            imgA.src = './demo.png';
+            img1Loaded = true;
+            checkLoadStatus();
+        };
+
+        function checkLoadStatus() {
+            if (img1Loaded) {
+                loader.style.display = 'none';
+                normalPage.style.display = 'block';
+            }
+        }
+    </script>
+</html>
