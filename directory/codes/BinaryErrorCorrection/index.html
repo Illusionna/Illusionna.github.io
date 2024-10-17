@@ -93,7 +93,7 @@
             <time>21:59</time>
         </span>
         <span style="margin-left: 20px">
-            <i class="fas fa-tag"><a href="./BinarizationErrorProcess.pdf" download="Osrrceoy-Algorithm.pdf" target="_blank"><strong>Download</strong></a></i>
+            <i class="fas fa-tag"><a href="./Osrrceoy-Algorithm.zip" download="Osrrceoy-Algorithm.zip" target="_blank"><strong>Download</strong></a></i>
         </span>
     </div>
 
@@ -154,13 +154,18 @@
             <div style="text-align: center;">
                 ${\rm vec}^{'}(X)=[1001{\color[rgb]{1,0,0}1}1001{\color[rgb]{1,0,0}1}100001]$
             </div>
-            <p>压缩向量，还原矩阵：</p>
+            <p>压缩 ${\rm vec}^{'}(X)$ 向量，乘以 255 并还原矩阵，形成单通道图像：</p>
             <div style="text-align: center;">
-                $X^{'}=\left[\begin{matrix}
+                $X^{'}=255\times\left[\begin{matrix}
                 1 & 0 & 0 & 1 \\
                 {\color[rgb]{1,0,0}1} & 1 & 0 & 0 \\
                 1 & {\color[rgb]{1,0,0}1} & 1 & 0 \\
                 0 & 0 & 0 & 1 \\
+                \end{matrix}\right]=\left[\begin{matrix}
+                255 & 0 & 0 & 255 \\
+                {\color[rgb]{1,0,0}255} & 255 & 0 & 0 \\
+                255 & {\color[rgb]{1,0,0}255} & 255 & 0 \\
+                0 & 0 & 0 & 255 \\
                 \end{matrix}\right]$
             </div>
             <h2>3. 代码</h2>
@@ -258,7 +263,7 @@ int** BinaryErrorProcess(int** matrix, int dim1, int dim2, float r) {
     // 向量压缩还原矩阵.
     for (int i=0; i < dim1; ++i) {
         for (int j=0; j < dim2; ++j) {
-            matrix[i][j] = vectorX[i * dim2 + j];
+            matrix[i][j] = 255 * vectorX[i * dim2 + j];
         }
     }
 
@@ -299,6 +304,7 @@ int main() {
 }</code></pre>
 
         <h2>4. 应用</h2>
+        <p>回到顶部的 <a href="#"><strong>Download</strong></a> 下载项目代码，分别运算高、低噪声的两张图片。</p>
         <div style="display: flex;">
             <img src="./HighNoise.png" width="45%" alt="Oops?">
             <img src="./HighNoiseResult.png" width="45%" alt="Oops?">
@@ -313,7 +319,6 @@ int main() {
         <figcaption>
             <p>低噪声图像前后对比</p>
         </figcaption>
-
         </div>
     </div>
 </div>
