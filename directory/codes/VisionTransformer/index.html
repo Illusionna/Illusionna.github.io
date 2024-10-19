@@ -1,0 +1,350 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <title>ViT</title>
+        <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+        <link rel="stylesheet" href="/assets/css/WuWangSheng.css" type="text/css">
+        <link rel="stylesheet" href="/assets/css/WuWangShengLPQ2GZE.css">
+        <link rel="stylesheet" href="/assets/css/WuWangShengStyle.css" type="text/css">
+
+        <link href="/assets/css/customBMPI.css" rel="stylesheet">
+        <link href="/assets/css/prism.css" rel="stylesheet" />
+    	<script src="/assets/js/prism.js"></script>
+    </head>
+
+    <body>
+        <div id="loader" class="loader">
+            <div class="text" style="font-size: 48px; font-family:courier;">Loading...</div>
+            <div class="horizontal">
+              <div class="circlesup">
+                    <div class="circle"></div>
+                    <div class="circle"></div>
+                    <div class="circle"></div>
+                    <div class="circle"></div>
+                    <div class="circle"></div>
+              </div>
+              <div class="circlesdwn">
+                    <div class="circle"></div>
+                    <div class="circle"></div>
+                    <div class="circle"></div>
+                    <div class="circle"></div>
+                    <div class="circle"></div>
+              </div>
+            </div>
+            <div class="vertical">
+              <div class="circlesup">
+                    <div class="circle"></div>
+                    <div class="circle"></div>
+                    <div class="circle"></div>
+                    <div class="circle"></div>
+                    <div class="circle"></div>
+              </div>
+              <div class="circlesdwn">
+                    <div class="circle"></div>
+                    <div class="circle"></div>
+                    <div class="circle"></div>
+                    <div class="circle"></div>
+                    <div class="circle"></div>
+              </div>
+            </div>
+        </div>
+
+        <div style="height: 25px; top: 0; position: sticky; background-color: rgba(250,250,250,1); z-index: 9998;"></div>
+
+        <header class="header">
+            <div class="header-container">
+                <a style="text-decoration: none" href="/" target="_blank">
+                    <div class="logo-words-couple">
+                        <div class="page-title-words-container">
+                            <div class="page-title-words"><span class="highlight-words">Orzzz.net</span></div>
+                        </div>
+                    </div>
+                </a>
+            </div>
+        </header>
+
+        <main class="main" id="normal-page" style="display: none;">
+            <div class="project-page-layout-justify">
+                <div class="project-justified-box pbox1">
+                    <div class="pbox1-content-container">
+                        <div class="sub-nav" style="display: flex; flex-direction: row; align-items: center;">
+                            <span>Table of Contents</span>
+                        </div>
+                        <div class="page-content-box">
+                            <ul class="page-content-list">
+                                <li style="margin-bottom: 1em;"><a class="content-link" href="#Introduction">1. Introduction</a></li>
+                                <li style="margin-bottom: 1em;"><a class="content-link" href="#Dataset">2. Data Preparation</a></li>
+                                <li style="margin-bottom: 1em;"><a class="content-link" href="#Dependency">3. Dependency</a></li>
+                                <li style="margin-bottom: 1em;"><a class="content-link" href="#Preprocessing">4. Preprocessing</a></li>
+                                <li style="margin-bottom: 1em;"><a class="content-link" href="#Train">5. Train</a></li>
+                                <li style="margin-bottom: 1em;"><a class="content-link" href="#Test">6. Test</a></li>
+                                <li style="margin-bottom: 0.25em;"><a class="content-link" href="#Predict">7. Predict</a></li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="project-justified-box pbox2">
+                    <div class="page-content">
+                        <div class="story-title">Vision Transformer</div>
+                        <div class="story-time">Friday, November 24, 2023, at 03:54 a.m.</div>
+                        <div class="story-content-section">
+                            <div class="story-content-paragraph">
+                                <div class="download-file-box-container">
+                                    <a style="text-decoration: none !important; color: inherit; height: 100%; display: flex; align-items: center;" class="download-file-link" href="./resources/ViT-Lite.zip" download="ViT-Lite.zip">
+                                        <div class="download-file-left">
+                                            <div class="download-file-box-icon">
+                                                <img class="file-type-icon-csv" src="./zip.png">
+                                            </div>
+                                            <div class="download-file-left-words">
+                                                <div class="download-file-name">ViT-Lite.zip</div>
+                                                <div style="color: rgb(225, 45, 120);" class="download-file-name-describe">Click here to download the lite code zip.</div>
+                                            </div>
+                                        </div>
+                                        <div class="download-file-right">
+                                            <img class="action-icon" src="./download.png">
+                                        </div>
+                                    </a>
+                                </div>
+                            </div>
+
+                            <div class="story-content-paragraph">
+                                <div class="download-file-box-container">
+                                    <a style="text-decoration: none !important; color: inherit; height: 100%; display: flex; align-items: center;" class="download-file-link" href="https://github.com/Illusionna/VisionTransformer" target="_blank">
+                                        <div class="download-file-left">
+                                            <div class="download-file-box-icon">
+                                                <img class="file-type-icon" src="./github-mark.png">
+                                            </div>
+                                            <div class="download-file-left-words">
+                                                <div class="download-file-name">VisionTransformer-master</div>
+                                                <div style="color: rgb(225, 45, 120);" class="download-file-name-describe">Redirect to the GitHub full code repository.</div>
+                                            </div>
+                                        </div>
+                                        <div class="download-file-right">
+                                            <img class="action-icon" src="./redirect.png">
+                                        </div>
+                                    </a>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="story-content-section" id="Introduction">
+                            <div class="story-content-section-name">1. Introduction</div>
+                            <div class="story-content-paragraph">
+                                The project code is a ViT neural network architecture demo. It can train, test and predict image datasets. You can download the provided datasets including fruits, animals, bloodcells. And of course, you can also run the code on your own image datasets. However, it is important to note that the project is only a demo. So it is not recommended that you deploy the code to industrial production.
+                            </div>
+                        </div>
+
+                        <div class="story-content-section" id="Dataset">
+                            <div class="story-content-section-name">2. Data Preparation</div>
+                            <div class="story-content-paragraph">
+                                There are three image datasets provided: fruits, animals, bloodcells. You can customize a new image dataset, but you need to meet certain rules. Otherwise the project code might not run. Please refer to the three provided image datasets folder or file placement structure. It is easy for you to discover the rules, right?
+                            </div>
+
+                            <div class="story-content-paragraph">
+                                The three image datasets occupy approximately 1GB of disk space totally. So only the fruits dataset zip package is placed in the <a class="inline-link" href="https://github.com/Illusionna/VisionTransformer" target="_blank">GitHub repository</a>. The other two datasets are recommended to download via BaiduNetdisk. Remember to unzip these image datasets before you run code!
+                            </div>
+
+                            <ul class="list-in-paragraph">
+                                <li>Fruits (download link <a href="https://pan.baidu.com/s/1efoe_ptRAQ6Nv6RwCzmETQ?pwd=nl86" target="_blank" style="color: rgb(225, 45, 120);">BaiduNetdisk</a> extract password "nl86"): apple, carambola, pear, plum, tomato.</li>
+                                <li>Animals (download link <a href="https://pan.baidu.com/s/1efoe_ptRAQ6Nv6RwCzmETQ?pwd=nl86" target="_blank" style="color: rgb(225, 45, 120);">BaiduNetdisk</a> extract password "nl86"): cat, dog.</li>
+                                <li>Bloodcells (download link 1 <a href="https://pan.baidu.com/s/1efoe_ptRAQ6Nv6RwCzmETQ?pwd=nl86" target="_blank" style="color: rgb(225, 45, 120);">BaiduNetdisk</a> extract password "nl86", download link 2 <a href="https://prod-dcd-datasets-cache-zipfiles.s3.eu-west-1.amazonaws.com/snkd93bnjr-1.zip" target="_blank" style="color: rgb(225, 45, 120);">Amazon</a>): neutrophils, eosinophils, basophils, lymphocytes, monocytes, immature granulocytes, erythroblasts, platelets.</li>
+                            </ul>
+
+                            <div class="story-content-paragraph">
+                                As an aside, you can integrate the three provided image datasets into a larger dataset which has 15 (5+2+8=15) categories. Then try to train and test the ViT model. The project workspace structure file tree is as follows:
+
+                                <p><img id="project-tree" class="in-text-pics"></p>
+                            </div>
+                        </div>
+
+                        <div class="story-content-section" id="Dependency">
+                            <div class="story-content-section-name">3. Dependency</div>
+                            <div class="story-content-paragraph">
+                                The project supports both CPU and GPU. If your computer has a graphics processing unit, you can use the "nvidia-smi" command in the terminal to view the GPU type. My GPU memory is 4GB size. The version returned by the "nvidia-smi" command is CUDA 12.5.
+                            </div>
+
+<code class="language-c">>>> NVIDIA-SMI 556.12   Driver Version: 556.12  CUDA Version: 12.5</code>
+
+                            <div class="story-content-paragraph">
+                                You can find the appropriate package version on the <a class="inline-link" href="https://pytorch.org" target="_blank">PyTorch</a> website. And I install the torch-cu121 package on Windows 11.
+
+                                <p><img id="PyTorch" class="in-text-pics"></p>
+
+                                It is recommended to download <strong>Python 3.10+</strong> packages via Anaconda, Miniconda, or Python venv.
+                            </div>
+
+                            <ul class="list-in-paragraph">
+                                <li>conda</li>
+                                <ul class="list-in-paragraph">
+                                    <li>conda create -n ViTenv python==3.10.0</li>
+                                    <li>conda activate ViTenv</li>
+                                    <li>pip install matplotlib</li>
+                                    <li>python Preprocessing.py</li>
+                                </ul>
+                                <li>venv</li>
+                                <ul class="list-in-paragraph">
+                                    <li>python -m venv venv</li>
+                                    <li>./venv/Scripts/activate</li>
+                                    <li>./venv/Scripts/pip.exe install matplotlib</li>
+                                    <li>./venv/Scripts/python.exe Preprocessing.py</li>
+                                </ul>
+                            </ul>
+                            <p><img id="DownloadPyTorch" class="in-text-pics"></p>
+                            <ul class="list-in-paragraph">
+                                <li>Windows 11</li>
+                                <ul class="list-in-paragraph">
+                                    <li>pip install torch torchvision torchaudio --index-url https://download.pytorch.org/whl/cu121</li>
+                                </ul>
+                                <li>Windows 10</li>
+                                <ul class="list-in-paragraph">
+                                    <li>pip install torch torchvision torchaudio --index-url https://download.pytorch.org/whl/cu121</li>
+                                    <li>pip install pillow</li>
+                                </ul>
+                                <li>macOS</li>
+                                <ul class="list-in-paragraph">
+                                    <li>pip install torch torchvision torchaudio</li>
+                                    <li>pip install numpy</li>
+                                    <li>pip install pillow</li>
+                                </ul>
+                                <li>Linux</li>
+                                <ul class="list-in-paragraph">
+                                    <li>I don't know.</li>
+                                </ul>
+                            </ul>
+                        </div>
+
+                        <div class="story-content-section" id="Preprocessing">
+                            <div class="story-content-section-name">4. Preprocessing</div>
+                            <div class="story-content-paragraph">
+                                Before training, the "Preprocessing.py" file needs to be executed to collect statistics and process images.
+                            </div>
+
+<code class="language-">>>> python ./Preprocessing.py</code>
+
+                            <p><img id="Preprocessing-Animals" class="in-text-pics"></p>
+                        </div>
+
+                        <div class="story-content-section" id="Train">
+                            <div class="story-content-section-name">5. Train</div>
+                            <div class="story-content-paragraph">
+                                The "./cache/log" folder in project has "animals.pt" and "fruits.pt" weight files. They are the excellent weight results of Illusionna training after 200 epochs. You can just apply these two weights to testing and predicting without training from scratch. After all, training is very time-consuming.
+                            </div>
+
+                            <div class="story-content-paragraph">
+                                If you wanna train from scratch with fruits, animals, bloodcells or own image datasets, you can execute the "Train.py" file after "Preprocessing.py" is done.
+                            </div>
+
+<code class="language-">>>> python ./Train.py</code>
+
+                            <p><img id="Training-Animals" class="in-text-pics"></p>
+                            <p><img id="Trained-Animals" class="in-text-pics"></p>
+                            <p><img id="Trained-Fruits" class="in-text-pics"></p>
+
+                            <div class="story-content-paragraph">
+                                The above three in a column screenshots show the training process of 200 epochs for animals and fruits datasets respectively. The training time of animals is 03:31:17, and the training time of fruits is 01:54:29.
+                            </div>
+
+                            <div class="story-content-paragraph">
+                                The program code automatically saves all training results in the "./cache" directory, where the subfolder "./cache/log" is the storage of training weight files. You can find the animals and fruits weights in "./cache/log". They are the optimal weights that I trained for 200 epochs.
+                            </div>
+                        </div>
+
+                        <div class="story-content-section" id="Test">
+                            <div class="story-content-section-name">6. Test</div>
+                            <div class="story-content-paragraph">
+                                The "Illustrate.py" file is applied for illustrating the training process. You can find a general range of intervals according to the illustration. And then you will seek an optimal training weight. Certainly, you can also test directly with the two optimal weights I trained in the "./cache/log" directory.
+                            </div>
+
+<code class="language-">>>> python ./Illustrate.py</code>
+
+                            <div style="display: grid; place-items: center;">
+                                <p><object type="image/svg+xml" data="./resources/Figure_1.svg" width="100%"></object></p>
+                            </div>
+                            <div style="display: grid; place-items: center;">
+                                <p><object type="image/svg+xml" data="./resources/Figure_2.svg" width="100%"></object></p>
+                            </div>
+
+<code class="language-">>>> python ./Test.py</code>
+
+                            <div class="story-content-paragraph">
+                                The final test result is returned and saved with an accuracy. The fruits image test dataset achieves <strong>98%</strong> accuracy. It's very very very good!
+
+                                <p><img id="Test-Fruits" class="in-text-pics"></p>
+                            </div>
+                        </div>
+
+                        <div class="story-content-section" id="Predict">
+                            <div class="story-content-section-name">7. Predict</div>
+                            <div class="story-content-paragraph">
+                                The accuracy of the fruits image test dataset is as high as 98%. It indicates that the weight of training is quite good. So we can apply this weight to predicting some unknown image dataset.
+                            </div>
+
+<code class="language-">>>> python ./Predict.py</code>
+
+                            <p><img id="Predicted-Fruits" class="in-text-pics"></p>
+                            <p><img id="Predicted-Result" class="in-text-pics"></p>
+                            <p><img id="All-Right" class="in-text-pics"></p>
+                        </div>
+
+                    </div>
+
+                    <div class="page-end"></div>
+                </div>
+            </div>
+        </main>
+
+        <footer class="footer">
+            <div class="foot-container">
+                <div class="copy-right">GPLv3</div>
+            </div>
+        </footer>
+    </body>
+
+    <script>
+        let imagesToLoad = [
+            { id: 'project-tree', src: './resources/project-tree.png' },
+            { id: 'PyTorch', src: './resources/PyTorch.png'},
+            { id: 'Preprocessing-Animals', src: './resources/Preprocessing-Animals.png'},
+            { id: 'Training-Animals', src: './resources/Training-Animals.png'},
+            { id: 'Trained-Animals', src: './resources/Trained-Animals.png'},
+            { id: 'Trained-Fruits', src: './resources/Trained-Fruits.png'},
+            { id: 'Test-Fruits', src: './resources/Test-Fruits.png'},
+            { id: 'Predicted-Fruits', src: './resources/Predicted-Fruits.png'},
+            { id: 'Predicted-Result', src: './resources/Predicted-Result.png'},
+            { id: 'All-Right', src: './resources/All-Right.png'},
+        ];
+
+        function loadImage(imgId, src, callback) {
+            let img = new Image();
+            img.src = src;
+            img.onload = function() {
+                document.getElementById(imgId).src = src;
+                callback();
+            };
+        }
+
+        function loadImages(imgIdsAndSrcs, callback) {
+            let loadedCount = 0;
+            let totalCount = imgIdsAndSrcs.length;
+            imgIdsAndSrcs.forEach(function(imgInfo) {
+                loadImage(imgInfo.id, imgInfo.src, function() {
+                    loadedCount++;
+                    if (loadedCount === totalCount) {
+                        callback();
+                    }
+                });
+            });
+        }
+
+        let loader = document.getElementById('loader');
+        let normalPage = document.getElementById('normal-page');
+
+        loadImages(imagesToLoad, function() {
+            loader.style.display = 'none';
+            normalPage.style.display = 'block';
+        });
+    </script>
+</html>
