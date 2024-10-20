@@ -80,7 +80,8 @@
                                 <li style="margin-bottom: 1em;"><a class="content-link" href="#Preprocessing">4. Preprocessing</a></li>
                                 <li style="margin-bottom: 1em;"><a class="content-link" href="#Train">5. Train</a></li>
                                 <li style="margin-bottom: 1em;"><a class="content-link" href="#Test">6. Test</a></li>
-                                <li style="margin-bottom: 0.25em;"><a class="content-link" href="#Predict">7. Predict</a></li>
+                                <li style="margin-bottom: 1em;"><a class="content-link" href="#Predict">7. Predict</a></li>
+                                <li style="margin-bottom: 0.25em;"><a class="content-link" href="#Conclusion">8. Conclusion</a></li>
                             </ul>
                         </div>
                     </div>
@@ -230,7 +231,7 @@
                         <div class="story-content-section" id="Train">
                             <div class="story-content-section-name">5. Train</div>
                             <div class="story-content-paragraph">
-                                The "./cache/log" folder in project has "animals.pt" and "fruits.pt" weight files. They are the excellent weight results of Illusionna training after 200 epochs. You can just apply these two weights to testing and predicting without training from scratch. After all, training is very time-consuming.
+                                The "./cache/log" folder in project has "animals.pt", "fruits.pt" and "blood cells.pt" weight files. They are the excellent weight results of <a class="inline-link" href="https://github.com/Illusionna" target="_blank">Illusionna</a> training after 200 epochs. You can just apply these two weights to testing and predicting without training from scratch. After all, training is very time-consuming.
                             </div>
 
                             <div class="story-content-paragraph">
@@ -241,10 +242,12 @@
 
                             <p><img id="Training-Animals" class="in-text-pics"></p>
                             <p><img id="Trained-Animals" class="in-text-pics"></p>
+                            <p><img id="Training-Bloodcells" class="in-text-pics"></p>
+                            <p><img id="Trained-Bloodcells" class="in-text-pics"></p>
                             <p><img id="Trained-Fruits" class="in-text-pics"></p>
 
                             <div class="story-content-paragraph">
-                                The above three in a column screenshots show the training process of 200 epochs for animals and fruits datasets respectively. The training time of animals is 03:31:17, and the training time of fruits is 01:54:29.
+                                The above three in a column screenshots show the training process of 200 epochs for animals and fruits datasets respectively. The training time of animals is 03:31:17, and the training time of fruits is 01:54:29. The training time of bloodcells is moderate, 02:25:42.
                             </div>
 
                             <div class="story-content-paragraph">
@@ -266,13 +269,18 @@
                             <div style="display: grid; place-items: center;">
                                 <p><object type="image/svg+xml" data="./resources/Figure_2.svg" width="100%"></object></p>
                             </div>
+                            <div style="display: grid; place-items: center;">
+                                <p><object type="image/svg+xml" data="./resources/Figure_3.svg" width="100%"></object></p>
+                            </div>
 
 <code class="language-">>>> python ./Test.py</code>
 
                             <div class="story-content-paragraph">
-                                The final test result is returned and saved with an accuracy. The fruits image test dataset achieves <strong>98%</strong> accuracy. It's very very very good!
+                                The final test result is returned and saved with an accuracy. The fruits image test dataset achieves <strong>98%</strong> accuracy. It's very very very good! The bloodcells image test dataset is 92% accuracy, which is also good : )
 
                                 <p><img id="Test-Fruits" class="in-text-pics"></p>
+                                <p><img id="Test-Animals" class="in-text-pics"></p>
+                                <p><img id="Test-Bloodcells" class="in-text-pics"></p>
                             </div>
                         </div>
 
@@ -287,6 +295,17 @@
                             <p><img id="Predicted-Fruits" class="in-text-pics"></p>
                             <p><img id="Predicted-Result" class="in-text-pics"></p>
                             <p><img id="All-Right" class="in-text-pics"></p>
+                        </div>
+
+                        <div class="story-content-section" id="Conclusion">
+                            <div class="story-content-section-name">8. Conclusion</div>
+                            <div class="story-content-paragraph">
+                                The ViT neural network architecture model performs very well on the three image datasets fruits, animals and bloodcells. The accuracy of fruits is 98.455%, 80.150% on animals and 92.678% on bloodcells.
+                            </div>
+
+                            <div class="story-content-paragraph">
+                                That's all for the code description of the project. If you have any questions about this, plzzzzz contact <a class="inline-link" href="/" target="_blank">Illusionna</a> by email. Thanks for your reading.
+                            </div>
                         </div>
 
                     </div>
@@ -306,15 +325,19 @@
     <script>
         let imagesToLoad = [
             { id: 'project-tree', src: './resources/project-tree.png' },
-            { id: 'PyTorch', src: './resources/PyTorch.png'},
-            { id: 'Preprocessing-Animals', src: './resources/Preprocessing-Animals.png'},
-            { id: 'Training-Animals', src: './resources/Training-Animals.png'},
-            { id: 'Trained-Animals', src: './resources/Trained-Animals.png'},
-            { id: 'Trained-Fruits', src: './resources/Trained-Fruits.png'},
-            { id: 'Test-Fruits', src: './resources/Test-Fruits.png'},
-            { id: 'Predicted-Fruits', src: './resources/Predicted-Fruits.png'},
-            { id: 'Predicted-Result', src: './resources/Predicted-Result.png'},
-            { id: 'All-Right', src: './resources/All-Right.png'},
+            { id: 'PyTorch', src: './resources/PyTorch.png' },
+            { id: 'Preprocessing-Animals', src: './resources/Preprocessing-Animals.png' },
+            { id: 'Training-Animals', src: './resources/Training-Animals.png' },
+            { id: 'Trained-Animals', src: './resources/Trained-Animals.png' },
+            { id: 'Trained-Fruits', src: './resources/Trained-Fruits.png' },
+            { id: 'Test-Fruits', src: './resources/Test-Fruits.png' },
+            { id: 'Predicted-Fruits', src: './resources/Predicted-Fruits.png' },
+            { id: 'Predicted-Result', src: './resources/Predicted-Result.png' },
+            { id: 'All-Right', src: './resources/All-Right.png' },
+            { id: 'Training-Bloodcells', src: './resources/Training-Bloodcells.png' },
+            { id: 'Trained-Bloodcells', src: './resources/Trained-Bloodcells.png' },
+            { id: 'Test-Bloodcells', src: './resources/Test-Bloodcells.png' },
+            { id: 'Test-Animals', src: './resources/Test-Animals.png' }
         ];
 
         function loadImage(imgId, src, callback) {
