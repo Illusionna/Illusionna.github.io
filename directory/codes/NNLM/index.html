@@ -1,0 +1,418 @@
+<!DOCTYPE html>
+<html lang="zh-cn">
+    <head>
+        <meta charset="utf-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+        <title>NNLM 的 PyTorch 实现</title>
+
+        <link rel="preload" href="https://cdnjs.cloudflare.com/ajax/libs/lxgw-wenkai-webfont/1.7.0/lxgwwenkai-regular.min.css" as="style" onload="this.onload=null;this.rel='stylesheet'">
+        <link rel="stylesheet" href="../../../assets/css/style.css"/>
+        <link rel="stylesheet" href="../../../assets/css/main.css" />
+        <link href="../../../assets/css/aos.css" rel="stylesheet">
+        <link rel="stylesheet" href="../../../assets/css/customBMPI.css" />
+        <noscript><link rel="stylesheet" href="../../../assets/css/lxgwwenkai-regular.min.css"></noscript>
+        <noscript><link rel="stylesheet" href="../../../assets/css/tagcloud.css"></noscript>
+        <script src="../../../assets/js/lazysizes.min.js" async></script>
+        <script src="../../../assets/js/aos.js"></script>
+        <link href="../../../assets/css/prism.css" rel="stylesheet" />
+    	<script src="../../../assets/js/prism.js"></script>
+        <script>
+            MathJax = {
+                tex: {
+                    inlineMath: [['$', '$'], ['\\(', '\\)']]
+                }
+            };
+        </script>
+        <script id="MathJax-script" async src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-chtml.js"></script>
+    </head>
+
+    <body class="colorscheme-auto">
+        <main class="wrapper">
+            <div id="loader" class="loader">
+                <div class="text" style="font-size: 48px; font-family:courier;">Loading...</div>
+                <div class="horizontal">
+                  <div class="circlesup">
+                        <div class="circle"></div>
+                        <div class="circle"></div>
+                        <div class="circle"></div>
+                        <div class="circle"></div>
+                        <div class="circle"></div>
+                  </div>
+                  <div class="circlesdwn">
+                        <div class="circle"></div>
+                        <div class="circle"></div>
+                        <div class="circle"></div>
+                        <div class="circle"></div>
+                        <div class="circle"></div>
+                  </div>
+                </div>
+                <div class="vertical">
+                  <div class="circlesup">
+                        <div class="circle"></div>
+                        <div class="circle"></div>
+                        <div class="circle"></div>
+                        <div class="circle"></div>
+                        <div class="circle"></div>
+                  </div>
+                  <div class="circlesdwn">
+                        <div class="circle"></div>
+                        <div class="circle"></div>
+                        <div class="circle"></div>
+                        <div class="circle"></div>
+                        <div class="circle"></div>
+                  </div>
+                </div>
+            </div>
+
+            <div class="content" id="normal-page" style="display: none;">
+                <section class="container post">
+                    <article>
+                        <header>
+                            <nav class="navigation">
+                                <section class="container" align="center">
+                                    <a id="site-title" class="navigation-title" href="/" target="_blank" style="font-size: 32px;">
+                                        orzzz.net
+                                    </a>
+                                </section>
+                            </nav>
+
+<div class="post-title heti">
+    <h1 class="title">NNLM 解读与复现</h1>
+</div>
+
+<div class="post-meta">
+    <div class="date">
+        <span class="posted-on">
+            <i class="fas fa-calendar"></i>
+            <time>2024-12-10</time>
+        </span>
+        <span class="reading-time">
+            <i class="fas fa-clock"></i>
+            <time>13:44</time>
+        </span>
+    </div>
+
+    <p></p>
+
+    <div class="article">
+        <div class="article-content heti" data-aos="fade-up" data-aos-duration="1500" data-aos-anchor-placement="top-bottom">
+            <h2>一、任务</h2>
+            <p>原论文 <a href="https://jmlr.org/papers/volume3/bengio03a/bengio03a.pdf" target="_blank">A Neural Probabilistic Language Model (2003)</a> 链接。我们的目标是根据前 n - 1 个单词，预测接下来第 n 个单词。</p>
+            <p>以原论文 1.1 章节的例子说明，已知以下两句话，每句话都包含 7 个单词。</p>
+            <ul>
+                <li>the cat is walking in the bedroom</li>
+                <li>a dog was running in a room</li>
+            </ul>
+            <p>我们需要通过一个模型，训练上面的两句话，然后用模型预测这三个句子，其中每个句子包含 6 (7 - 1) 个单词。</p>
+            <ul>
+                <li>the cat is running in a ____</li>
+                <li>a dog is walking in a ____</li>
+                <li>the dog was walking in the ____</li>
+            </ul>
+            <p>当然，模型不能瞎预测，我们做些约定，来主观定义预测的好坏。</p>
+            <dt>理想的预测 ✅</dt>
+            <dd>the cat is running in a <u>room</u></dd>
+            <dd>the cat is running in a <u>bedroom</u></dd>
+            <dd>a dog is walking in a <u>room</u></dd>
+            <dd>a dog is walking in a <u>bedroom</u></dd>
+            <dd>the dog was walking in the <u>room</u></dd>
+            <dd>the dog was walking in the <u>bedroom</u></dd>
+            <dt>垃圾的预测 ❌</dt>
+            <dd>the cat is running in a <u>walking</u>【预测结果词性错误，应该是名词】</dd>
+            <dd>a dog is walking in a <u>cat</u>【预测结果语义错误，什么叫狗在猫上散步？】</dd>
+            <dd>the dog was walking in the <u>playground</u>【预测结果未定义，是未知词汇】</dd>
+            <dd>the dog was walking in the <u>操场</u>【预测结果未定义，是未知词汇】</dd>
+
+            <h2>二、算法解读</h2>
+            <img id="ArchitecturalDesign" alt="Oops?" class="lazyload" width="75%" loading="lazy">
+            <figcaption>
+                <p>NNLM 神经网络架构注解</p>
+            </figcaption>
+            <p>架构一共 3 层，非常经典，粉色框分别是特征层、隐藏层、输出层。一层层看，在特征层时，作者提出一个重要概念“being shared across all the words”。</p>
+            <table style="border-width:3px; border-style:solid;">
+                <tr>
+                    <td>The function $f$ is a composition of these two mapping ($C$ and $g$), with $C$ <strong>being shared across all the words in the context</strong>. With each of these two parts are associated some parameters. The parameters of the mapping $C$ are simply the feature vector themselves, represented by a $|V|\times m$ matrix $C$ whose row $i$ is the feature vector $C(i)$ for word $i$.</td>
+                </tr>
+            </table>
+            <p>概括这段话，他想表达 $C$ 是一个被所有单词共享的矩阵。以 2024 年的视角看这篇我才刚出生的论文，后人将其提炼成“词嵌入矩阵”。</p>
+            <p>生活中的一个常见的例子是，小明，小红，小王等样本，具有身高、体重、血压等属性。类比单词，也有词性、词义等属性。我们先定义一个词汇索引表，限定模型只能使用表格中的单词，不会出现未定义的未知词汇（像前文的 playground、操场）。词汇索引表是一个字典，键值对具有唯一性。</p>
+            <table>
+                <thead>
+                    <tr>
+                        <th>单词</th>
+                        <th>the</th>
+                        <th>a</th>
+                        <th>cat</th>
+                        <th>bedroom</th>
+                        <th>dog</th>
+                        <th>room</th>
+                        <th>is</th>
+                        <th>running</th>
+                        <th>walking</th>
+                        <th>was</th>
+                        <th>in</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td>索引</td>
+                        <td>0</td>
+                        <td>1</td>
+                        <td>2</td>
+                        <td>3</td>
+                        <td>4</td>
+                        <td>5</td>
+                        <td>6</td>
+                        <td>7</td>
+                        <td>8</td>
+                        <td>9</td>
+                        <td>10</td>
+                    </tr>
+                </tbody>
+            </table>
+            <p>记词汇索引表元素个数为 $|V|$，此处有 11 个。假设一个单词具有词性和词义两个属性，则记 $m=2$。那么词嵌入矩阵 $C$ 可以随机初始化：</p>
+            <div style="text-align: center;">
+                $C=\left[\begin{matrix}
+                 & m_1 & m_2 \\
+                {\rm idx}_0 & -0.123 & 0.31415926 \\
+                {\rm idx}_1 & 0.28376 & 0.2718 \\
+                {\rm idx}_2 & 0.9813 & 0.14711 \\
+                {\rm idx}_3 & 0.0814 & -0.456912 \\
+                {\rm idx}_4 & -0.415 & 0.783 \\
+                \vdots & \vdots & \vdots \\
+                {\rm idx}_{10} & 0.9876 & 0.7326 \\
+                \end{matrix}\right]_{11\times2}$
+            </div>
+            <p>譬如，idx = 2 代表 cat 这个单词，它的属性是 [0.9813, 0.14711] 向量。</p>
+            <p>作者首先说，将输入的 n - 1 个单词索引转化为词向量，然后进行拼接，形成一个大的单词特征层激活向量（此处的激活向量从数学角度而言，也是一个矩阵）。其中，$w_{t-1}$ 表示倒数第 1 个 word，$C(w_{t-1})$ 表示矩阵中倒数第 1 个单词的属性向量。</p>
+            <div style="text-align: center;">
+                $x=[C(w_{t-1}),\ C(w_{t-2}),\ \ldots,\ C(w_{t-n+1})]$
+            </div>
+            <p>我们按照作者意思，对例子进行操作。</p>
+            <ul>
+                <li>the cat is walking in the bedroom -> [0, 2, 6, 8, 10, 0, 3]</li>
+                <li>a dog was running in a room -> [1, 4, 9, 7, 10, 1, 5]</li>
+            </ul>
+            <p>由于第 n 个是需要预测的，即 bedroom 和 room 的词汇索引删除，再把两个向量拼接起来，得到 $x$ 矩阵：</p>
+            <div style="text-align: center;">
+                $x=\left[\begin{matrix}
+                0 & 2 & 6 & 8 & 10 & 0 \\
+                1 & 4 & 9 & 7 & 10 & 1 \\
+                \end{matrix}\right]_{2\times6}$
+            </div>
+            <p>我们顺便把删除的 bedroom 和 room 索引组合成 target 目标向量：</p>
+            <div style="text-align: center;">
+                ${\rm target}=[3,\ 5]_{1\times2}$
+            </div>
+            <p>然后对单词索引 $x$ 矩阵进行属性的词“嵌入”：</p>
+            <div style="text-align: center;">
+                $\left[\begin{matrix}
+                [-0.123,\ 0.31415926] & [0.9813,\ 0.14711] & \cdots & [-0.123,\ 0.31415926] \\
+                [0.28376,\ 0.2718] & [-0.415,\ 0.783] & \cdots & [0.28376,\ 0.2718] \\
+                \end{matrix}\right]_{2\times6}$
+            </div>
+            <p>这样的写法不是很像数学中矩阵分块的表示，所以干脆简化一下。</p>
+            <div style="text-align: center;">
+                $x=\left[\begin{matrix}
+                -0.123 & 0.31415926 & 0.9813 & 0.14711 & \cdots & -0.123 & 0.31415926 \\
+                0.28376 & 0.2718 & -0.415 & 0.783 & \cdots & 0.28376 & 0.2718 \\
+                \end{matrix}\right]_{2\times12}$
+            </div>
+            <p>这里得到的 $x$ 矩阵，就是作者所说的“word features layer activation vector”单词特征层激活向量。</p>
+            <p>继续一层层看，到隐藏层和输出层时，作者做了一个双曲正切非线性变换，然后将变换结果进行线性变换。作者用绿色虚线表示 $x$ 矩阵数据需要追加到输出层，即 $Wx$ 数据，作者发文的 12 年后，大名鼎鼎的残差神经网络横空出世，两者的核心思想竟如出一辙？</p>
+            <div style="text-align: center;">
+                $y=b+Wx+U\tanh(d+Hx)$
+            </div>
+            <p>接着作者解释线性变换的这些系数矩阵相应的参数。</p>
+            <img id="theta" alt="Oops?" class="lazyload" width="100%" loading="lazy">
+            <figcaption>
+                <p>所有参数的解释</p>
+            </figcaption>
+            <ul>
+                <li>h：隐藏层神经元的个数</li>
+                <li>m：单词拥有属性的个数，在上面我举的例子中，m = 2</li>
+                <li>W：特征输入层到输出层的权重，$|V|\times[(n-1)m]$ 的矩阵</li>
+                <li>b：输出层偏置，$|V|$ 个元素的向量</li>
+                <li>d：隐藏层偏置，向量元素个数与隐藏层神经元个数相同</li>
+                <li>U：隐藏层到输出层权重，$|V|\times h$ 的矩阵</li>
+                <li>H：隐藏层权重，$h\times(n-1)$ 的矩阵</li>
+                <li>C：词嵌入矩阵，$|V|\times m$ 的矩阵，上述例子中，即 11 x 2 的矩阵</li>
+            </ul>
+            <p>作者说这所有的参数构成 $\theta$ 参数空间，经过学习率 $\epsilon$ 下的迭代，找到偏导函数最优解。当然，现在是 2024 年，PyTorch 早就写好优化器了 ：)</p>
+
+            <h2>三、PyTorch 简单复现 NNLM 过程</h2>
+<pre id="code"><code class="language-python">import torch
+
+class NNLM(torch.nn.Module):
+    def __init__(self, V: int, m: int, h: int, n: int, *args, **kwargs) -> None:
+        """
+        V: 词汇字典所含元素个数.
+        m: 用向量表达单词, 向量的维度.
+        h: 隐藏层神经元个数.
+        n: 已知前 n-1 个单词, 推理接下来第 n 个单词, 论文中 n 的最小索引从 1 开始.
+        """
+        super().__init__(*args, **kwargs)
+        self.b = torch.nn.Parameter(torch.randn(V))   # 偏置 b 是模型输出层的自由参数, 标准正态.
+        self.d = torch.nn.Parameter(torch.randn(h))   # 隐藏层偏置 d 有 h 个元素, 标准正态.
+        self.W = torch.nn.Parameter(torch.rand(V, (n-1)*m))  # 单词特征层到输出层权重, 均匀分布.
+        self.U = torch.nn.Parameter(torch.rand(V, h))    # 隐藏层到输出层权重, 均匀分布.
+        self.H = torch.nn.Parameter(torch.rand(h, (n-1)*m))  # 隐藏层权重, 均匀分布.
+        self.C = torch.nn.Embedding(num_embeddings=V, embedding_dim=m)   # 词嵌入矩阵.
+        # θ = (b, d, W, U, H, C)
+        self.__dict__.update(**locals())
+
+    def forward(self, x: torch.LongTensor) -> torch.Tensor:
+        # x = (C(w_{t-1}), C(w_{t-2}), ..., C(w_{t-n+1}))
+        x = self.C(x)
+        x = x.view(-1, (self.n-1)*self.m)
+        # y = b + Wx + Utanh(d + Hx)
+        y = self.b + torch.matmul(x, self.W.T) + torch.matmul(torch.tanh(self.d + torch.matmul(x, self.H.T)), self.U.T)
+        return y
+
+if __name__ == '__main__':
+    vocabulary_index = {'the': 0, 'a': 1, 'cat': 2, 'bedroom': 3, 'dog': 4, 'room': 5, 'is': 6, 'running': 7, 'walking': 8, 'was': 9, 'in': 10}
+    index_vocabulary = {0: 'the', 1: 'a', 2: 'cat', 3: 'bedroom', 4: 'dog', 5: 'room', 6: 'is', 7: 'running', 8: 'walking', 9: 'was', 10: 'in'}
+
+    # ['the cat is walking in the bedroom', 'a dog was running in a room']
+    sentences_x = [
+        ['the', 'cat', 'is', 'walking', 'in', 'the'],
+        ['a', 'dog', 'was', 'running', 'in', 'a']
+    ]
+    sentences_target = ['bedroom', 'room']
+
+    model = NNLM(V=len(vocabulary_index), m=2, h=12, n=7)
+    criterion = torch.nn.CrossEntropyLoss()
+    optimizer = torch.optim.Adam(model.parameters(), lr=1e-3)
+
+    x = torch.LongTensor([
+        [0, 2, 6, 8, 10, 0],
+        [1, 4, 9, 7, 10, 1]
+    ])
+    target = torch.LongTensor([3, 5])
+
+    # 举论文 "A Neural Probabilistic Language Model (2003)" 的 1.1 章节例子.
+    unknown = [
+        ['the', 'cat', 'is', 'running', 'in', 'a'],
+        ['a', 'dog', 'is', 'walking', 'in', 'a'],
+        ['the', 'dog', 'was', 'walking', 'in', 'the']
+    ]
+    unknown = torch.LongTensor([[vocabulary_index.get(j) for j in i] for i in unknown])
+
+    # 训练次数低, 未知 unknown 测试集大概率预测错误.
+    epoch = 50
+    for _ in range(0, epoch, 1):
+        optimizer.zero_grad()
+        y = model.forward(x)
+        loss = criterion(y, target)
+        if _ % 25 == 0:
+            print(f'[{_ + 25} / {epoch}]\tloss = {loss:.7f}')
+        loss.backward()
+        optimizer.step()
+    print('-' * 50)
+    y: torch.Tensor = model(unknown)
+    print(y)
+    print('-' * 50)
+    predict = y.max(dim=1, keepdim=True)[1].squeeze()
+    print(predict, ' -> ', list(index_vocabulary.get(int(idx)) for idx in predict))
+
+    input('\n按 Enter 回车键继续...')
+
+    # 训练次数多, 未知 unknown 测试集基本正确.
+    epoch = 5000
+    for _ in range(0, epoch, 1):
+        optimizer.zero_grad()
+        y = model.forward(x)
+        loss = criterion(y, target)
+        if _ % 25 == 0:
+            print(f'[{_ + 25} / {epoch}]\tloss = {loss:.7f}')
+        loss.backward()
+        optimizer.step()
+    print('-' * 50)
+    y: torch.Tensor = model(unknown)
+    print(y)
+    print('-' * 50)
+    predict = y.max(dim=1, keepdim=True)[1].squeeze()
+    print(predict, ' -> ', list(index_vocabulary.get(int(idx)) for idx in predict))
+</code></pre>
+
+            <dt>训练 50 次，预测结果是 ❌</dt>
+            <dd>the cat is running in a <u>is</u></dd>
+            <dd>a dog is walking in a <u>is</u></dd>
+            <dd>the dog was walking in the <u>walking</u></dd>
+            <dt>训练 5000 次，预测结果是 ✅</dt>
+            <dd>the cat is running in a <u>bedroom</u></dd>
+            <dd>a dog is walking in a <u>room</u></dd>
+            <dd>the dog was walking in the <u>bedroom</u></dd>
+
+            <h2>四、在简化版的 Brown Corpus 数据集上训练并预测</h2>
+            <p>作者在 Brown Corpus 数据集上做了模型的 CPU 训练，非常耗时，为此，我简化一下数据集，加之如果你的电脑有 GPU 图像处理器（至少 4GB 显存，否则可能报错 CUDA is out of memory，修改 device = 'cpu'），推理速度会更快。</p>
+            <p><a href="./NNLM.zip" download="NNLM.zip"><u>点击此处下载项目压缩包【400 KB】</u></a></p>
+            <p>简化版的数据集每句话单词数量介于 10～15 个之间，我们假定已知前 7 个单词，预测第 8 个单词，即 n = 8，其中每句话的标定符号全部忽略，并且所有单词采取小写格式，统计得到 19355 个单词。</p>
+            <p>为单词集合到每个元素编号，形成词汇索引字典，再按照训练集是测试集的 99 倍划分数据集。训练 99% 的数据集，然后用模型预测剩下 1% 的测试集，最后得到图示结果，中括号里绿色是原本单词，黄色是预测单词。</p>
+            <img id="result" alt="Oops?" class="lazyload" width="100%" loading="lazy">
+            <figcaption>
+                <p>似乎效果并不是很好，不过预测单词的词性与真值比较相近</p>
+            </figcaption>
+            <p>综上所述，思路很好，不过模型一般般吧，呵呵呵。</p>
+
+        </div>
+    </div>
+</div>
+
+<section class="container" align="center">
+    <a id="site-title" class="navigation-title" href="#">Top</a>
+</section>
+                        </header>
+                    </article>
+                </section>
+            </div>
+        </main>
+    </body>
+
+    <script src="../../../assets/js/heti-addon.min.js"></script>
+
+    <script>
+        const heti = new Heti('.heti h4, h5, h6');
+        heti.autoSpacing(); 
+        AOS.init({disable: 'mobile'});
+    </script>
+
+    <script>
+        let imagesToLoad = [
+            { id: 'ArchitecturalDesign', src: './ArchitecturalDesign.jpeg' },
+            { id: 'theta', src: './theta.png' },
+            { id: 'result', src: './result.png' }
+        ];
+
+        function loadImage(imgId, src, callback) {
+            let img = new Image();
+            img.src = src;
+            img.onload = function() {
+                document.getElementById(imgId).src = src;
+                callback();
+            };
+        }
+
+        function loadImages(imgIdsAndSrcs, callback) {
+            let loadedCount = 0;
+            let totalCount = imgIdsAndSrcs.length;
+            imgIdsAndSrcs.forEach(function(imgInfo) {
+                loadImage(imgInfo.id, imgInfo.src, function() {
+                    loadedCount++;
+                    if (loadedCount === totalCount) {
+                        callback();
+                    }
+                });
+            });
+        }
+
+        let loader = document.getElementById('loader');
+        let normalPage = document.getElementById('normal-page');
+
+        loadImages(imagesToLoad, function() {
+            loader.style.display = 'none';
+            normalPage.style.display = 'block';
+        });
+    </script>
+</html>
