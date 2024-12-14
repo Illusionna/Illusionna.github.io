@@ -268,6 +268,7 @@ class NNLM(torch.nn.Module):
         x = x.view(-1, (self.n-1)*self.m)
         # y = b + Wx + Utanh(d + Hx)
         y = self.b + torch.matmul(x, self.W.T) + torch.matmul(torch.tanh(self.d + torch.matmul(x, self.H.T)), self.U.T)
+        # return torch.nn.functional.softmax(y)
         return y
 
 if __name__ == '__main__':
