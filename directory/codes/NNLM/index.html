@@ -184,7 +184,7 @@
                 {\rm idx}_{10} & 0.9876 & 0.7326 \\
                 \end{matrix}\right]_{11\times2}$
             </div>
-            <p>譬如，idx = 2 代表 cat 这个单词，它的属性是 [0.9813, 0.14711] 向量。</p>
+            <p>譬如，idx = 2 代表 cat 这个单词，它的属性是 [0.9813, 0.14711] 向量，即 cat = [0.9813, 0.14711]，同理 idx = 4 是 dog，则 dog = [-0.415, 0.783]。</p>
             <p>作者首先说，将输入的 n - 1 个单词索引转化为词向量，然后进行拼接，形成一个大的单词特征层激活向量（此处的激活向量从数学角度而言，也是一个矩阵）。其中，$w_{t-1}$ 表示倒数第 1 个 word，$C(w_{t-1})$ 表示矩阵中倒数第 1 个单词的属性向量。</p>
             <div style="text-align: center;">
                 $x=[C(w_{t-1}),\ C(w_{t-2}),\ \ldots,\ C(w_{t-n+1})]$
@@ -355,8 +355,15 @@ if __name__ == '__main__':
             <figcaption>
                 <p>似乎效果并不是很好，不过预测单词的词性与真值比较相近</p>
             </figcaption>
-            <p>综上所述，思路很好，不过模型一般般吧，呵呵呵。</p>
+            <p>综上所述，这是一篇思路出色的论文，虽然作者最终的训练效果不是很好。</p>
 
+            <h2>五、一些思考</h2>
+            <img id="thought" alt="Oops?" class="lazyload" width="100%" loading="lazy">
+            <figcaption>
+                <p>用数学矩阵的思想理解词嵌入</p>
+            </figcaption>
+            <p>如果 One-Hot 编码的矩阵非常大，词嵌入矩阵可以起到降维作用，不管时间复杂度还是空间复杂度都会大大降低。</p>
+            <p>词嵌入矩阵看似混乱，但其中蕴含秩序。比如某个属性维度，那么该维度下的所有单词可能具备某种统计学分布。依然沿用前文的例子，小红、小明、小王，身高、体重等等，就单从身高维度来说，样本服从人群中的正态分布。因此，训练好的词嵌入矩阵看似一堆随机数，实则反应单词的某种秩序（规律），这种秩序在不同下游任务中，应该是统一的，即一个良好的词嵌入矩阵可以用在不同 NLP 任务中。</p>
         </div>
     </div>
 </div>
@@ -383,7 +390,8 @@ if __name__ == '__main__':
         let imagesToLoad = [
             { id: 'ArchitecturalDesign', src: './ArchitecturalDesign.jpeg' },
             { id: 'theta', src: './theta.png' },
-            { id: 'result', src: './result.png' }
+            { id: 'result', src: './result.png' },
+            { id: 'thought', src: './thought.jpeg'}
         ];
 
         function loadImage(imgId, src, callback) {
