@@ -104,6 +104,10 @@
             <figcaption>
                 <p>I love USTC</p>
             </figcaption>
+            <p><img width="50%" id="certificate" alt="Oops?" class="lazyload" loading="lazy"/></p>
+            <figcaption>
+                <p>优营证书</p>
+            </figcaption>
             <h2>题外话</h2>
             <p>数据标注员的实习别做，没含金量且薪酬低得要死，而且就会像我一样去合肥郊区，周围全是工地，吃路边摊，坐马路牙子，像逃荒者一样，但摆摊阿姨和叔叔好好，他俩宿州人，吃完问我饱不饱，不饱免费加。纯纯白送公司 HR 的业绩 KPI 人头。</p>
             <p>本科生找北京的 AI 算法与开发的实习好难哇，面试官人很好，但被一顿拷打一小时，比保研还狠，希望最后能录用吧。没录用就回家放暑假，赶在开学前，我要玩！</p>
@@ -140,11 +144,13 @@
         let imgB = document.getElementById('love');
         let imgC = document.getElementById('recruit');
         let imgD = document.getElementById('hotel');
+        let imgE = document.getElementById('certificate');
 
         let img1Loaded = false;
         let img2Loaded = false;
         let img3Loaded = false;
         let img4Loaded = false;
+        let img5Loaded = false;
 
         let img1 = new Image();
         img1.src = './ustc.jpg';
@@ -178,8 +184,16 @@
             checkLoadStatus();
         };
 
+        let img5 = new Image();
+        img5.src = './USTC-certificate.png';
+        img5.onload = function() {
+            imgE.src = './USTC-certificate.png';
+            img5Loaded = true;
+            checkLoadStatus();
+        };
+
         function checkLoadStatus() {
-            if (img1Loaded && img2Loaded && img3Loaded && img4Loaded) {
+            if (img1Loaded && img2Loaded && img3Loaded && img4Loaded && img5Loaded) {
                 loader.style.display = 'none';
                 normalPage.style.display = 'block';
             }
