@@ -1,0 +1,521 @@
+
+<!DOCTYPE html>
+<html lang="zh-cn">
+    <head>
+        <meta charset="utf-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+        <title>平方根倒数快速幂</title>
+
+        <link rel="preload" href="https://cdnjs.cloudflare.com/ajax/libs/lxgw-wenkai-webfont/1.7.0/lxgwwenkai-regular.min.css" as="style" onload="this.onload=null;this.rel='stylesheet'">
+        <link rel="stylesheet" href="../../../assets/css/style.css"/>
+        <link rel="stylesheet" href="../../../assets/css/main.css" />
+        <link href="../../../assets/css/aos.css" rel="stylesheet">
+        <link rel="stylesheet" href="../../../assets/css/customBMPI.css" />
+        <noscript><link rel="stylesheet" href="../../../assets/css/lxgwwenkai-regular.min.css"></noscript>
+        <noscript><link rel="stylesheet" href="../../../assets/css/tagcloud.css"></noscript>
+        <script src="../../../assets/js/lazysizes.min.js" async></script>
+        <script src="../../../assets/js/aos.js"></script>
+        <script>
+            MathJax = {
+                tex: {
+                    inlineMath: [['$', '$'], ['\\(', '\\)']]
+                }
+            };
+        </script>
+        <script id="MathJax-script" async src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-chtml.js"></script>
+
+        <style>
+            pre {
+                background-color: #f9f9f9;
+                border: 1px solid #088ff0;
+                padding: 10px;
+                font-size: 14px;
+                white-space: pre;
+                overflow-x: auto;
+            }
+            code {
+                background-color: #f9f9f9;
+                padding: 2px 4px;
+                font-size: 18px;
+                border-radius: 3px;
+            }
+        </style>
+
+        <link href="../../../assets/css/prism.css" rel="stylesheet" />
+        <script src="../../../assets/js/prism.js"></script>
+    </head>
+
+    <body class="colorscheme-auto">
+        <main class="wrapper">
+            <div id="loader" class="loader">
+                <div class="text" style="font-size: 48px; font-family:courier;">Loading...</div>
+                <div class="horizontal">
+                  <div class="circlesup">
+                        <div class="circle"></div>
+                        <div class="circle"></div>
+                        <div class="circle"></div>
+                        <div class="circle"></div>
+                        <div class="circle"></div>
+                  </div>
+                  <div class="circlesdwn">
+                        <div class="circle"></div>
+                        <div class="circle"></div>
+                        <div class="circle"></div>
+                        <div class="circle"></div>
+                        <div class="circle"></div>
+                  </div>
+                </div>
+                <div class="vertical">
+                  <div class="circlesup">
+                        <div class="circle"></div>
+                        <div class="circle"></div>
+                        <div class="circle"></div>
+                        <div class="circle"></div>
+                        <div class="circle"></div>
+                  </div>
+                  <div class="circlesdwn">
+                        <div class="circle"></div>
+                        <div class="circle"></div>
+                        <div class="circle"></div>
+                        <div class="circle"></div>
+                        <div class="circle"></div>
+                  </div>
+                </div>
+            </div>
+
+            <div class="content" id="normal-page" style="display: none;">
+                <section class="container post">
+                    <article>
+                        <header>
+                            <nav class="navigation">
+                                <section class="container" align="center">
+                                    <a id="site-title" class="navigation-title" href="../../../index.html" target="_blank" style="font-size: 32px;">
+                                        orzzz.net
+                                    </a>
+                                </section>
+                            </nav>
+
+<div class="post-title heti">
+    <h1 class="title">平方根倒数算法对比</h1>
+</div>
+
+<div class="post-meta">
+    <div class="date">
+        <span class="posted-on">
+            <i class="fas fa-calendar"></i>
+            <time>2024-05-30</time>
+        </span>
+        <span class="reading-time">
+            <i class="fas fa-clock"></i>
+            <time>08:34</time>
+        </span>
+    </div>
+
+    <p></p>
+
+    <div class="article">
+        <div class="article-content heti" data-aos="fade-up" data-aos-duration="1500" data-aos-anchor-placement="top-bottom">
+            <p>这是游戏<a target="_blank" href="https://github.com/id-Software/Quake-III-Arena/blob/master/code/game/q_math.c#L552-L564">雷神之锤</a>中的一段代码，出自于 John Carmack 之手，在那个硬件受限的年代，这段代码彻底地改变了整个游戏界。</p>
+            <p><img id="Qrsqrt" width="100%" alt="Oops?" class="lazyload" loading="lazy"/></p>
+            <p>初见卡马克快速平方根倒数代码，我完全没看懂它在做什么，只听说它计算速度巨快，后来系统地学习了这个算法，我想对比一下它究竟多快？首先介绍卡马克平方根倒数算法，再与 math.h 数学库、CPU 指令集详尽对比。</p>
+
+            <h2>一、目标</h2>
+            <p>平方根倒数是为了计算如下公式：</p>
+            <div style="margin: 0 auto; text-align: center;">
+                $f(x)=\dfrac{1}{\sqrt{x}}$
+            </div>
+            <p>雷神之锤游戏的渲染会经常遇到曲面物体，对于计算机而言，画直线轻而易举，但曲线就会涉及大量的运算，光照射到曲面上，会反射，而要获得到反射光的效果，就需要得知曲面上入射点的单位法向量【<a href="./theory.pdf" target="_blank">点击查看 DezemingFamily 介绍的原理</a>】，这个过程速度越快，游戏的帧率就会越高。</p>
+            <p><img id="Quake" width="100%" alt="Oops?" class="lazyload" loading="lazy"/></p>
+            <p>尤其当构成曲面（曲线）但平面（直线）过多时，大量光线照射到墙体，CPU 每次计算单位法向量都慢一拍，累积下来，游戏帧率就会大幅度下降。虽然现状有 NVIDIA 显卡并行计算，但当时只能靠 CPU 算力。同样的道理，平方根倒数算法也可以运用在余弦相似度计算：</p>
+            <div style="margin: 0 auto; text-align: center;">
+                $\cos(x,\ y)=\dfrac{\displaystyle\sum_{i=1}^{n}x_i\cdot y_i}{\sqrt{\displaystyle\sum_{i=1}^n}x_i^2\cdot \sqrt{\displaystyle\sum_{i=1}^n}y_i^2}=\dfrac{\displaystyle\sum_{i=1}^{n}x_i\cdot y_i}{\sqrt{\displaystyle\sum_{i=1}^nx_i^2\cdot \displaystyle\sum_{i=1}^ny_i^2} }$
+            </div>
+
+            <h2>二、卡马克平方根倒数算法</h2>
+            <p>简单来说，该算法利用了 IEEE 754 浮点型数存储形式和牛顿迭代定理，实现线性时间复杂度计算平方根倒数，并且有着不错的精度。</p>
+            <p>32 位浮点数在计算机中的存储方式如下：</p>
+            <div style="display: grid; place-items: center;">
+                <object type="image/svg+xml" data="./IEEE754.svg" width="100%"></object>
+            </div>
+            <p>最高位第 31 位是 sign 符号位，用 0 代表正数，用 1 代表负数；中间第 23 ~ 30 位是 exponent 指数位；后面 23 个位是 mantissa 尾数位。</p>
+            <p>任意一个在作用域内的浮点型数 $a$ 都可以用二进制科学记数法表示：</p>
+            <div style="margin: 0 auto; text-align: center;">
+                $a=(-1)^S\cdot(1+M)\cdot2^{E-127}=(-1)^S\cdot(1+\dfrac{m}{2^{23}})\cdot2^{E-127}$
+            </div>
+            <p>譬如：0 01111100 11000000000000000000000 这样的浮点型存储，对应的浮点数为：</p>
+            <div style="margin: 0 auto; text-align: center;">
+                $(-1)^{0}\cdot(1+1\times2^{-1}+1\times2^{-2})\cdot2^{124-127}=0.21875$
+            </div>
+            <p>其中，指数 8 位 01111100 对应十进制 124，尾数 23 位用小 $m$ 表示为：</p>
+            <div style="margin: 0 auto; text-align: center;">
+                $1+\dfrac{1\times2^{22}}{2^{23}}+\dfrac{1\times2^{21}}{2^{23}}+\dfrac{0\times2^{20}}{2^{23}}+\cdots+\dfrac{0\times2^{0}}{2^{23}}$
+            </div>
+            <p>同理，可以反推，譬如浮点数 -3.1415 转化成 IEEE 754 存储。符号位是 1，代表负数，整数部分是 3，尾数部分是 0.1415。整数反复除以二，小数反复乘以二，都转化成二进制：</p>
+            <div style="margin: 0 auto; text-align: center;">
+                $3\to11\qquad0.1415\to0.00100100001\cdots$
+            </div>
+            <p>由于 0.1415 始终乘不尽，所以我用省略号表示了，因此 3.1415 的二进制：</p>
+            <div style="margin: 0 auto; text-align: center;">
+                $3.1415\to11.00100100001\cdots$
+            </div>
+            <p>再转为二进制科学记数法：</p>
+            <div style="margin: 0 auto; text-align: center;">
+                $11.00100100001\cdots=1.100100100001\cdots\times2^1$
+            </div>
+            <p>又因为 E - 127 要等于 1，所以 E 等于 128，对应二进制：</p>
+            <div style="margin: 0 auto; text-align: center;">
+                $128\to10000000$
+            </div>
+            <p>综上，浮点数 -3.1415 对应 IEEE 754 计算机存储为（其中省略号一直凑齐 23 个）：</p>
+            <div style="margin: 0 auto; text-align: center;">
+                $-3.1415\to1\ 10000000\ 100100100001\cdots$
+            </div>
+            <p>不妨设 $\vartheta$ 是浮点数 $a$ 的平方根倒数解，即：</p>
+            <div style="margin: 0 auto; text-align: center;">
+                $\vartheta=\dfrac{1}{\sqrt{a}}$
+            </div>
+            <p>易知解 $\vartheta$ 也是浮点型，因此也可以用 IEEE 754 表示法：</p>
+            <div style="margin: 0 auto; text-align: center;">
+                $\log_2(\vartheta)=\log_2\left(\dfrac{1}{\sqrt{a}}\right)$
+            </div>
+            <div style="margin: 0 auto; text-align: center;">
+                $\log_2(\vartheta)=-\dfrac{1}{2}\log_2(a)$
+            </div>
+            <div style="margin: 0 auto; text-align: center;">
+                $\log_2\left[\left(1+\dfrac{m_{\vartheta}}{2^{23}}\right)\cdot2^{E_{\vartheta}-127}\right]=-\dfrac{1}{2}\log_2\left[\left(1+\dfrac{m_a}{2^{23}}\right)\cdot2^{E_a-127}\right]$
+            </div>
+            <div style="margin: 0 auto; text-align: center;">
+                $E_{\vartheta}-127+\log_2\left(1+\dfrac{m_{\vartheta}}{2^{23}}\right)=-\dfrac{1}{2}\left[E_a-127+\log_2\left(1+\dfrac{m_a}{2^{23}}\right)\right]$
+            </div>
+            <p>由于 $M\in[0,1)$ 之间，因此有如下性质：</p>
+            <div style="margin: 0 auto; text-align: center;">
+                $\log_2(x+1)\approx x+\varepsilon$
+            </div>
+            <p>根据切比雪夫最佳直线逼近，可得到 $\varepsilon$ 的最优值：</p>
+            <div style="margin: 0 auto; text-align: center;">
+                $ \varepsilon=\max\limits_{0\leqslant x\leqslant 1}\dfrac{\log_2(1+x)-x}{2}\approx 0.043035666$
+            </div>
+            <p>因此，可进一步得到：</p>
+            <div style="margin: 0 auto; text-align: center;">
+                $E_{\vartheta}-127+\dfrac{m_{\vartheta}}{2^{23}}+\varepsilon=-\dfrac{1}{2}\left(E_a-127+\dfrac{m_a}{2^{23}}+\varepsilon\right)$
+            </div>
+            <p>则：</p>
+            <div style="margin: 0 auto; text-align: center;">
+                $m_{\vartheta}+2^{23}E_{\vartheta}=3\cdot2^{22}\cdot(127-\varepsilon)-\dfrac{1}{2}(m_a+2^{23}E_a)$
+            </div>
+            <div style="margin: 0 auto; text-align: center;">
+                $m_{\vartheta}+2^{23}E_{\vartheta}={\tt0x5f37bcb6}-\dfrac{1}{2}(m_a+2^{23}E_a)$
+            </div>
+            <p>卡马克在这里，取的幻数是 0x5f3759df，与切比雪夫最优逼近的幻数 0x5f37bcb6 相差十进制 25303 个单位。</p>
+            <p>其中，$m_{\vartheta}+2^{23}E_{\vartheta}$ 正是浮点型数的 IEEE 754 二进制表示，譬如先前示例：</p>
+            <p>0.21875 对应着 0 01111100 11000000000000000000000，则：</p>
+            <div style="margin: 0 auto; text-align: center;">
+                $m=1\times2^{22}+1\times2^{21}+0\times2^{20}+\cdots+0\times2^0$
+            </div>
+            <div style="margin: 0 auto; text-align: center;">
+                $2^{23}E=2^{23}\cdot(0\times2^7+1\times2^6+1\times2^5+\cdots+0\times2^0)$
+            </div>
+            <div style="margin: 0 auto; text-align: center;">
+                $m+2^{23}E=0\times2^{30}+1\times2^{29}+1\times2^{28}+\cdots+1\times2^{22}+1\times2^{21}+\cdots+0\times2^0$
+            </div>
+            <p>从 C 语言编程角度而言，$\dfrac{1}{2}(m_a+2^{23}E_a)$ 等价于二进制位运算右移一个单位。</p>
+<pre><code>i = 0x5f3759df - (i >> 1);   // what the fuck?</code></pre>
+            <p>至于浮点型和二进制互相转化，对应源码中：</p>
+<pre><code>i = * ( long * ) &y;     // evil floating point bit level hacking
+y = * ( float * ) &i;</code></pre>
+            <p>只不过需要注意的是，当年 long 型代表 32 位，而如今 long 普遍是 64 位，所以今天我们需要修改成：i = *(int *)&y 即可。</p>
+            <p>又因为平方根倒数的精度不够，所以卡马克在后面补充了牛顿迭代，进一步逼近更精确的数值解。</p>
+            <div style="margin: 0 auto; text-align: center;">
+                $x_{n+1}=x_n-\dfrac{f(x_n)}{f^{'}(x_n)}$
+            </div>
+            <div style="margin: 0 auto; text-align: center;">
+                $\dfrac{1}{x^2}=a\Longrightarrow g(x)=\dfrac{1}{x^2}-a=0$
+            </div>
+            <div style="margin: 0 auto; text-align: center;">
+                $x_{n+1}=1.5x_n-0.5ax_n^3$
+            </div>
+<pre><code>y = y * ( 1.5F - ( 0.5F * number * y * y ) );     // 1st iteration</code></pre>
+
+            <h2>二、性能对比</h2>
+            <p>在 Windows 10/11 AMD Ryzen 5 5600H、Linux Ubuntu Intel(R) Xeon(R) Silver 4310 和 macOS Sonoma M2 三台机器测试自然指数 e 的平方根倒数，计算十亿次，其中 GCC 使用 O3 优化。</p>
+            <div style="display: grid; place-items: center;">
+                <object type="image/svg+xml" data="./result.svg" width="100%"></object>
+            </div>
+            <p>结果表明：在 Windows 操作系统下，无论是否开启 GCC 编译优化，卡马克平方根倒数快速幂算法优于数学库的标准函数，与牛顿迭代一次的 CPU 指令集策略速度几乎持平（但牛顿迭代一次的 CPU 指令集精度更高），卡马克策略虽然慢于直接使用 CPU 指令集策略，但精度比直接使用 CPU 指令集更高。在 Linux 操作系统中，无论是否开启 GCC 编译优化，卡马克策略均最慢，开启 O3 优化后，牛顿迭代一次的 CPU 指令集速度和精度都是最好的。在 macOS 系统下，不开启 GCC 编译优化的卡马克策略慢于数学标准库，但快于 CPU 指令集及其一次牛顿迭代这两种策略，不过从精度上而言，卡马克策略优于数学标准库，在开启 O3 优化后，四种策略速度得到大幅度提升，并且均不相上下地持平。</p>
+<pre><code class="language-c">/*
+Windows or macOS:
+    >>> gcc rsqrt.c
+    >>> gcc -O3 rsqrt.c
+Linux:
+    >>> gcc rsqrt.c -lm
+    >>> gcc -O3 rsqrt.c -lm
+*/
+
+# include &lt;math.h&gt;
+# include &lt;time.h&gt;
+# include &lt;stdio.h&gt;
+
+# ifdef __x86_64__
+    # include &lt;xmmintrin.h&gt;
+# elif __arm64__ || __aarch64__
+    # include &lt;arm_neon.h&gt;
+# endif
+
+void Timer(const char *name, float (*func)(float), float x, int epoch) {
+    clock_t start = clock();
+    volatile float y;   // Prevents the gcc compiler from optimizing the result.
+    for (int i = 0; i < epoch; i++) y = func(x);
+    clock_t end = clock();
+    double elapse = (double)(end - start) / CLOCKS_PER_SEC;
+    printf("time = %.5lfs (epoch = %d)  -->  %s(%f) = %f\n", elapse, epoch, name, x, y);
+}
+
+float Q_rsqrt(float x) {
+    float x_half = 0.5F * x;
+    int i = *(int *)&x;     // A 32-bit (4-byte) int must be used instead of long (8-byte).
+    i = 0x5f3759df - (i >> 1);
+    x = *(float *)&i;
+    x = x * (1.5F - x_half * x * x);
+    x = x * (1.5F - x_half * x * x);
+    return x;
+}
+
+float Math_rsqrt(float x) {
+    return 1 / sqrtf(x);
+}
+
+# ifdef __x86_64__
+    float SSE_rsqrt(float x) {
+        __m128 vector_x = _mm_set_ss(x);
+        __m128 vector_y = _mm_rsqrt_ss(vector_x);
+        return _mm_cvtss_f32(vector_y);
+    }
+
+    float SSE_Newton_rsqrt(float x) {
+        __m128 vector_x = _mm_set_ss(x);
+        __m128 vector_y = _mm_rsqrt_ss(vector_x);
+        float y = vector_y[0];
+        y = y * (1.5F - 0.5F * x * y * y);
+        return y;
+    }
+# endif
+
+# if defined(__arm64__) || defined(__aarch64__)
+    float NEON_rsqrt(float x) {
+        float32x4_t vector_x = {x, 1.0F, 1.0F, 1.0F};
+        float32x4_t vector_y = vrsqrteq_f32(vector_x);
+        return vgetq_lane_f32(vector_y, 0);
+    }
+
+    float NEON_Newton_rsqrt(float x) {
+        float32x4_t vector_x = {x, 1.0F, 1.0F, 1.0F};
+        float32x4_t vector_y = vrsqrteq_f32(vector_x);
+        float y = vgetq_lane_f32(vector_y, 0);
+        y = y * (1.5F - 0.5F * x * y * y);
+        return y;
+    }
+# endif
+
+float cos_similarity(int dim, float *vector_a, float *vector_b) {
+    float numerator = 0.0F;
+    float module_a = 0.0F;
+    float module_b = 0.0F;
+    for (int i = 0; i < dim; i++) {
+        numerator = numerator + vector_a[i] * vector_b[i];
+        module_a = module_a + vector_a[i] * vector_a[i];
+        module_b = module_b + vector_b[i] * vector_b[i];
+    }
+    return numerator * Q_rsqrt(module_a * module_b);
+}
+
+int main(int argc, char *argv[], char *env[]) {
+    Timer("Q_rsqrt", Q_rsqrt, 2.71828F, 1e9);
+    Timer("Math_rsqrt", Math_rsqrt, 2.71828F, 1e9);
+
+    # ifdef __x86_64__
+        Timer("SSE_rsqrt", SSE_rsqrt, 2.71828F, 1e9);
+        Timer("SSE_Newton_rsqrt", SSE_Newton_rsqrt, 2.71828F, 1e9);
+    # elif __arm64__ || __aarch64__
+        Timer("NEON_rsqrt", NEON_rsqrt, 2.71828F, 1e9);
+        Timer("NEON_Newton_rsqrt", NEON_Newton_rsqrt, 2.71828F, 1e9);
+    # endif
+
+    float vector_a[4] = {1.2, 2.4, 3.6, 4.8};
+    float vector_b[4] = {4.8, 3.6, 2.4, 1.2};
+    float y = cos_similarity(4, vector_a, vector_b);
+    printf("cos similarity = %f\n", y);
+
+    return 0;
+}</code></pre>
+
+
+
+
+
+<!-- 
+            <p>"what the fuck?" 这是平方根倒数快速幂算法中作者的注释。如果不借助其他外来库的情况下，我们能想到什么好的方法，让计算机快速求解 $\sqrt{2}\approx1.41421356\ $ 的浮点型？夹逼法、连分法、二分法、泰勒展开式？约翰卡马克告诉我们还有极致。</p>
+
+            <h1>1. 夹逼法</h1>
+            <p><img id="img3" width="100%" alt="Oops?" class="lazyload" loading="lazy"/></p>
+<pre><code># Python 3.10.0 +
+
+def PinchSqrt2(epoch: int) -> float:
+    """夹逼求解根号二.
+
+    Args:
+        epoch (int): 迭代次数.
+
+    Returns:
+        float: 根号二近似值.
+    """
+    x1 = 1
+    for _ in range(0, epoch, 1):
+        tmp = x1
+        x2 = 2 / tmp
+        x1 = (tmp + x2) / 2
+    return x1
+
+print(PinchSqrt2(epoch=12))</code></pre>
+
+
+            <h1>2. 连分法</h1>
+            <div style="margin: 0 auto; text-align: center;">
+                $\sqrt{2}=1+\dfrac{1}{2+\dfrac{1}{2+\dfrac{1}{2+\cdots}}}$
+            </div>
+<pre><code># Python 3.10.0 +
+
+def ConsecutiveDivisionSqrt2(epoch: int) -> float:
+    """连分求解根号二.
+
+    Args:
+        epoch (int): 迭代次数.
+
+    Returns:
+        float: 根号二近似值.
+    """
+    ans = 0     # 初始化可任取, 别取 -2 就好.
+    for _ in range(0, epoch, 1):
+        ans = 1 / (2 + ans)
+    return ans + 1
+
+print(ConsecutiveDivisionSqrt2(12))</code></pre>
+
+
+            <h1>3. 二分法</h1>
+            <p><img id="img4" width="100%" alt="Oops?" class="lazyload" loading="lazy"/></p>
+<pre><code># Python 3.10.0 +
+
+def BisectionSqrt2(precision: float) -> float:
+    """二分求解根号二
+
+    Args:
+        precision (float): 最终收敛结束精度.
+
+    Returns:
+        float: 根号二近似值.
+    """
+    left = 1
+    right = 2
+    while (right - left) > precision:
+        middle = (left + right) / 2
+        if (middle ** 2) < 2:
+            left = middle
+        else:
+            right = middle
+    return (left + right) / 2
+
+print(BisectionSqrt2(precision=1e-7))</code></pre>
+
+
+            <h1>4. 泰勒级数</h1>
+            <div style="margin: 0 auto; text-align: center; font-size: 20px;">
+                $(1+x)^n=1+\displaystyle\sum_{k=1}^{\infty}\dfrac{\displaystyle\prod\limits_{t=0}^{k-1}(n-t)}{k!}x^k$
+            </div>
+            <br>
+            <div style="margin: 0 auto; text-align: center; font-size: 18px;">
+                $\Rightarrow2^{0.5}=1+\dfrac{1}{2}-\dfrac{1}{8}+\dfrac{1}{16}-\dfrac{5}{128}+\cdots$
+            </div>
+<pre><code># Python 3.10.0 +
+
+def TaylorSqrt2(order: int) -> float:
+    """泰勒级数求解根号二.
+
+    Args:
+        order (int): 展开阶数.
+
+    Returns:
+        float: 根号二近似值.
+    """
+    ans = 1
+    for _ in range(0, order, 1):
+        ans = 1 / ans + 0.5 * ans
+    return ans
+
+print(TaylorSqrt2(7))</code></pre>
+
+            <h2>a:) 牛顿迭代法</h2>
+
+            <h2>b:) 线性拟合幻数</h2>
+
+            <h2>c:) 计算机浮点型的存储</h2>
+
+            <h2>d:) 位运算</h2> -->
+
+
+        </div>
+    </div>
+</div>
+
+<section class="container" align="center">
+    <a id="site-title" class="navigation-title" href="#">Top</a>
+</section>
+                        </header>
+                    </article>
+                </section>
+            </div>
+        </main>
+    </body>
+
+    <script src="../../../assets/js/heti-addon.min.js"></script>
+
+    <script>
+        const heti = new Heti('.heti h2, h3, h4, h5, h6, .title');
+        heti.autoSpacing(); 
+        AOS.init({disable: 'mobile'});
+    </script>
+
+    <script>
+        let loader = document.getElementById('loader');
+        let normalPage = document.getElementById('normal-page');
+    
+        let imgA = document.getElementById('Qrsqrt');
+        let imgB = document.getElementById('Quake');
+
+        let img1Loaded = false;
+        let img2Loaded = false;
+
+        let img1 = new Image();
+        img1.src = './Qrsqrt.png';
+        img1.onload = function() {
+            imgA.src = './Qrsqrt.png';
+            img1Loaded = true;
+            checkLoadStatus();
+        };
+
+        let img2 = new Image();
+        img2.src = './NormalVector.png';
+        img2.onload = function() {
+            imgB.src = './NormalVector.png';
+            img2Loaded = true;
+            checkLoadStatus();
+        };
+
+        function checkLoadStatus() {
+            if (img1Loaded && img2Loaded) {
+                loader.style.display = 'none';
+                normalPage.style.display = 'block';
+            }
+        }
+    </script>
+</html>
