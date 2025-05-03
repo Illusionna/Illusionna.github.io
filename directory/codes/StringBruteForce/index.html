@@ -1,0 +1,157 @@
+
+<!DOCTYPE html>
+<html lang="zh-cn">
+    <head>
+        <meta charset="utf-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+        <title>字符串暴力匹配</title>
+
+        <link rel="preload" href="https://cdnjs.cloudflare.com/ajax/libs/lxgw-wenkai-webfont/1.7.0/lxgwwenkai-regular.min.css" as="style" onload="this.onload=null;this.rel='stylesheet'">
+        <link rel="stylesheet" href="../../../assets/css/style.css"/>
+        <link rel="stylesheet" href="../../../assets/css/main.css" />
+        <link href="../../../assets/css/aos.css" rel="stylesheet">
+        <link rel="stylesheet" href="../../../assets/css/customBMPI.css" />
+        <noscript><link rel="stylesheet" href="../../../assets/css/lxgwwenkai-regular.min.css"></noscript>
+        <noscript><link rel="stylesheet" href="../../../assets/css/tagcloud.css"></noscript>
+        <script src="../../../assets/js/lazysizes.min.js" async></script>
+        <script src="../../../assets/js/aos.js"></script>
+        <script>
+            MathJax = {
+                tex: {
+                    inlineMath: [['$', '$'], ['\\(', '\\)']]
+                }
+            };
+        </script>
+        <script id="MathJax-script" async src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-chtml.js"></script>
+
+        <style>
+            pre {
+                background-color: #f9f9f9;
+                border: 1px solid #088ff0;
+                padding: 10px;
+                font-size: 14px;
+                white-space: pre;
+                overflow-x: auto;
+            }
+            code {
+                background-color: #f9f9f9;
+                padding: 2px 4px;
+                font-size: 18px;
+                border-radius: 3px;
+            }
+        </style>
+
+        <link href="../../../assets/css/prism.css" rel="stylesheet" />
+        <script src="../../../assets/js/prism.js"></script>
+    </head>
+
+    <body class="colorscheme-auto">
+        <main class="wrapper">
+            <div class="content" id="normal-page">
+                <section class="container post">
+                    <article>
+                        <header>
+                            <nav class="navigation">
+                                <section class="container" align="center">
+                                    <a id="site-title" class="navigation-title" href="../../../index.html" target="_blank" style="font-size: 32px;">
+                                        orzzz.net
+                                    </a>
+                                </section>
+                            </nav>
+
+<div class="post-title heti">
+    <h1 class="title">字符串暴力匹配平均时间复杂度</h1>
+</div>
+
+<div class="post-meta">
+    <div class="date">
+        <span class="posted-on">
+            <i class="fas fa-calendar"></i>
+            <time>2025-05-03</time>
+        </span>
+        <span class="reading-time">
+            <i class="fas fa-clock"></i>
+            <time>14:14</time>
+        </span>
+    </div>
+
+    <p></p>
+
+    <div class="article">
+        <div class="article-content heti" data-aos="fade-up" data-aos-duration="1500" data-aos-anchor-placement="top-bottom">
+            <p>暴力匹配是模式匹配的一种，还有一个有名的叫 KMP 匹配，KMP 匹配的时间复杂度很稳定，保持在 $\mathcal{O}(n+m)$，由于要开辟 next 数组，空间复杂度是 $\Omega(m)$。暴力匹配虽然理解起来最简单，但平均时间复杂度比较复杂。【注：我认为平均比较次数就是平均时间复杂度，当然可以换一个定义，那么结论可能会与本文不同】</p>
+            <p>这是一个经典的示例：</p>
+            <p style="text-align: center;">P = "Odyssey"</p>
+            <p style="text-align: center;">T = "A space <span style="color: red;">Odyssey</span> is not about the <span style="color: red;">Odyssey</span>"</p>
+            <p>一般情况下，约定子串 P 的长度为 m，文本串 T 的长度为 n。我们会发现 P 子串在 T 文本串中遍历了 n - m + 1 轮，而每轮可能需要对比 m 次。</p>
+            <p>现在，我们更进一步约定条件：</p>
+            <ul>
+                <li>文本串 T 不短于子串 P，即 $n\geqslant m$</li>
+                <li>T 和 P 中所有字符出现概率独立同分布，假设服从均匀分布</li>
+                <li>按照数学习惯，索引一律从 1 开始</li>
+            </ul>
+            <p>根据以上约定，当子串 P 与文本串 T 比较到第 i 轮时，若匹配成功，则必有：</p>
+            <div style="margin: 0 auto; text-align: center;">
+                $[P_1,\ P_2,\ \ldots,\ P_{m}]=[T_i,\ T_{i+1},\ \ldots,\ T_{i+m-1}]$
+            </div>
+            <p>那么，对于第 i 轮的第 j 次比较，$P_j$ 与 $T_{i+j-1}$ 相同的概率显然是一个古典概型。不妨记任意字符 c 出现的概率为 $\Pr(c)$，由于均匀独立同分布，所以 $P_j$ 这个字符与 $T_{i+j-1}$ 这个字符相同的概率为：$\Pr(c)\times\Pr(c)\times\mbox{字符集总个数}=\Pr(c)$。</p>
+            <p>其中，$\Pr(c)$ 就等于字符集总个数的倒数，常数。$P_j=T_{i+j-1}$ 意味着前面的 $j-1$ 个字符都是比较成功的，其概率为 $\Pr^{j-1}(c)$，毕竟，前 $j-1$ 个字符中但凡有一个比较失败的，子串 $P$ 都会继续往前移动一个单位，进入新的一轮匹配。</p>
+            <div style="margin: 0 auto; text-align: center;">
+                $P_j=T_{i+j-1}\Longleftrightarrow [P_1,\ P_2,\ \ldots,\ P_j]=[T_{i},\ T_{i+1},\ \ldots,\ T_{i+j-1}]$
+            </div>
+            <p>如果某轮仅有 $j$ 次比较，则意味着前 $j-1$ 次比较都成功了，且当前第 $j$ 次比较失败了。毕竟，要是第 $j$ 次还比较成功了，那么意味这轮必定还有第 $j+1$ 次比较。</p>
+            <p>因此，每轮匹配的比较次数分布律如下：</p>
+            <div style="display: grid; place-items: center;">
+                <object type="image/svg+xml" data="./DistributionLaw.svg" width="100%"></object>
+            </div>
+            <p>则每轮比较次数的数学期望：</p>
+            <div style="margin: 0 auto; text-align: center;">
+                $\begin{align}
+                    E&=\displaystyle\sum_{j=1}^{m-1}j{\Pr}^{j-1}(c)[1-\Pr(c)]+m{\Pr}^{m-1}(c)
+                    \\
+                    &=m{\Pr}^{m-1}(c)+[1-\Pr(c)]\color{red}\displaystyle\sum_{j=1}^{m-1}j{\Pr}^{j-1}(c)
+                \end{align}$
+            </div>
+            <p>记 $S=\color{red}\displaystyle\sum_{j=1}^{m-1}j{\Pr}^{j-1}(c)$，把 S 看作等比数列求和，然后错位相减：</p>
+            <div style="margin: 0 auto; text-align: center;">
+                $S\times\Pr(c)=\displaystyle\sum_{j=1}^{m-1}j{\Pr}^{j}(c)\implies S=\dfrac{\displaystyle\sum_{j=1}^{m-1}j{\Pr}^{j-1}(c)-\displaystyle\sum_{j=1}^{m-1}j{\Pr}^{j}(c)}{1-\Pr(c)}$
+            </div>
+            <p>化简得到：</p>
+            <div style="margin: 0 auto; text-align: center;">
+                $S=\dfrac{m\Pr^m(c)-m\Pr^{m-1}(c)-\Pr^m(c)+1}{\Pr(c)[1-\Pr(c)]^2}$
+            </div>
+            <p>最后将 S 代入数学期望 E 可得：</p>
+            <div style="margin: 0 auto; text-align: center;">
+                $E=\dfrac{1-\Pr^m(c)}{1-\Pr(c)}=\displaystyle\sum_{j=1}^m{\Pr}^{j-1}(c)$
+            </div>
+            <p>每轮比较次数的数学期望是 E，一共有 n - m + 1 轮，因此，整个模式匹配下来的平均比较次数：</p>
+            <div style="margin: 0 auto; text-align: center;">
+                $(n-m+1)\displaystyle\sum_{j=1}^m{\Pr}^{j-1}(c)$
+            </div>
+            <p>我记得《数据结构》课本上说平均时间复杂度是 $\mathcal{O}(nm)$，这是因为真实情况下，字符集中每个字符肯定不是服从独立均匀同分布，好比 26 个英文字母出现的概率都不同。所以这里计算的只是一个理想值，或者说最小值。</p>
+            <div style="margin: 0 auto; text-align: center;">
+                $(n-m+1)\displaystyle\sum_{j=1}^m{\Pr}^{j-1}(c)\leqslant(n-m+1)m\lessapprox nm$
+            </div>
+        </div>
+    </div>
+</div>
+
+<section class="container" align="center">
+    <a id="site-title" class="navigation-title" href="#">Top</a>
+</section>
+                        </header>
+                    </article>
+                </section>
+            </div>
+        </main>
+    </body>
+
+    <script src="../../../assets/js/heti-addon.min.js"></script>
+
+    <script>
+        const heti = new Heti('.heti h2, h3, h4, h5, h6, .title');
+        heti.autoSpacing(); 
+        AOS.init({disable: 'mobile'});
+    </script>
+</html>

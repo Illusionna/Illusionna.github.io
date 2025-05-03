@@ -1,0 +1,133 @@
+<!DOCTYPE html>
+<html lang="zh-cn">
+    <head>
+        <meta charset="utf-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+        <title>离散余弦变换</title>
+
+        <link rel="preload" href="https://cdnjs.cloudflare.com/ajax/libs/lxgw-wenkai-webfont/1.7.0/lxgwwenkai-regular.min.css" as="style" onload="this.onload=null;this.rel='stylesheet'">
+        <link rel="stylesheet" href="../../../../assets/css/style.css"/>
+        <link rel="stylesheet" href="../../../../assets/css/main.css" />
+        <link href="../../../../assets/css/aos.css" rel="stylesheet">
+        <link rel="stylesheet" href="../../../../assets/css/customBMPI.css" />
+        <noscript><link rel="stylesheet" href="../../../../assets/css/lxgwwenkai-regular.min.css"></noscript>
+        <noscript><link rel="stylesheet" href="../../../../assets/css/tagcloud.css"></noscript>
+        <script src="../../../../assets/js/lazysizes.min.js" async></script>
+        <script src="../../../../assets/js/aos.js"></script>
+        <script>
+            MathJax = {
+                tex: {
+                    inlineMath: [['$', '$'], ['\\(', '\\)']]
+                }
+            };
+        </script>
+        <script id="MathJax-script" async src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-chtml.js"></script>
+        <style>
+            td {
+                text-align: center;
+            }
+        </style>
+        <link href="../../../../assets/css/prism.css" rel="stylesheet" />
+    	<script src="../../../../assets/js/prism.js"></script>
+    </head>
+
+    <body class="colorscheme-auto">
+        <main class="wrapper">
+            <div class="content" id="normal-page">
+                <section class="container post">
+                    <article>
+                        <header>
+                            <nav class="navigation">
+                                <section class="container" align="center">
+                                    <a id="site-title" class="navigation-title" href="/" target="_blank" style="font-size: 32px;">
+                                        orzzz.net
+                                    </a>
+                                </section>
+                            </nav>
+
+<div class="post-title heti">
+    <h1 class="title">离散余弦变换</h1>
+</div>
+
+<div class="post-meta">
+    <div class="date">
+        <span class="posted-on">
+            <i class="fas fa-calendar"></i>
+            <time>2025-05-03</time>
+        </span>
+        <span class="reading-time">
+            <i class="fas fa-clock"></i>
+            <time>16:15</time>
+        </span>
+    </div>
+
+    <p></p>
+
+    <div class="article">
+        <div class="article-content heti" data-aos="fade-up" data-aos-duration="1500" data-aos-anchor-placement="top-bottom">
+            <p>离散余弦变换（Discrete Cosine Transform, DCT）起源于切比雪夫插值思想，利用切比雪夫多项式进行余弦变化，本质上是傅里叶变化的形式。</p>
+            <p>一维数组 DCT 离散余弦变换：</p>
+            <div style="margin: 0 auto; text-align: center;">
+                $y_n=\sqrt{\dfrac{2}{N}}\displaystyle\sum_{k=0}^{N-1}x_k\dfrac{1}{\sqrt{1+\delta_{k_0}}}\cos\left[\dfrac{\pi}{2N}(k-1)(2n-1)\right]$
+            </div>
+            <p>一维数组 IDCT 逆离散余弦变换：</p>
+            <div style="margin: 0 auto; text-align: center;">
+                $y_n=\sqrt{\dfrac{2}{N}}\displaystyle\sum_{k=0}^{N-1}x_k\dfrac{1}{\sqrt{1+\delta_{n_0}}}\cos\left[\dfrac{\pi}{2N}(2k-1)(n-1)\right]$
+            </div>
+            <p>其中，数组元素个数为 N，输入数组为 x，输出数组为 y，超参数项 $\dfrac{1}{\sqrt{1+\delta}}$ 也可以忽略删除。</p>
+            <p>二维矩阵 DCT 离散余弦变换：</p>
+            <div style="margin: 0 auto; text-align: center;">
+                $B_{pq}=\alpha_p\alpha_q\displaystyle\sum_{m=0}^{M-1}\sum_{n=0}^{N-1}A_{mn}\cos\dfrac{\pi(2m+1)p}{2M}\cos\dfrac{\pi(2n+1)q}{2N}$
+            </div>
+            <p>二维矩阵 IDCT 逆离散余弦变换：</p>
+            <div style="margin: 0 auto; text-align: center;">
+                $A_{mn}=\displaystyle\sum_{p=0}^{M-1}\sum_{q=0}^{N-1}\alpha_p\alpha_qB_{pq}\cos\dfrac{\pi(2m+1)p}{2M}\cos\dfrac{\pi(2n+1)q}{2N}$
+            </div>
+            <p>其中，输入矩阵为 A，输出矩阵为 B，矩阵 M 行 N 列，超参数项 $\alpha$ 可忽略删除，如果不删除，一般取值如下：</p>
+            <div style="margin: 0 auto; text-align: center;">
+                $\begin{align}
+                    \alpha_p=
+                    \begin{cases}
+                        \dfrac{1}{\sqrt{M}},\quad p=0
+                        \\[2ex]
+                        \sqrt{\dfrac{2}{M}},\quad 1\leqslant p\leqslant M-1
+                    \end{cases}
+                    \quad
+                    \alpha_q=
+                    \begin{cases}
+                        \dfrac{1}{\sqrt{N}},\quad q=0
+                        \\[2ex]
+                        \sqrt{\dfrac{2}{N}},\quad 1\leqslant q\leqslant N-1
+                    \end{cases}
+                \end{align}$
+            </div>
+            <p>逆变化得到的矩阵 $A$ 可以理解为以下因子的和式：</p>
+            <div style="margin: 0 auto; text-align: center;">
+                $\alpha_p\alpha_q\cos\dfrac{\pi(2m+1)p}{2M}\cos\dfrac{\pi(2n+1)q}{2N}$
+            </div>
+            <p>该因子也称为二维 DCT 的基，元素 $B_{pq}$ 称为 $A$ 矩阵的 DCT 系数，所以 $B_{pq}$ 也是因子基的权重。</p>
+            <p>离散余弦变换可以应用在图像领域，它可以把图像右下方的像素信息特征提取部分到图像左上方，使得左上方集中图像的低频率信息（样貌），右下方集中图像高频率信息（细节），高低频率信息分离开来后有利于后续（如压缩、量化、切分等）处理。</p>
+            <p><a href="https://ww2.mathworks.cn/help/images/discrete-cosine-transform.html" target="_blank"><strong>[Redirect to MathWorks MATLAB]</strong></a></p>
+        </div>
+    </div>
+</div>
+
+<section class="container" align="center">
+    <a id="site-title" class="navigation-title" href="#">Top</a>
+</section>
+                        </header>
+                    </article>
+                </section>
+            </div>
+        </main>
+    </body>
+
+    <script src="../../../../assets/js/heti-addon.min.js"></script>
+
+    <script>
+        const heti = new Heti('.heti h6, .title');
+        heti.autoSpacing(); 
+        AOS.init({disable: 'mobile'});
+    </script>
+</html>
