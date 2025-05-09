@@ -251,6 +251,37 @@ int main(int argc, char* argv[], char** env) {
     return 0;
 }</code></pre>
 
+        <h2>4. C 语言进度条</h2>
+            <pre id="code"><code class="language-c"># include &lt;stdio.h&gt;
+# include &lt;string.h&gt;
+# include &lt;windows.h&gt;
+
+void progress_bar(int epoch) {
+    int width = 50;
+    printf("\x1b[?25l");        // 隐藏光标.
+    for (int i = 0; i < epoch; i++) {
+        float percentage = (i + 1.0) / epoch;
+        int filled = percentage * width;
+        printf("\r[");          // 回滚光标.
+        for (int j = 0; j < width; j++) {
+            if (j < filled) printf("\x1b[32m=\x1b[0m");
+            else if (j == filled) printf(">");
+            else printf(" ");
+        }
+        printf("] %7.2f%%", percentage * 100);
+        fflush(stdout);
+        Sleep(25);
+    }
+    printf("\x1b[?25h\n");        // 显示光标.
+}
+
+int main(int argc, char *argv[], char *env[]) {
+    printf("start...\n");
+    progress_bar(100);
+    printf("done!\n");
+    return 0;
+}</code></pre>
+
         </div>
     </div>
 </div>
