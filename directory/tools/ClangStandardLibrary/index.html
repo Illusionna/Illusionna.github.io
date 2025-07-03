@@ -1,0 +1,271 @@
+<!DOCTYPE html>
+<html lang="zh-cn">
+    <head>
+        <meta charset="utf-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+        <title>C 语言标准库</title>
+
+        <link rel="preload" href="https://cdnjs.cloudflare.com/ajax/libs/lxgw-wenkai-webfont/1.7.0/lxgwwenkai-regular.min.css" as="style" onload="this.onload=null;this.rel='stylesheet'">
+        <link rel="stylesheet" href="../../../assets/css/style.css"/>
+        <link rel="stylesheet" href="../../../assets/css/main.css" />
+        <link href="../../../assets/css/aos.css" rel="stylesheet">
+        <link rel="stylesheet" href="../../../assets/css/customBMPI.css" />
+        <noscript><link rel="stylesheet" href="../../../assets/css/lxgwwenkai-regular.min.css"></noscript>
+        <noscript><link rel="stylesheet" href="../../../assets/css/tagcloud.css"></noscript>
+        <script src="../../../assets/js/lazysizes.min.js" async></script>
+        <script src="../../../assets/js/aos.js"></script>
+
+        <link href="../../../assets/css/prism.css" rel="stylesheet" />
+    	<script src="../../../assets/js/prism.js"></script>
+    </head>
+
+    <body class="colorscheme-auto">
+        <main class="wrapper">
+            <div class="loader" style="display: none;">
+                <div class="text" style="font-size: 48px; font-family:courier;">Loading...</div>
+                <div class="horizontal">
+                  <div class="circlesup">
+                        <div class="circle"></div>
+                        <div class="circle"></div>
+                        <div class="circle"></div>
+                        <div class="circle"></div>
+                        <div class="circle"></div>
+                  </div>
+                  <div class="circlesdwn">
+                        <div class="circle"></div>
+                        <div class="circle"></div>
+                        <div class="circle"></div>
+                        <div class="circle"></div>
+                        <div class="circle"></div>
+                  </div>
+                </div>
+                <div class="vertical">
+                  <div class="circlesup">
+                        <div class="circle"></div>
+                        <div class="circle"></div>
+                        <div class="circle"></div>
+                        <div class="circle"></div>
+                        <div class="circle"></div>
+                  </div>
+                  <div class="circlesdwn">
+                        <div class="circle"></div>
+                        <div class="circle"></div>
+                        <div class="circle"></div>
+                        <div class="circle"></div>
+                        <div class="circle"></div>
+                  </div>
+                </div>
+            </div>
+
+            <div class="content" style="display: block;">
+                <section class="container post">
+                    <article>
+                        <header>
+                            <nav class="navigation">
+                                <section class="container" align="center">
+                                    <a id="site-title" class="navigation-title" href="/" target="_blank" style="font-size: 32px;">
+                                        orzzz.net
+                                    </a>
+                                </section>
+                            </nav>
+
+<div class="post-title heti">
+    <h1 class="title">C 语言标准库</h1>
+</div>
+
+<div class="post-meta">
+    <div class="date">
+        <span class="posted-on">
+            <i class="fas fa-calendar"></i>
+            <time>2025-07-03</time>
+        </span>
+        <span class="reading-time">
+            <i class="fas fa-clock"></i>
+            <time>20:13</time>
+        </span>
+    </div>
+
+    <p></p>
+
+    <div class="article">
+        <div class="article-content heti" data-aos="fade-up" data-aos-duration="1500" data-aos-anchor-placement="top-bottom">
+            <table>
+                <thead>
+                    <tr>
+                        <th>库名</th>
+                        <th>用途</th>
+                        <th>时间</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td>assert.h</td>
+                        <td>条件编译宏</td>
+                        <td>C89</td>
+                    </tr>
+                    <tr>
+                        <td>ctype.h</td>
+                        <td>字符类型判断</td>
+                        <td>C89</td>
+                    </tr>
+                    <tr>
+                        <td>errno.h</td>
+                        <td>涉及错误报告的宏</td>
+                        <td>C89</td>
+                    </tr>
+                    <tr>
+                        <td>float.h</td>
+                        <td>float 类型的限制</td>
+                        <td>C89</td>
+                    </tr>
+                    <tr>
+                        <td>limits.h</td>
+                        <td>基础类型大小</td>
+                        <td>C89</td>
+                    </tr>
+                    <tr>
+                        <td>locale.h</td>
+                        <td>本地化工具</td>
+                        <td>C89</td>
+                    </tr>
+                    <tr>
+                        <td>math.h</td>
+                        <td>通用的数学函数</td>
+                        <td>C89</td>
+                    </tr>
+                    <tr>
+                        <td>setjmp.h</td>
+                        <td>非本地跳转</td>
+                        <td>C89</td>
+                    </tr>
+                    <tr>
+                        <td>signal.h</td>
+                        <td>信号处理相关</td>
+                        <td>C89</td>
+                    </tr>
+                    <tr>
+                        <td>stdarg.h</td>
+                        <td>可变变量声明相关</td>
+                        <td>C89</td>
+                    </tr>
+                    <tr>
+                        <td>stddef.h</td>
+                        <td>通用的宏定义</td>
+                        <td>C89</td>
+                    </tr>
+                    <tr>
+                        <td>stdio.h</td>
+                        <td>输入输出</td>
+                        <td>C89</td>
+                    </tr>
+                    <tr>
+                        <td>stdlib.h</td>
+                        <td>内存操作、程序工具、字符串转换、随机数</td>
+                        <td>C89</td>
+                    </tr>
+                    <tr>
+                        <td>string.h</td>
+                        <td>字符串处理</td>
+                        <td>C89</td>
+                    </tr>
+                    <tr>
+                        <td>time.h</td>
+                        <td>时间日期</td>
+                        <td>C89</td>
+                    </tr>
+                    <tr>
+                        <td>iso646.h</td>
+                        <td>可选的运算符拼写方式</td>
+                        <td>C95</td>
+                    </tr>
+                    <tr>
+                        <td>wchar.h</td>
+                        <td>拓展的多字节和宽字符工具</td>
+                        <td>C95</td>
+                    </tr>
+                    <tr>
+                        <td>wctype.h</td>
+                        <td>区分宽字符类型的函数</td>
+                        <td>C95</td>
+                    </tr>
+                    <tr>
+                        <td>complex.h</td>
+                        <td>复数运算</td>
+                        <td>C99</td>
+                    </tr>
+                    <tr>
+                        <td>fenv.h</td>
+                        <td>浮点数运算环境相关</td>
+                        <td>C99</td>
+                    </tr>
+                    <tr>
+                        <td>inttypes.h</td>
+                        <td>int 类型的格式转换</td>
+                        <td>C99</td>
+                    </tr>
+                    <tr>
+                        <td>stdbool.h</td>
+                        <td>boolean 类型相关</td>
+                        <td>C99</td>
+                    </tr>
+                    <tr>
+                        <td>stdint.h</td>
+                        <td>固定长度的 int 类型</td>
+                        <td>C99</td>
+                    </tr>
+                    <tr>
+                        <td>tgmath.h</td>
+                        <td>泛类型的数学宏相关</td>
+                        <td>C99</td>
+                    </tr>
+                    <tr>
+                        <td>stdalign.h</td>
+                        <td>alignas 和 alignof 转换宏</td>
+                        <td>C11</td>
+                    </tr>
+                    <tr>
+                        <td>stdatomic.h</td>
+                        <td>原子操作相关</td>
+                        <td>C11</td>
+                    </tr>
+                    <tr>
+                        <td>stdnoreturn.h</td>
+                        <td>noreturn 宏相关</td>
+                        <td>C11</td>
+                    </tr>
+                    <tr>
+                        <td>threads.h</td>
+                        <td>线程库</td>
+                        <td>C11</td>
+                    </tr>
+                    <tr>
+                        <td>uchar.h</td>
+                        <td>UTF 字符工具</td>
+                        <td>C11</td>
+                    </tr>
+                </tbody>
+            </table>
+
+        </div>
+    </div>
+</div>
+
+<section class="container" align="center">
+    <a id="site-title" class="navigation-title" href="#">Top</a>
+</section>
+                        </header>
+                    </article>
+                </section>
+            </div>
+        </main>
+    </body>
+
+    <script src="../../../assets/js/heti-addon.min.js"></script>
+
+    <script>
+        const heti = new Heti('.heti h5, h6');
+        heti.autoSpacing(); 
+        AOS.init({disable: 'mobile'});
+    </script>
+</html>
