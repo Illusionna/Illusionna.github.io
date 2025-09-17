@@ -1,0 +1,171 @@
+<!DOCTYPE html>
+<html lang="zh-cn">
+    <head>
+        <meta charset="utf-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+        <title>嘉兴</title>
+
+        <link rel="preload" href="https://cdnjs.cloudflare.com/ajax/libs/lxgw-wenkai-webfont/1.7.0/lxgwwenkai-regular.min.css" as="style" onload="this.onload=null;this.rel='stylesheet'">
+        <link rel="stylesheet" href="../../../assets/css/style.css"/>
+        <link rel="stylesheet" href="../../../assets/css/main.css" />
+        <link href="../../../assets/css/aos.css" rel="stylesheet">
+        <link rel="stylesheet" href="../../../assets/css/customBMPI.css" />
+        <noscript><link rel="stylesheet" href="../../../assets/css/lxgwwenkai-regular.min.css"></noscript>
+        <noscript><link rel="stylesheet" href="../../../assets/css/tagcloud.css"></noscript>
+        <script src="../../../assets/js/lazysizes.min.js" async></script>
+        <script src="../../../assets/js/aos.js"></script>
+    </head>
+
+    <body class="colorscheme-auto">
+        <main class="wrapper">
+            <div id="loader" class="loader">
+                <div class="text" style="font-size: 48px; font-family:courier;">Loading...</div>
+                <div class="horizontal">
+                  <div class="circlesup">
+                        <div class="circle"></div>
+                        <div class="circle"></div>
+                        <div class="circle"></div>
+                        <div class="circle"></div>
+                        <div class="circle"></div>
+                  </div>
+                  <div class="circlesdwn">
+                        <div class="circle"></div>
+                        <div class="circle"></div>
+                        <div class="circle"></div>
+                        <div class="circle"></div>
+                        <div class="circle"></div>
+                  </div>
+                </div>
+                <div class="vertical">
+                  <div class="circlesup">
+                        <div class="circle"></div>
+                        <div class="circle"></div>
+                        <div class="circle"></div>
+                        <div class="circle"></div>
+                        <div class="circle"></div>
+                  </div>
+                  <div class="circlesdwn">
+                        <div class="circle"></div>
+                        <div class="circle"></div>
+                        <div class="circle"></div>
+                        <div class="circle"></div>
+                        <div class="circle"></div>
+                  </div>
+                </div>
+            </div>
+
+            <div class="content" id="normal-page" style="display: none;">
+                <section class="container post">
+                    <article>
+                        <header>
+                            <nav class="navigation">
+                                <section class="container" align="center">
+                                    <a id="site-title" class="navigation-title" href="../../../index.html" target="_blank" style="font-size: 32px;">
+                                        orzzz.net
+                                    </a>
+                                </section>
+                            </nav>
+
+<div class="post-title heti">
+    <h1 class="title">嘉兴</h1>
+</div>
+
+<div class="post-meta">
+    <div class="date">
+        <span class="posted-on">
+            <i class="fas fa-calendar"></i>
+            <time>2025-08-19</time>
+        </span>
+        <span class="reading-time">
+            <i class="fas fa-clock"></i>
+            <time>21:01</time>
+        </span>
+    </div>
+
+    <p></p>
+
+    <div class="article">
+        <div class="article-content heti" data-aos="fade-up" data-aos-duration="1500" data-aos-anchor-placement="top-bottom">
+            <p><img id="白昼南湖" alt="Oops?" class="lazyload" loading="lazy"/></p>
+            <figcaption>
+                <p>白昼南湖</p>
+            </figcaption>
+            <p><img id="子城遗址公园" alt="Oops?" class="lazyload" loading="lazy"/></p>
+            <figcaption>
+                <p>子城遗址公园</p>
+            </figcaption>
+            <p><img id="夜幕嘉兴南湖" alt="Oops?" class="lazyload" loading="lazy"/></p>
+            <figcaption>
+                <p>夜幕嘉兴南湖</p>
+            </figcaption>
+            <p><img id="嘉兴站" alt="Oops?" class="lazyload" loading="lazy"/></p>
+            <figcaption>
+                <p>嘉兴站</p>
+            </figcaption>
+            <p><img id="嘉兴天主教堂" alt="Oops?" width="50%" class="lazyload" loading="lazy"/></p>
+            <figcaption>
+                <p>嘉兴天主教堂</p>
+            </figcaption>
+        </div>
+    </div>
+</div>
+
+<section class="container" align="center">
+    <a id="site-title" class="navigation-title" href="#">Top</a>
+</section>
+                        </header>
+                    </article>
+                </section>
+            </div>
+        </main>
+    </body>
+
+    <script src="../../../assets/js/heti-addon.min.js"></script>
+
+    <script>
+        const heti = new Heti('.heti h4, h5, h6, .title');
+        heti.autoSpacing(); 
+        AOS.init({disable: 'mobile'});
+    </script>
+
+    <script>
+        let imagesToLoad = [
+            { id: '白昼南湖', src: './imgs/白昼南湖.jpg' },
+            { id: '嘉兴天主教堂', src: './imgs/嘉兴天主教堂.jpg' },
+            { id: '嘉兴站', src: './imgs/嘉兴站.jpg' },
+            { id: '夜幕嘉兴南湖', src: './imgs/夜幕嘉兴南湖.jpg' },
+            { id: '子城遗址公园', src: './imgs/子城遗址公园.jpg' },
+        ];
+
+        function loadImage(imgId, src, callback) {
+            let img = new Image();
+            img.src = src;
+            img.onload = function() {
+                document.getElementById(imgId).src = src;
+                callback();
+            };
+        }
+
+        function loadImages(imgIdsAndSrcs, callback) {
+            let loadedCount = 0;
+            let totalCount = imgIdsAndSrcs.length;
+            imgIdsAndSrcs.forEach(function(imgInfo) {
+                loadImage(imgInfo.id, imgInfo.src, function() {
+                    loadedCount++;
+                    if (loadedCount === totalCount) {
+                        callback();
+                    }
+                });
+            });
+        }
+
+        let loader = document.getElementById('loader');
+        let normalPage = document.getElementById('normal-page');
+
+        loadImages(imagesToLoad, function() {
+            loader.style.display = 'none';
+            normalPage.style.display = 'block';
+        });
+    </script>
+</html>
