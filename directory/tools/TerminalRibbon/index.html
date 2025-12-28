@@ -252,14 +252,13 @@ int main(int argc, char* argv[], char** env) {
 }</code></pre>
 
         <h2>4. C 语言进度条</h2>
-            <pre id="code"><code class="language-c"># include &lt;stdio.h&gt;
-# include &lt;string.h&gt;
-# include &lt;windows.h&gt;
+            <pre id="code"><code class="language-c">#include &lt;stdio.h&gt;
 
-void progress_bar(int current, int epoch) {
+void progress_bar(int current, int epoch, int step, char *description) {
+    if (current != 0 && current % step != 0 && current != epoch) return;
     int width = 50;
-    printf("\x1b[?25l");
-    float percentage = (current + 1.0) / epoch;
+    // printf("\x1b[?25l");
+    float percentage = (epoch > 0) ? (float)current / epoch : 0.0F;
     int filled = percentage * width;
     printf("\r[");
     for (int j = 0; j < width; j++) {
@@ -267,18 +266,222 @@ void progress_bar(int current, int epoch) {
         else if (j == filled) printf(">");
         else printf(" ");
     }
-    printf("] %7.2f%% (%d/%d)", percentage * 100, current + 1, epoch);
+    printf("] %7.2f%% (%d/%d)", percentage * 100, current, epoch);
+    if (description != NULL && description[0] != '\0') printf(" \x1b[33m%s\x1b[0m\x1b[K", description);
+    else printf("\x1b[K");
     fflush(stdout);
-
-    if (current == epoch - 1) printf("\x1b[?25h\n");
+    if (current >= epoch) printf("\n");
+    // if (current >= epoch) printf("\x1b[?25h\n");
 }
 
-int main(int argc, char *argv[], char *env[]) {
-    printf("start...\n");
-    for (int n = 0; n < 100; n++) progress_bar(n, 100);
-    printf("done!\n");
+int main(int argc, char *argv[], char *envs[]) {
+    int epoch = 100000;
+    for (int i = 0; i < epoch; i++) {
+        progress_bar(i + 1, epoch, 1, NULL);
+    }
+    printf("============= 1 =============\n");
+    for (int i = 0; i < epoch; i++) {
+        progress_bar(i + 1, epoch, 10, "This is a description.");
+    }
+    printf("============= 2 =============\n");
     return 0;
 }</code></pre>
+
+        <h2>5. LaTeX 条形图</h2>
+        <div style="display: grid; place-items: center;">
+            <object type="image/svg+xml" data="./imgs/bar.svg" width="50%"></object>
+        </div>
+
+<pre id="code"><code class="language-latex">% pdflatex main.tex
+% dvisvgm --no-fonts --pdf --exact main.pdf -o main.svg
+    
+\documentclass{standalone}
+
+\usepackage{pgfplots}
+
+\pgfplotsset{compat = 1.18}
+\usepgfplotslibrary{groupplots}
+\usetikzlibrary{matrix, calc}
+
+\definecolor{color1}{HTML}{EAE0D5}
+\definecolor{color2}{HTML}{C6D5C5}
+\definecolor{color3}{HTML}{82B0AA}
+\definecolor{color4}{HTML}{4A8B93}
+\definecolor{color5}{HTML}{00505F}
+
+\begin{document}
+
+\begin{tikzpicture}
+    \begin{groupplot}[
+        group style = {
+            group size = 2 by 1,
+            horizontal sep = 1cm
+        },
+        ybar = 0pt,
+        ymin = 0,
+        ymax = 100,
+        width = 7cm,
+        height = 7cm,
+        /pgf/bar width = 8pt,
+        ymajorgrids = true,
+        grid style = dashed,
+        xtick = data,
+        symbolic x coords = {SR, E2E},
+        enlarge x limits = 0.5,
+        tick label style = {font = \small},
+    ]
+        \nextgroupplot[
+            xlabel = {
+                \textit{
+                    \textbf{Heat food in the microwave}
+                }
+            }
+        ] {
+            \addplot[fill = color1] coordinates {(SR, 2) (E2E, 20)};
+            \addplot[fill = color2] coordinates {(SR, 12) (E2E, 35)};
+            \addplot[fill = color3] coordinates {(SR, 28) (E2E, 65)};
+            \addplot[fill = color4] coordinates {(SR, 65) (E2E, 95)};
+            \addplot[fill = color5] coordinates {(SR, 65) (E2E, 88)};
+        }
+
+        \nextgroupplot[
+            xlabel = {
+                \textit{
+                    \textbf{Packing detergent from conveyor}
+                }
+            }
+        ] {
+            \addplot[fill = color1] coordinates {(SR, 5) (E2E, 25)};
+            \addplot[fill = color2] coordinates {(SR, 8) (E2E, 28)};
+            \addplot[fill = color3] coordinates {(SR, 48) (E2E, 80)};
+            \addplot[fill = color4] coordinates {(SR, 25) (E2E, 45)};
+            \addplot[fill = color5] coordinates {(SR, 75) (E2E, 90)};
+        }
+    \end{groupplot}
+
+    \node at (
+        $(group c1r1.north) ! 0.5 ! (group c2r1.north) + (0, 1em)$
+    ) [anchor = south] {
+        \begin{tikzpicture}
+            \matrix[
+                draw = none,
+                matrix of nodes,
+                column sep = 0.5em,
+                row sep = 0.3cm,
+                nodes = {
+                    anchor = center,
+                    inner sep = 0.5em
+                }
+            ] {
+                | [fill = color1, minimum width = 1em, minimum height = 1em] | & Category 1 &
+                | [fill = color2, minimum width = 1em, minimum height = 1em] | & Category 2 &
+                | [fill = color3, minimum width = 1em, minimum height = 1em] | & Category 3 &
+                | [fill = color4, minimum width = 1em, minimum height = 1em] | & Category 4 &
+                | [fill = color5, minimum width = 1em, minimum height = 1em] | & Category 5 \\
+            };
+        \end{tikzpicture}
+    };
+\end{tikzpicture}
+
+\end{document}</code></pre>
+
+        <h2>6. LaTeX 3D 绘图</h2>
+        <div style="display: grid; place-items: center;">
+            <object type="image/svg+xml" data="./imgs/3D.svg" width="50%"></object>
+        </div>
+
+<pre id="code"><code class="language-tex">% pdflatex main.tex
+% dvisvgm --no-fonts --pdf --exact main.pdf -o main.svg
+
+\documentclass{standalone}
+
+\usepackage{amsmath}
+\usepackage{pgfplots}
+
+\pgfplotsset{compat = 1.18}
+
+\begin{document}
+
+\begin{tikzpicture}
+    \begin{axis}[
+        title = Exmple using the mesh parameter,
+        hide axis,
+        colormap/cool,
+        legend style = {
+            at = {(0.75, 1)},
+            anchor = north west,
+            nodes = {
+                inner sep = 7pt,
+                anchor = center
+            },
+            fill = white,
+            draw = green
+        }
+    ]
+        \addplot3[
+            mesh,
+            samples = 50,
+            domain = -8 : 8,
+        ] {
+            sin(deg(sqrt(x^2 + y^2))) / sqrt(x^2 + y^2)
+        };
+        \addlegendentry{$\dfrac{\sin(r)}{r}$}
+    \end{axis}
+\end{tikzpicture}
+
+\end{document}</code></pre>
+
+        <h2>7. LaTeX Morandi 表格</h2>
+        <div style="display: grid; place-items: center;">
+            <object type="image/svg+xml" data="./imgs/Morandi.svg" width="50%"></object>
+        </div>
+
+<pre id="code"><code class="language-tex">% pdflatex main.tex
+% dvisvgm --no-fonts --pdf --exact main.pdf -o main.svg
+
+\documentclass{standalone}
+
+\usepackage{tikz}
+\usepackage{booktabs}
+\usepackage[table]{xcolor}
+
+\newcommand{\cube}[1]{
+    \begin{tikzpicture}[baseline = 0ex]
+        \draw[
+            draw = #1,
+            fill = #1!20,
+            thick,
+            rounded corners = 0.5pt
+        ] (0,0) rectangle (0.25, 0.25);
+    \end{tikzpicture}
+}
+
+\definecolor{MorandiLightCyan}{RGB}{209, 238, 238}
+\definecolor{MorandiBlue}{RGB}{70, 110, 255}
+\definecolor{MorandiGrey}{RGB}{80, 100, 100}
+\definecolor{MorandiPurple}{RGB}{140, 110, 180}
+\definecolor{MorandiCyan}{RGB}{110, 170, 190}
+\definecolor{MorandiRed}{RGB}{220, 130, 130}
+\definecolor{MorandiOrange}{RGB}{250, 210, 160}
+
+\begin{document}
+    % \begin{table}[!t]
+        \setlength{\tabcolsep}{12pt}
+        \renewcommand{\arraystretch}{1.5}
+        \begin{tabular}{clcccc}
+            \bottomrule[1.5pt]
+            \@ & \textbf{Model} & \textbf{Scene} & \textbf{Motion} & \textbf{Semantics} & \textbf{Score} \\
+            \midrule[0.5pt]
+            \rowcolor{MorandiLightCyan}\cube{MorandiBlue} & GE-Base & 0.9427 & 1.6676 & 2.0907 & 4.7010 \\
+            \cube{MorandiGrey} & Kling & 0.8888 & 0.9440 & 2.0370 & 3.8698 \\
+            \cube{MorandiPurple} & Hailuo & 0.8577 & 0.5362 & 2.0186 & 3.4125 \\
+            \cube{MorandiCyan} & COSMOS & 0.7963 & 0.7085 & 1.7824 & 3.2872 \\
+            \cube{MorandiRed} & OpenSora & 0.9210 & 0.3442 & 1.8739 & 3.1392 \\
+            \cube{MorandiOrange} & LTX & 0.9156 & 0.4002 & 1.6518 & 2.9676 \\
+            \toprule[1.5pt]
+        \end{tabular}
+    % \end{table}
+\end{document}</code></pre>
 
         </div>
     </div>
@@ -292,7 +495,8 @@ int main(int argc, char *argv[], char *env[]) {
                 </section>
             </div>
         </main>
-    </body>
+    <script defer src="https://static.cloudflareinsights.com/beacon.min.js/vcd15cbe7772f49c399c6a5babf22c1241717689176015" integrity="sha512-ZpsOmlRQV6y907TI0dKBHq9Md29nnaEIPlkf84rnaERnq6zvWvPUqr2ft8M1aS28oN72PdrCzSjY4U6VaAw1EQ==" data-cf-beacon='{"version":"2024.11.0","token":"07abb312bc654ea7924c5831fcbb5686","r":1,"server_timing":{"name":{"cfCacheStatus":true,"cfEdge":true,"cfExtPri":true,"cfL4":true,"cfOrigin":true,"cfSpeedBrain":true},"location_startswith":null}}' crossorigin="anonymous"></script>
+</body>
 
     <script src="../../../assets/js/heti-addon.min.js"></script>
 
