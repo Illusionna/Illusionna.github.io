@@ -584,6 +584,42 @@ int main(int argc, char *argv[], char *envs[]) {
 
 \end{document}</code></pre>
 
+        <h2>9. LaTeX 彩色表格</h2>
+        <div style="display: grid; place-items: center;">
+            <object type="image/svg+xml" data="./imgs/table.svg" width="100%"></object>
+        </div>
+
+<pre id="code"><code class="language-tex">\documentclass[varwidth]{standalone}
+
+\usepackage[table]{xcolor}
+\usepackage{pifont}
+\usepackage{amsmath}
+\usepackage{multirow}
+
+\definecolor{cadetblue}{HTML}{5F9EA0}
+\definecolor{darksalmon}{rgb}{0.91, 0.59, 0.48}
+\definecolor{forestgreen}{rgb}{0.13, 0.55, 0.13}
+
+\newcolumntype{C}[1]{>{\centering\arraybackslash}p{#1}}
+\newcolumntype{M}[1]{>{\centering\arraybackslash}m{#1}}
+
+\begin{document}
+
+\setlength{\tabcolsep}{12pt}
+\renewcommand{\arraystretch}{1.5}
+\begin{tabular}{C{4em}M{4em}|cc|cc}
+    \rowcolor{cadetblue!20} & & \multicolumn{2}{c}{\textbf{dim3}} & \multicolumn{2}{c}{\textbf{dim4}} \\
+    \rowcolor{cadetblue!20} \multirow{-2}{*}{\hspace{1.5em}\textbf{dim1}} & \multirow{-2}{*}{\textbf{dim2}} & $\mathcal{S}$ & $\mathcal{T}$ & $\mathcal{P}$ & $\mathcal{Q}$ \\
+    \hline
+    \textcolor{darksalmon}{\ding{55}} & \textcolor{darksalmon}{\ding{55}} & 0.1 & 0.2 & 0.3 & 0.4 \\
+    \rowcolor{gray!10} \textcolor{darksalmon}{\ding{55}} & \textcolor{forestgreen}{\ding{51}} & 0.4 & 0.3 & 0.2 & 0.1 \\
+    \textcolor{forestgreen}{\ding{51}} & \textcolor{darksalmon}{\ding{55}} & 0.5 & 0.6 & 0.7 & 0.8 \\
+    \rowcolor{gray!10} \textcolor{forestgreen}{\ding{51}} & \textcolor{forestgreen}{\ding{51}} & \textbf{0.9} & 0.2 & \textbf{0.8} & 0.7 \\
+\end{tabular}
+
+\end{document}</code></pre>
+        
+
         </div>
     </div>
 </div>
