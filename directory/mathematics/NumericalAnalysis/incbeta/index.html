@@ -1,0 +1,1289 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+    <head>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width,initial-scale=1">
+        <title>正则化不完全贝塔函数</title>
+        <script async src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+        <script>
+            MathJax = {
+                tex: {
+                    inlineMath: [
+                        ['$', '$']
+                    ],
+                    displayMath: [
+                        ['\\[', '\\]']
+                    ],
+                    tags: 'ams'
+                },
+                options: {
+                    skipHtmlTags: ['script', 'noscript', 'style', 'textarea']
+                }
+            }
+        </script>
+
+        <link rel="stylesheet" type="text/css" href="../../../../assets/css/prism.css">
+        <script src="../../../../assets/js/prism.js"></script>
+
+        <style>
+            /* ══════════════════════════════════════════════
+            Design tokens
+            ══════════════════════════════════════════════ */
+            :root {
+                /* page palette */
+                --bg: #FDF6EC;
+                --card: #FFFAF3;
+                --warm: #FFF1DC;
+                --hi: #FEF0D6;
+                --ink: #3A2E22;
+                --soft: #7A6A56;
+                --rule: #E8D9C0;
+                --a1: #C8622A;
+                /* rust-orange  */
+                --a2: #E8A44A;
+                /* amber        */
+                --a3: #8B5E3C;
+                /* brown        */
+                --r: 14px;
+                /* fonts */
+                --serif: 'Palatino Linotype', Palatino, Georgia, serif;
+                --disp: 'Didot', 'Bodoni MT', Georgia, serif;
+                --mono: 'Courier New', monospace;
+
+                /* code-box palette — classic dark editor */
+                --cb-bg: #1E1A14;
+                --cb-bar: #2A2318;
+                --cb-border: #3E3428;
+                --cb-ln: #4A4030;
+                /* line-number colour */
+                --cb-base: #D4C4A8;
+                /* normal text        */
+                /* syntax tokens */
+                --t-kw: #F0A050;
+                /* keywords    amber-gold   */
+                --t-fn: #7EC8E3;
+                /* functions   sky-blue     */
+                --t-num: #98D878;
+                /* numbers     lime-green   */
+                --t-str: #E8C068;
+                /* strings     warm-yellow  */
+                --t-cm: #6A6050;
+                /* comments    muted        */
+                --t-ty: #C8A8F8;
+                /* types       lavender     */
+                --t-op: #A09080;
+                /* operators   sand         */
+            }
+
+            /* ══════════════════════════════════════════════
+            Reset & base
+            ══════════════════════════════════════════════ */
+            *,
+            *::before,
+            *::after {
+                box-sizing: border-box;
+                margin: 0;
+                padding: 0;
+            }
+
+            html {
+                scroll-behavior: smooth;
+            }
+
+            body {
+                background: var(--bg);
+                color: var(--ink);
+                font-family: var(--serif);
+                font-size: clamp(15px, 2vw, 17px);
+                line-height: 1.85;
+            }
+
+            /* subtle grain overlay */
+            body::before {
+                content: '';
+                position: fixed;
+                inset: 0;
+                pointer-events: none;
+                z-index: 0;
+                background: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='200' height='200'%3E%3Cfilter id='n'%3E%3CfeTurbulence baseFrequency='.75' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='200' height='200' filter='url(%23n)' opacity='.04'/%3E%3C/svg%3E");
+            }
+
+            .wrap {
+                position: relative;
+                z-index: 1;
+                max-width: 780px;
+                margin: 0 auto;
+                padding: 0 clamp(18px, 5vw, 48px) 80px;
+            }
+
+            /* ══════════════════════════════════════════════
+            Header
+            ══════════════════════════════════════════════ */
+            header {
+                padding: clamp(48px, 8vh, 96px) 0 clamp(32px, 5vh, 56px);
+                border-bottom: 2px solid var(--rule);
+                margin-bottom: clamp(36px, 6vh, 64px);
+            }
+
+            .eyebrow {
+                font-family: var(--mono);
+                font-size: 11px;
+                letter-spacing: .18em;
+                text-transform: uppercase;
+                color: var(--a1);
+                margin-bottom: 16px;
+            }
+
+            h1 {
+                font-family: var(--disp);
+                font-size: clamp(2.4rem, 7vw, 4.2rem);
+                line-height: 1.1;
+                font-weight: 700;
+                letter-spacing: -.01em;
+                margin-bottom: 18px;
+            }
+
+            h1 em {
+                color: var(--a1);
+                font-style: italic;
+            }
+
+            .subtitle {
+                font-size: clamp(.95rem, 2.5vw, 1.1rem);
+                color: var(--soft);
+                font-style: italic;
+                max-width: 540px;
+                line-height: 1.6;
+            }
+
+            /* ══════════════════════════════════════════════
+            Table of contents
+            ══════════════════════════════════════════════ */
+            .toc {
+                background: var(--warm);
+                border: 1.5px solid var(--rule);
+                border-radius: var(--r);
+                padding: 22px 26px;
+                margin-bottom: clamp(36px, 6vh, 60px);
+            }
+
+            .toc-ttl {
+                font-family: var(--mono);
+                font-size: 10.5px;
+                letter-spacing: .15em;
+                text-transform: uppercase;
+                color: var(--a3);
+                margin-bottom: 10px;
+            }
+
+            .toc ol {
+                list-style: none;
+                counter-reset: tc;
+            }
+
+            .toc li {
+                counter-increment: tc;
+                display: flex;
+                align-items: baseline;
+                gap: 10px;
+                padding: 3px 0;
+            }
+
+            .toc li::before {
+                content: counter(tc, decimal-leading-zero);
+                font-family: var(--mono);
+                font-size: 11px;
+                color: var(--a2);
+                min-width: 22px;
+            }
+
+            .toc a {
+                color: var(--ink);
+                text-decoration: none;
+                font-size: .93rem;
+                transition: color .2s;
+            }
+
+            .toc a:hover {
+                color: var(--a1);
+            }
+
+            /* ══════════════════════════════════════════════
+            Section typography
+            ══════════════════════════════════════════════ */
+            section {
+                margin-bottom: clamp(44px, 8vh, 76px);
+            }
+
+            h2 {
+                font-family: var(--disp);
+                font-size: clamp(1.45rem, 4vw, 1.95rem);
+                font-weight: 700;
+                letter-spacing: -.01em;
+                margin-bottom: 18px;
+                padding-bottom: 9px;
+                border-bottom: 1.5px solid var(--rule);
+            }
+
+            h3 {
+                font-weight: 600;
+                color: var(--a3);
+                margin: 26px 0 9px;
+                letter-spacing: .02em;
+            }
+
+            p {
+                margin-bottom: 1em;
+            }
+
+            code {
+                font-family: var(--mono);
+                font-size: .86em;
+                background: #F5EAD6;
+                padding: 2px 6px;
+                border-radius: 4px;
+                color: var(--a3);
+            }
+
+            /* ══════════════════════════════════════════════
+            Formula box
+            ══════════════════════════════════════════════ */
+            .fbox {
+                background: var(--card);
+                border: 1.5px solid var(--rule);
+                border-left: 4px solid var(--a1);
+                border-radius: var(--r);
+                padding: 18px 22px;
+                margin: 22px 0;
+                overflow-x: auto;
+            }
+
+            .flbl {
+                font-family: var(--mono);
+                font-size: 10px;
+                letter-spacing: .12em;
+                text-transform: uppercase;
+                color: var(--a2);
+                margin-bottom: 8px;
+            }
+
+            .callout {
+                background: var(--hi);
+                border: 1.5px solid var(--a2);
+                border-radius: var(--r);
+                padding: 16px 20px;
+                margin: 22px 0;
+                font-size: .93rem;
+            }
+
+            /* ══════════════════════════════════════════════
+            Data table
+            ══════════════════════════════════════════════ */
+            .pt {
+                width: 100%;
+                border-collapse: collapse;
+                margin: 18px 0;
+                font-size: .91rem;
+            }
+
+            .pt th {
+                background: var(--warm);
+                font-family: var(--mono);
+                font-size: 10px;
+                letter-spacing: .1em;
+                text-transform: uppercase;
+                color: var(--a3);
+                padding: 9px 13px;
+                text-align: left;
+                border-bottom: 2px solid var(--rule);
+            }
+
+            .pt td {
+                padding: 10px 13px;
+                border-bottom: 1px solid var(--rule);
+                vertical-align: middle;
+            }
+
+            .pt tr:last-child td {
+                border-bottom: none;
+            }
+
+            .pt tr:hover td {
+                background: var(--hi);
+            }
+
+            /* ══════════════════════════════════════════════
+            Gamma canvas frame
+            ══════════════════════════════════════════════ */
+            .gbox {
+                border: 1.5px solid var(--rule);
+                border-radius: var(--r);
+                overflow: hidden;
+                margin: 22px 0;
+                background: var(--card);
+            }
+
+            .gbox-ttl {
+                background: var(--warm);
+                padding: 9px 16px;
+                font-family: var(--mono);
+                font-size: 10.5px;
+                letter-spacing: .12em;
+                text-transform: uppercase;
+                color: var(--a3);
+                border-bottom: 1.5px solid var(--rule);
+            }
+
+            #gc {
+                display: block;
+                width: 100%;
+                height: 280px;
+            }
+
+            /* ══════════════════════════════════════════════
+            t-distribution image cards
+            ══════════════════════════════════════════════ */
+            .img-grid {
+                display: grid;
+                grid-template-columns: repeat(auto-fill, minmax(210px, 1fr));
+                gap: 16px;
+                margin: 22px 0;
+            }
+
+            .img-card {
+                border-radius: 18px;
+                overflow: hidden;
+                border: 1.5px solid var(--rule);
+                background: var(--card);
+                box-shadow: 0 2px 12px rgba(58, 46, 34, .07);
+                cursor: zoom-in;
+                transition: transform .25s, box-shadow .25s;
+            }
+
+            .img-card:hover {
+                transform: translateY(-3px);
+                box-shadow: 0 8px 28px rgba(58, 46, 34, .14);
+            }
+
+            .img-card canvas,
+            .img-card img {
+                display: block;
+                width: 100%;
+                aspect-ratio: 4 / 3;
+                object-fit: cover;
+            }
+
+            .img-cap {
+                padding: 9px 14px 11px;
+                font-size: .8rem;
+                color: var(--soft);
+                font-style: italic;
+                text-align: center;
+                background: var(--warm);
+                border-top: 1px solid var(--rule);
+            }
+
+            .img-wide {
+                margin: 22px auto;
+                border-radius: 18px;
+                overflow: hidden;
+                border: 1.5px solid var(--rule);
+                display: block;
+                max-width: 100%;
+                box-shadow: 0 2px 16px rgba(58, 46, 34, .08);
+                cursor: zoom-in;
+                transition: transform .25s, box-shadow .25s;
+            }
+
+            .img-wide:hover {
+                transform: translateY(-3px);
+                box-shadow: 0 8px 28px rgba(58, 46, 34, .14);
+            }
+
+            .img-wide canvas,
+            .img-wide img {
+                display: block;
+                width: 100%;
+                height: auto;
+            }
+
+            /* ══════════════════════════════════════════════
+            Lightbox
+            ══════════════════════════════════════════════ */
+            #lb {
+                display: none;
+                position: fixed;
+                inset: 0;
+                z-index: 999;
+                background: rgba(20, 14, 8, .8);
+                backdrop-filter: blur(10px);
+                -webkit-backdrop-filter: blur(10px);
+                align-items: center;
+                justify-content: center;
+                cursor: zoom-out;
+            }
+
+            #lb.on {
+                display: flex;
+            }
+
+            #lb img {
+                max-width: 90vw;
+                max-height: 86vh;
+                border-radius: 18px;
+                box-shadow: 0 32px 80px rgba(0, 0, 0, .5);
+                animation: lbIn .24s ease;
+                cursor: default;
+            }
+
+            @keyframes lbIn {
+                from {
+                    opacity: 0;
+                    transform: scale(.9)
+                }
+
+                to {
+                    opacity: 1;
+                    transform: scale(1)
+                }
+            }
+
+            #lbX {
+                position: fixed;
+                top: 20px;
+                right: 24px;
+                font-size: 26px;
+                color: #fff;
+                opacity: .7;
+                cursor: pointer;
+                user-select: none;
+                transition: opacity .15s;
+            }
+
+            #lbX:hover {
+                opacity: 1;
+            }
+
+            #lbC {
+                position: fixed;
+                bottom: 24px;
+                left: 50%;
+                transform: translateX(-50%);
+                color: rgba(255, 245, 230, .85);
+                font-size: .82rem;
+                font-style: italic;
+                pointer-events: none;
+                text-shadow: 0 1px 4px rgba(0, 0, 0, .5);
+                max-width: 80vw;
+                text-align: center;
+            }
+
+            /* ══════════════════════════════════════════════
+            Code box  ·  dark-editor theme
+            ══════════════════════════════════════════════ */
+            .cbox {
+                border: 1.5px solid var(--cb-border);
+                border-radius: var(--r);
+                overflow: hidden;
+                margin: 22px 0;
+                background: var(--cb-bg);
+            }
+
+            /* tab bar */
+            .cbox-bar {
+                display: flex;
+                align-items: center;
+                background: var(--cb-bar);
+                border-bottom: 1px solid var(--cb-border);
+                padding-right: 10px;
+            }
+
+            .cbox-tabs {
+                display: flex;
+                flex: 1;
+            }
+
+            .ctab {
+                font-family: var(--mono);
+                font-size: 11px;
+                letter-spacing: .08em;
+                text-transform: uppercase;
+                padding: 10px 16px;
+                color: #6A5A48;
+                background: transparent;
+                border: none;
+                border-bottom: 2px solid transparent;
+                cursor: pointer;
+                transition: color .18s, border-color .18s;
+                white-space: nowrap;
+            }
+
+            .ctab:hover {
+                color: #B09878;
+            }
+
+            .ctab.on {
+                color: var(--a2);
+                border-bottom-color: var(--a2);
+            }
+
+            /* lang badge + copy */
+            .cbox-actions {
+                display: flex;
+                align-items: center;
+                gap: 8px;
+            }
+
+            .cbox-lang {
+                font-family: var(--mono);
+                font-size: 9.5px;
+                letter-spacing: .1em;
+                text-transform: uppercase;
+                color: #4A3A28;
+                background: #141008;
+                border: 1px solid var(--cb-border);
+                border-radius: 5px;
+                padding: 3px 10px;
+            }
+
+            .ccopy {
+                font-family: var(--mono);
+                font-size: 9.5px;
+                letter-spacing: .08em;
+                text-transform: uppercase;
+                color: #6A5A48;
+                background: transparent;
+                border: 1px solid var(--cb-border);
+                border-radius: 5px;
+                padding: 4px 12px;
+                cursor: pointer;
+                transition: color .18s, border-color .18s;
+            }
+
+            .ccopy:hover {
+                color: var(--a2);
+                border-color: var(--a2);
+            }
+
+            .ccopy.ok {
+                color: #78C878;
+                border-color: #78C878;
+            }
+
+            /* panels */
+            .cpanel {
+                display: none;
+            }
+
+            .cpanel.on {
+                display: block;
+            }
+
+            /* code body */
+            .cbox pre {
+                margin: 0;
+                padding: 0;
+                overflow-x: auto;
+                background: transparent;
+            }
+
+            .cbox ol {
+                list-style: none;
+                counter-reset: ln;
+                margin: 0;
+                padding: 12px 0;
+            }
+
+            .cbox ol li {
+                counter-increment: ln;
+                display: flex;
+                font-family: var(--mono);
+                font-size: clamp(12px, 1.55vw, 13.5px);
+                line-height: 1.78;
+            }
+
+            /* line number */
+            .cbox ol li::before {
+                content: counter(ln);
+                min-width: 46px;
+                text-align: right;
+                padding-right: 16px;
+                padding-top: 1px;
+                flex-shrink: 0;
+                user-select: none;
+                color: var(--cb-ln);
+                font-size: 12px;
+            }
+
+            /* base code text */
+            .cbox ol li>span {
+                white-space: pre;
+                color: var(--cb-base);
+            }
+
+            /* ── syntax token colours ── */
+            .tk-kw {
+                color: var(--t-kw);
+                font-weight: 600;
+            }
+
+            /* keywords   */
+            .tk-fn {
+                color: var(--t-fn);
+            }
+
+            /* functions  */
+            .tk-num {
+                color: var(--t-num);
+            }
+
+            /* numbers    */
+            .tk-str {
+                color: var(--t-str);
+            }
+
+            /* strings    */
+            .tk-cm {
+                color: var(--t-cm);
+                font-style: italic;
+            }
+
+            /* comments   */
+            .tk-ty {
+                color: var(--t-ty);
+            }
+
+            /* types      */
+            .tk-op {
+                color: var(--t-op);
+            }
+
+            /* operators  */
+
+            @media (max-width: 480px) {
+                .ctab {
+                    padding: 8px 10px;
+                    font-size: 10px;
+                }
+            }
+
+            /* ══════════════════════════════════════════════
+            Misc
+            ══════════════════════════════════════════════ */
+            .orn {
+                text-align: center;
+                color: var(--a2);
+                font-size: 1.1rem;
+                letter-spacing: .4em;
+                margin: 36px 0;
+                user-select: none;
+            }
+
+            footer {
+                border-top: 2px solid var(--rule);
+                padding-top: 28px;
+                text-align: center;
+                color: var(--soft);
+                font-size: .84rem;
+                font-style: italic;
+            }
+
+            /* nav dots */
+            #dots {
+                position: fixed;
+                right: clamp(10px, 2.5vw, 28px);
+                top: 50%;
+                transform: translateY(-50%);
+                display: flex;
+                flex-direction: column;
+                gap: 7px;
+                z-index: 100;
+            }
+
+            .dot {
+                width: 7px;
+                height: 7px;
+                border-radius: 50%;
+                background: var(--rule);
+                border: 1.5px solid var(--soft);
+                cursor: pointer;
+                transition: all .25s;
+            }
+
+            .dot.on {
+                background: var(--a1);
+                border-color: var(--a1);
+                transform: scale(1.45);
+            }
+
+            @media (max-width: 600px) {
+                #dots {
+                    display: none;
+                }
+            }
+
+            @keyframes up {
+                from {
+                    opacity: 0;
+                    transform: translateY(20px)
+                }
+
+                to {
+                    opacity: 1;
+                    transform: none
+                }
+            }
+
+            header,
+            .toc,
+            section {
+                animation: up .55s ease both;
+            }
+
+            header {
+                animation-delay: .05s;
+            }
+
+            .toc {
+                animation-delay: .12s;
+            }
+
+            section {
+                animation-delay: .20s;
+            }
+
+            mjx-container {
+                overflow-x: auto;
+                max-width: 100%;
+            }
+        </style>
+    </head>
+
+    <body>
+        <div id="lb">
+            <span id="lbX">✕</span>
+            <img id="lbI" src="" alt="">
+            <p id="lbC"></p>
+        </div>
+        <nav id="dots" aria-hidden="true"></nav>
+
+        <div class="wrap">
+            <header>
+                <p class="eyebrow">2026-03-15 · 数值分析 · 统计学</p>
+                <h2>正则化不完全 $\beta$ 函数 & Student $t$ 分布 CDF 函数</h2>
+                <p class="subtitle">正则化不完全 $\beta$ 函数可计算离散 $t$ 分布的累积概率分布函数，以下介绍一种理论与工程结合的做法。</p>
+            </header>
+
+            <nav class="toc">
+                <p class="toc-ttl">目 录</p>
+                <ol>
+                    <li><a href="#theorem">定理</a></li>
+                    <li><a href="#incbeta">正则化不完全贝塔函数</a></li>
+                    <li><a href="#lgamma">计算对数伽马</a></li>
+                    <li><a href="#fraction">无穷连分式展开</a></li>
+                    <li><a href="#lentz">函数序列的迭代 Lentz 算法</a></li>
+                    <li><a href="#gauss">高斯积分</a></li>
+                    <li><a href="#student-t">计算 Student t 分布的累积分布函数</a></li>
+                    <li><a href="#map">全局平滑映射</a></li>
+                    <li><a href="#code">C 语言代码</a></li>
+                </ol>
+            </nav>
+
+            <section id="theorem">
+                <h3>1. &ensp; 定理</h3>
+
+                <p>对于实数 $a,b>0$ 有贝塔函数定义：</p>
+                <div class="fbox">
+                    <p class="flbl">贝塔函数</p>
+                    \[ \beta(a,b)=\int_{0}^{1}t^{a-1}(1-t)^{b-1}\mathrm{d}t=\displaystyle\dfrac{\Gamma(a)\Gamma(b)}{\Gamma(a+b)} \]
+                </div>
+
+                <p>Gamma 函数由 <strong>Leonhard Euler</strong> 于 1730 年“内插阶乘”引入，定义为：</p>
+                <div class="fbox">
+                    <p class="flbl">欧拉第二类积分</p>
+                    \[ \Gamma(x)=\int_{0}^{\infty}\mathrm{e}^{-t}t^{x-1}\mathrm{d}t\qquad\operatorname{Re}(x)>0 \]
+                </div>
+                <p>其中 $\operatorname{Re}(x)>0$ 保证积分收敛，被积函数 $\mathrm{e}^{-t}t^{x-1}$ 在 $t\to0^{+}$ 与 $t\to+\infty$ 两端均趋于零。</p>
+
+                <p>Weierstrass 无穷乘积是 Gamma 函数的倒数，被定义为：</p>
+                <div class="fbox">
+                    <p class="flbl">威尔斯特拉斯乘积</p>
+                    \[ \dfrac{1}{\Gamma(x)}=x\mathrm{e}^{\gamma x}\prod_{n=1}^{\infty}\left(1+\dfrac{x}{n}\right)\mathrm{e}^{-x/n} \]
+                </div>
+                <p>其中 $\gamma\approx0.5772$ 为 <strong>Euler-Mascheroni</strong> 常数，由此 $\dfrac{1}{\Gamma(x)}$ 是整函数，$\Gamma(x)$ 在 $x=0,-1,-2,\ldots$ 处有一阶极点，无零点。</p>
+
+                <p>分部积分定义：</p>
+                <div class="fbox">
+                    <p class="flbl">分部积分</p>
+                    \[ \int u\mathrm{d}v=uv-\int v\mathrm{d}u \]
+                    令：
+                    \[ u=t^n\implies\mathrm{d}u=nt^{n-1}\mathrm{d}t\qquad\mathrm{d}v=\mathrm{e}^{-t}\mathrm{d}t\implies v=-\mathrm{e}^{-t} \]
+                </div>
+
+                <p>洛必达法则有：</p>
+                <div class="fbox">
+                    <p class="flbl">极限</p>
+                    \[ \lim_{t\to\infty}\dfrac{-t^n}{\mathrm{e}^t}=\lim_{t\to\infty}\dfrac{-n!\cdot0}{\mathrm{e}^t}=0 \]
+                </div>
+
+                <p>若 $x\in\mathbb{N}$ 则 Gamma 数列被定义为：</p>
+                <div class="fbox">
+                    <p class="flbl">伽马数列递推公式</p>
+                    \[ {\color{red}\Gamma(n+1)}=\int_{0}^{\infty}\mathrm{e}^{-t}t^{n}\mathrm{d}t=\left.\dfrac{-t^n}{\mathrm{e}^t}\right|_{0}^{\infty}+n\int_{0}^{\infty}\mathrm{e}^{-t}t^{n-1}\mathrm{d}t={\color{red}n\Gamma(n)=n!} \]
+                </div>
+            </section>
+
+            <div class="orn">· · · · ✦ · · · ·</div>
+
+            <section id="incbeta">
+                <h3>2. &ensp; 正则化不完全贝塔函数</h3>
+
+                <p>将 $\beta$ 函数的积分上限换成变量 $x$，其中 $0\leqslant x\leqslant 1$，得到不完全贝塔函数：</p>
+                <div class="fbox">
+                    <p class="flbl">不完全贝塔函数</p>
+                    \[ \beta(x;a,b)=\int_{0}^{x}t^{a-1}(1-t)^{b-1}\mathrm{d}t \]
+                </div>
+
+                <p>概率统计中，需保证总概率恒为 1，因此将不完全 $\beta$ 函数除以 $\beta$ 函数进行归一化，其中 $a,b\in\mathbb{N}$，得到正则化不完全 $\beta$ 函数：</p>
+                <div class="fbox">
+                    <p class="flbl">正则化不完全贝塔函数</p>
+                    \[ \begin{align*}
+                        I(x;a,b)&=\dfrac{\beta(x;a,b)}{\beta(a,b)}=\dfrac{\displaystyle\int_{0}^{x}t^{a-1}(1-t)^{b-1}\mathrm{d}t}{\displaystyle\dfrac{\Gamma(a)\Gamma(b)}{\Gamma(a+b)}}
+                        \\[7pt]
+                        &=\dfrac{(a+b-1)!}{(a-1)!(b-1)!}\left\{\left.\dfrac{t^a}{a}(1-t)^{b-1}\right|_{0}^{x}-\int_{0}^{x}\dfrac{t^a}{a}\left[-(b-1)(1-t)^{b-2}\right]\mathrm{d}t\right\}
+                        \\[7pt]
+                        &=\dfrac{(a+b-1)!}{(a-1)!(b-1)!}\left[\dfrac{x^a(1-x)^{b-1}}{a}+\dfrac{b-1}{a}\int_{0}^{x}t^a(1-t)^{b-2}\mathrm{d}t\right]
+                        \\[7pt]
+                        &=\dfrac{(a+b-1)!}{a!(b-1)!}x^a(1-x)^{b-1}+\dfrac{(a+b-1)!}{a!(b-2)!}\int_{0}^{x}t^a(1-t)^{b-2}\mathrm{d}t
+                        \\[7pt]
+                        &=\binom{a+b-1}{a}x^a(1-x)^{b-1}+\dfrac{\displaystyle\int_{0}^xt^a(1-t)^{b-2}\mathrm{d}t}{\beta(a+1,b-1)}
+                        \\[7pt]
+                        &=\binom{a+b-1}{a}x^a(1-x)^{b-1}+\dfrac{\beta(x;a+1,b-1)}{\beta(a+1,b-1)}
+                        \\[7pt]
+                        &=\binom{a+b-1}{a}x^a(1-x)^{b-1}+I(x;a+1,b-1)
+                        \\[7pt]
+                        &=\cdots\cdots\cdots\cdots\cdots\cdots\cdots\cdots\qquad{\color{red}\text{Recursion}\to I(x;n,1)=x^n}
+                        \\[7pt]
+                        &=\sum_{n=a}^{a+b-1}\binom{a+b-1}{n}x^n(1-x)^{a+b-1-n}
+                        \\[7pt]
+                        &=\sum_{n=a}^{a+b-1}\dfrac{(a+b-1)!}{n!(a+b-1-n)!}x^n(1-x)^{a+b-1-n}
+                    \end{align*} \]
+                </div>
+
+            </section>
+
+            <div class="orn">· · · · ✦ · · · ·</div>
+
+            <section id="lgamma">
+                <h3>3. &ensp; 计算对数伽马</h3>
+
+                <p>Gamma 函数增长极快，第一种情况是利用 $\Gamma(x+1)=x\Gamma(x)$ 递推，将伽马变到 $1\sim2$ 范围，但比如 $\Gamma(172)=171!>10^{308}$，即超过 double 双精度浮点数最大范围。第二种是考虑到使用<strong>对数</strong>压缩范围，这样可以使得计算不超过浮点数范围。</p>
+
+                <p>对于正数，使用斯特林近似：</p>
+                <div class="fbox">
+                    <p class="flbl">对数伽马的斯特林近似</p>
+                    \[ \ln\Gamma(x)\approx x\ln x-x-\dfrac{1}{2}\ln\left(\dfrac{x}{2\pi}\right) \]
+                </div>
+
+                <p>对于负数，使用欧拉反射公式：</p>
+                <div class="fbox">
+                    <p class="flbl">欧拉反射公式</p>
+                    \[ \Gamma(x)\Gamma(1-x)=\dfrac{\pi}{\sin\left(\pi x\right)} \]
+                </div>
+            </section>
+
+            <div class="orn">· · · · ✦ · · · ·</div>
+
+            <section id="fraction">
+                <h3>4. &ensp; 无穷连分式展开</h3>
+
+                <p>根据美国国家标准与技术研究院 NIST 出版的数学函数数字图书库 Digital Library of Mathematical Functions 权威定义，正则化不完全 $\beta$ 函数可以通过以下无限连分数展开进行超高精度逼近：</p>
+                <div class="fbox">
+                    <p class="flbl">正则化不完全贝塔函数无穷连分式展开</p>
+                    \[ I(x;a,b)=\dfrac{x^a(1-x)^b}{a\beta(a,b)}\cdot\dfrac{1}{1+\dfrac{d_1}{1+\dfrac{d_2}{1+\dfrac{d_3}{1+\dots}}}} \]
+                </div>
+
+                <p>偶数项系数序列：</p>
+                <div class="fbox">
+                    <p class="flbl">偶数项</p>
+                    \[ d_{2m}=\dfrac{m(b-m)x}{(a+2m-1)(a+2m)} \]
+                </div>
+
+                <p>奇数项系数序列：</p>
+                <div class="fbox">
+                    <p class="flbl">奇数项</p>
+                    \[ d_{2m+1}=-\dfrac{(a+m)(a+b+m)x}{(a+2m)(a+2m+1)} \]
+                </div>
+
+                <p>连分数收敛条件：</p>
+                <div class="fbox">
+                    <p class="flbl">收敛条件</p>
+                    \[ x<\dfrac{a+1}{a+b+2} \]
+                </div>
+
+                <p>评估点 $x$ 满足此核心不等式时，概率积分的几何权重分布主要集中在评估区间的前半部分，连分数的逼近截断误差呈现出极其优异的指数级衰减。然而，当输入的 $x$ 不满足条件时，连分数分母中的相互抵消效应会严重恶化，导致收敛速度急剧下降，如果强行继续迭代，不仅会消耗大量的 CPU 计算时钟周期，甚至可能由于双精度浮点数 double 类型尾数位 Mantissa 的截断误差累积，导致最终计算彻底发散失效。</p>
+
+                <p>为从根本上解决这一计算理论瓶颈，利用正则化不完全 $\beta$ 函数的镜像对称性等价恒等式：</p>
+                <div class="fbox">
+                    <p class="flbl">镜像对称性原理</p>
+                    \[ I(x;a,b)=1-I(1-x;b,a) \]
+                </div>
+
+                <p>任意形状的 $\beta$ 分布曲线，位于左侧尾部的概率累积面积，严格等价于其形状参数相互对调后，位于右侧相应镜像区间的尾部概率面积之补集。</p>
+                <p>实际编程算法实现层面，当检测到输入变量 $x$ 超出收敛域时，程序会立刻自动触发参数翻转机制，将目标计算任务转换为计算 $I(1-x;b,a)$，由于 $x$ 与 $1-x$ 处关于区间中点的互补状态，这种基于镜像对称性的动态条件分支策略，达成一种优雅的自适应保护机制，确保无论外部调用栈传入的输入参数如何畸形或极端，底层最深处的连分数引擎始终且必须运行在性能最佳的指数级收敛区间内。</p>
+
+            </section>
+
+            <div class="orn">· · · · ✦ · · · ·</div>
+
+            <section id="lentz">
+                <h3>5. &ensp; 函数序列的迭代 Lentz 算法</h3>
+
+                <p>Lentz 算法是一种高效且数值稳定计算连分数的方法，由 <strong>William J. Lentz</strong> 在 1976 年，用于计算贝塞尔函数等特殊函数的值，但后来被广泛用于各种无穷连分数的数值计算中，Lentz 算法求解的目标是形如：</p>
+                <div class="fbox">
+                    <p class="flbl">连分式</p>
+                    \[ F=b_0+\dfrac{a_1}{b_1+\dfrac{a_2}{b_2+\dfrac{a_3}{b_3+\dfrac{a_4}{b_4+\dots}}}} \]
+                </div>
+
+                <p>连分数直接从上到下计算容易出现除零或者数值溢出问题，Lentz 算法通过迭代更新避免了这些问题。Lentz 算法核心思想：</p>
+                <ul>
+                    <li>使用辅助状态 $C_n$ 和 $D_n$ 迭代更新分子分母的比值；</li>
+                    <li>引入一个很小的数 $\varepsilon$ 防止除零；</li>
+                    <li>每次迭代更新当前的近似值 $F_n$ 直到收敛。</li>
+                </ul><br>
+
+                <p>计算正则化不完全 $\beta$ 函数，其中 $b_0=b_1=b_2=\cdots=1$，而 $a_i$ 严格对应 $d_i$，并且设置 Lentz 初始值：</p>
+                <div class="fbox">
+                    <p class="flbl">Lentz 迭代算法</p>
+                    \[ \begin{align*}
+                        C_0&=F_0
+                        \\[7pt]
+                        D_0&=0
+                        \\[7pt]
+                        F_0&=b_0
+                        \\[7pt]
+                        C_i&=1+\dfrac{a_i}{C_{i-1}}
+                        \\[7pt]
+                        D_i&=\dfrac{1}{1+a_iD_{i-1}}
+                        \\[7pt]
+                        F_i&=F_{i-1}C_iD_i
+                        \\[7pt]
+                        \mid C_iD_i-1\mid&<\varepsilon\implies F_i
+                    \end{align*} \]
+                </div>
+
+            </section>
+
+            <div class="orn">· · · · ✦ · · · ·</div>
+
+            <section id="gauss">
+                <h3>6. &ensp; 高斯积分</h3>
+
+                <p>记 $A=\displaystyle\int_{-\infty}^{\infty}\mathrm{e}^{\displaystyle-x^2}\mathrm{d}x$，则：</p>
+                <div class="fbox">
+                    \[ A^2=\displaystyle\iint_{-\infty}^{\infty}\mathrm{e}^{\displaystyle-(x^2+y^2)}\mathrm{d}x\mathrm{d}y \]
+                </div>
+
+                <p>令：</p>
+                <div class="fbox">
+                    \[ \begin{cases}
+                        x=r\cos\theta
+                        \\[10pt]
+                        y=r\sin\theta
+                    \end{cases}\qquad 0\leqslant r,\quad0\leqslant\theta\leqslant2\pi \]
+                </div>
+
+                <p>根据雅可比行列式可得：</p>
+                <div class="fbox">
+                    \[ J=\left|\begin{matrix}
+                        \dfrac{\partial x}{\partial r} & \dfrac{\partial x}{\partial \theta} \\[10pt]
+                        \dfrac{\partial y}{\partial r} & \dfrac{\partial y}{\partial \theta}
+                        \end{matrix}\right|=\left|\begin{matrix}
+                            \cos\theta & -r\sin\theta \\
+                            \sin\theta & r\cos\theta
+                        \end{matrix}\right|=r\implies\mathrm{d}x\mathrm{d}y=\mid J\mid\mathrm{d}r\mathrm{d}\theta \]
+                </div>
+
+                <p>则：</p>
+                <div class="fbox">
+                    \[ A^2=\int_{0}^{2\pi}\int_{0}^{\infty}\mathrm{e}^{\displaystyle-r^2}r\mathrm{d}r\mathrm{d}\theta \]
+                </div>
+
+                <p>记 $u=r^2$ 则微分：</p>
+                <div class="fbox">
+                    \[ \mathrm{d}u=\mathrm{d}r^2=2r\mathrm{d}r\implies r\mathrm{d}r=\dfrac{1}{2}\mathrm{d}u \]
+                </div>
+
+                <p>则：</p>
+                <div class="fbox">
+                    \[ A^2=\int_{0}^{2\pi}\int_{0}^{\infty}\mathrm{e}^{\displaystyle-u}\cdot\dfrac{1}{2}\mathrm{d}u\mathrm{d}\theta= \int_{0}^{2\pi}\left[\left. \dfrac{1}{2}\left(-\mathrm{e}^{\displaystyle-u}\right)\right|_{0}^{\infty}\right]\mathrm{d}\theta =\int_{0}^{2\pi}\dfrac{1}{2}\mathrm{d}\theta=\pi \]
+                </div>
+
+                <p>根据高斯积分，易算得有如下推论：</p>
+                <div class="fbox">
+                    \[ \Gamma(0.5)=\sqrt{\pi} \]
+                </div>
+
+            </section>
+
+            <div class="orn">· · · · ✦ · · · ·</div>
+
+            <section id="student-t">
+                <h3>7. &ensp; 计算 Student $t$ 分布的累积分布函数</h3>
+
+                <p>Student $t$ 的 PDF 概率密度函数：</p>
+                <div class="fbox">
+                    <p class="flbl">Student t 分布概率密度函数</p>
+                    \[ f(x;\nu)=\dfrac{\Gamma\left(\dfrac{\nu+1}{2}\right)}{\sqrt{\nu\pi}\Gamma\left(\dfrac{\nu}{2}\right)}\left(1+\dfrac{x^2}{\nu}\right)^{-\dfrac{\nu+1}{2}} \]
+                </div>
+
+                <p>由于：</p>
+                <div class="fbox">
+                    \[ \beta\left(\dfrac{\nu}{2},\dfrac{1}{2}\right)=\dfrac{\Gamma\left(\dfrac{\nu}{2}\right)\Gamma\left(\dfrac{1}{2}\right)}{\Gamma\left(\dfrac{\nu+1}{2}\right)}=\dfrac{\Gamma\left(\dfrac{\nu}{2}\right)\sqrt{\pi}}{\Gamma\left(\dfrac{\nu+1}{2}\right)} \]
+                </div>
+
+                <p>则有：</p>
+                <div class="fbox">
+                    \[ f(x;\nu)=\dfrac{1}{\sqrt{\nu}\beta\left(\dfrac{\nu}{2},\dfrac{1}{2}\right)}\left(1+\dfrac{x^2}{\nu}\right)^{-\dfrac{\nu+1}{2}} \]
+                </div>
+
+                <p>则有累积概率分布函数：</p>
+                <div class="fbox">
+                    \[ \Pr(X>t)=\int_{t}^{\infty}f(x;\nu)\mathrm{d}x=\dfrac{1}{\sqrt{\nu}\beta\left(\dfrac{\nu}{2},\dfrac{1}{2}\right)}\int_{t}^{\infty}\left(1+\dfrac{x^2}{\nu}\right)^{-\dfrac{\nu+1}{2}}\mathrm{d}x \]
+                </div>
+                
+                <p>令 $u=\dfrac{\nu}{\nu+x^2}$，则有：</p>
+                <div class="fbox">
+                    \[ \mathrm{d}x=-\dfrac{\sqrt{\nu}}{2}u^{-\tfrac{3}{2}}(1-u)^{-\tfrac{1}{2}}\mathrm{d}u \]
+                </div>
+
+                <p>当 $x\to\infty$ 时，$u\to0$，当 $x\to t$ 时，$u\to\dfrac{\nu}{\nu+t^2}$，记 $s=\dfrac{\nu}{\nu+t^2}$，则有：</p>
+                <div class="fbox">
+                    \[ \begin{align*}
+                        \Pr(X>t)&=\dfrac{1}{\sqrt{\nu}\beta\left(\dfrac{\nu}{2},\dfrac{1}{2}\right)}\int_{s}^{0}u^{\tfrac{\nu+1}{2}}\left[-\dfrac{\sqrt{\nu}}{2}u^{-\tfrac{3}{2}}(1-u)^{-\tfrac{1}{2}}\right]\mathrm{d}u
+                        \\[7pt]
+                        &=\dfrac{1}{2\beta\left(\dfrac{\nu}{2},\dfrac{1}{2}\right)}\int_{0}^{s}u^{\tfrac{\nu}{2}-1}(1-u)^{-\tfrac{1}{2}}\mathrm{d}u
+                        \\[7pt]
+                        &=\dfrac{1}{2}\cdot\dfrac{1}{\beta\left(\dfrac{\nu}{2},\dfrac{1}{2}\right)}\int_{0}^{s}u^{\tfrac{\nu}{2}-1}(1-u)^{\tfrac{1}{2}-1}\mathrm{d}u
+                        \\[7pt]
+                        &=\dfrac{1}{2}I\left(s;\dfrac{\nu}{2},\dfrac{1}{2}\right)=\dfrac{1}{2}I\left(\dfrac{\nu}{\nu+t^2};\dfrac{\nu}{2},\dfrac{1}{2}\right)
+                    \end{align*} \]
+                </div>
+
+                <p>因此 Student $t$ 分布的 CDF 结果如下：</p>
+                <div class="fbox">
+                    <p class="flbl">累积概率分布函数与正则化不完全贝塔函数关系</p>
+                    \[ \Pr(X\leqslant t)=\begin{cases}
+                        1-\dfrac{1}{2}I\left(\dfrac{\nu}{\nu+t^2};\dfrac{\nu}{2},\dfrac{1}{2}\right)\qquad t>0
+                        \\[10pt]
+                        \dfrac{1}{2}I\left(\dfrac{\nu}{\nu+t^2};\dfrac{\nu}{2},\dfrac{1}{2}\right)\qquad\ \ \ \quad t\leqslant0
+                    \end{cases} \]
+                </div>
+
+                <div class="img-grid">
+                    <div class="img-card" data-src="./t1.svg" data-cap="Student t 分布 CDF — 自由度 ν = 1">
+                        <img src="./t1.svg" alt="Student t 分布 CDF ν=1" loading="lazy">
+                        <p class="img-cap">自由度 ν = 1</p>
+                    </div>
+                    <div class="img-card" data-src="./t5.svg" data-cap="Student t 分布 CDF — 自由度 ν = 5">
+                        <img src="./t5.svg" alt="Student t 分布 CDF ν=5" loading="lazy">
+                        <p class="img-cap">自由度 ν = 5</p>
+                    </div>
+                    <div class="img-card" data-src="./t30.svg" data-cap="Student t 分布 CDF — 自由度 ν = 30">
+                        <img src="./t30.svg" alt="Student t 分布 CDF ν=30" loading="lazy">
+                        <p class="img-cap">自由度 ν = 30</p>
+                    </div>
+                </div>
+
+            </section>
+
+            <div class="orn">· · · · ✦ · · · ·</div>
+
+            <section id="map">
+                <h3>8. &ensp; 全局平滑映射</h3>
+
+                <p>为了消除编程中 if-else 分支判断正负，加快 CPU 计算，我们把 $t\in(-\infty,+\infty)$ 映射到正则化不完全 $\beta$ 函数所需的 $x\in[0,1]$ 区间，刚才是令 $s=\dfrac{\nu}{\nu+t^2}$，但代码里必须进行 <strong>if t > 0</strong> 和 <strong>if t <= 0</strong> 分段处理，并且参数是固定的 $\dfrac{\nu}{2}$ 和 $\dfrac{1}{2}$，现在用另一种映射变量：</p>
+
+                <div class="fbox">
+                    \[ z=\dfrac{t+\sqrt{t^2+\nu}}{2\sqrt{t^2+\nu}}=\dfrac{1}{2}\left(1+\dfrac{t}{\sqrt{t^2+\nu}}\right) \]
+                </div>
+
+                <p>这是一种单调递增的映射，有这些特点：</p>
+                <ul>
+                    <li>当 $t\to-\infty$ 时 $z\to0$；</li>
+                    <li>当 $t=0$ 时 $z=0.5$；</li>
+                    <li>当 $t\to+\infty$ 时 $z\to1$。</li>
+                </ul><br>
+                <p>它把整个实数轴平滑地拉伸并压缩到了 $[0,1]$ 区间内，不需要任何 if-else 分支来判断正负。</p>
+                <p>当 Student $t$ 分布以 $t=0$ 为中心对称时，让正则化不完全 $\beta$ 函数的两个参数都为 $\dfrac{\nu}{2}$，则利用贝塔函数对称性恒等式：</p>
+
+                <div class="fbox">
+                    <p class="flbl">正则化不完全贝塔函数对称恒等式</p>
+                    \[ I\left(z;\dfrac{\nu}{2},\dfrac{\nu}{2}\right)=\begin{cases}
+                        1-\dfrac{1}{2}I\left[1-(1-2z)^2;\dfrac{\nu}{2},\dfrac{1}{2}\right]\qquad z>0.5
+                        \\[10pt]
+                        \dfrac{1}{2}I\left[1-(1-2z)^2;\dfrac{\nu}{2},\dfrac{1}{2}\right]\qquad\ \ \ \quad z\leqslant0.5
+                    \end{cases} \]
+                </div>
+
+                <p>若将 $z=\dfrac{1}{2}\left(1+\dfrac{t}{\sqrt{t^2+\nu}}\right)$ 代入 $1-(1-2z)^2$ 可得：</p>
+                <div class="fbox">
+                    \[ 1-(1-2z)^2=\dfrac{\nu}{\nu+t^2} \]
+                </div>
+
+                <p>这与上述 Student $t$ 分布 CDF 在数学推导上是等价的。</p>
+
+            </section>
+
+            <div class="orn">· · · · ✦ · · · ·</div>
+
+            <section id="code">
+                <h3>9. &ensp; C 语言代码</h3>
+
+                <div class="img-wide" data-src="./demo.png" data-cap="C 语言代码">
+                    <img src="./demo.png" alt="Oops?" loading="lazy" style="width:100%;display:block;">
+                    <p class="img-cap" style="padding:9px 14px 11px;font-size:.8rem;color:var(--soft);font-style:italic;text-align:center;background:var(--warm);border-top:1px solid var(--rule);">C 语言代码</p>
+                </div>
+
+<pre><code class="language-c" style="font-size: 12px">
+#include &lt;math.h&gt;
+#include &lt;stdio.h&gt;
+
+double incbeta(double x, double a, double b) {
+    static const double epsilon = 1.0e-30;
+    static const double condition = 1.0e-12;
+
+    if (x < 0.0 || x > 1.0) return INFINITY;
+    if (x > (a + 1.0) / (a + b + 2.0)) return 1.0 - incbeta(1.0 - x, b, a);
+
+    double c = 1.0;
+    double d = 0.0;
+    double f = 1.0;
+
+    const double lbeta_ab = lgamma(a) + lgamma(b) - lgamma(a + b);
+    const double front = exp(a * log(x) + b * log(1.0 - x) - lbeta_ab) / a;
+
+    for (int i = 0; i <= 200; ++i) {
+        int m = i / 2;
+        double numerator;
+
+        if (i == 0) numerator = 1.0;
+        else if (i % 2 == 0) numerator = (m * (b - m) * x) / ((a + 2.0 * m - 1.0) * (a + 2.0 * m));
+        else numerator = - ((a + m) * (a + b + m) * x) / ((a + 2.0 * m) * (a + 2.0 * m + 1));
+
+        d = 1.0 + numerator * d;
+        if (fabs(d) < epsilon) d = epsilon;
+        d = 1.0 / d;
+
+        c = 1.0 + numerator / c;
+        if (fabs(c) < epsilon) c = epsilon;
+
+        double cd = c * d;
+        f = f * cd;
+        if (fabs(cd - 1.0) < condition) return front * (f - 1.0);
+    }
+    return INFINITY;
+}
+
+double cdf_student_t(double t, double df) {
+    if (df <= 0.0) return NAN;
+    if (t == 0.0) return 0.5;
+    double cache = sqrt(t * t + df);
+    return incbeta((t + cache) / (2.0 * cache), df / 2.0, df / 2.0);
+}
+
+int main(int argc, char *argv[], char *envs[]) {
+    printf("incbeta(0.5, 5, 4) = %lf\n", incbeta(0.5, 5, 4));
+    printf("cdf_student_t(7.2, 1.2) = %lf\n", cdf_student_t(7.2, 1.2));
+    return 0;
+}
+</code></pre>
+
+            </section>
+
+        </div>
+    </body>
+
+    <script>
+        /* ══════════════════════════════════════════
+        Lightbox — click any .img-card or .img-wide
+        ══════════════════════════════════════════ */
+        (function () {
+            const lb   = document.getElementById('lb');
+            const lbI  = document.getElementById('lbI');
+            const lbC  = document.getElementById('lbC');
+            const lbX  = document.getElementById('lbX');
+
+            function openLb(src, cap) {
+                lbI.src = src;
+                lbI.alt = cap || '';
+                lbC.textContent = cap || '';
+                lb.classList.add('on');
+                document.body.style.overflow = 'hidden';
+            }
+
+            function closeLb() {
+                lb.classList.remove('on');
+                document.body.style.overflow = '';
+                /* delay src clear so close animation looks clean */
+                setTimeout(() => { lbI.src = ''; }, 280);
+            }
+
+            /* delegate clicks on card & wide wrappers */
+            document.addEventListener('click', function (e) {
+                const card = e.target.closest('.img-card, .img-wide');
+                if (card) {
+                    const src = card.dataset.src
+                            || card.querySelector('img')?.src
+                            || '';
+                    const cap = card.dataset.cap || '';
+                    openLb(src, cap);
+                    return;
+                }
+                /* close on backdrop or ✕ button */
+                if (e.target === lb || e.target === lbX) closeLb();
+            });
+
+            /* close on Escape */
+            document.addEventListener('keydown', function (e) {
+                if (e.key === 'Escape') closeLb();
+            });
+
+            /* prevent click on the image itself from bubbling to backdrop */
+            lbI.addEventListener('click', function (e) { e.stopPropagation(); });
+
+        })();
+
+        /* ══════════════════════════════════════════
+        Nav dots — highlight current section
+        ══════════════════════════════════════════ */
+        (function () {
+            const sections = Array.from(document.querySelectorAll('section[id]'));
+            const nav = document.getElementById('dots');
+            if (!nav || !sections.length) return;
+
+            sections.forEach(function (sec) {
+                const d = document.createElement('div');
+                d.className = 'dot';
+                d.title = sec.querySelector('h3')?.textContent.replace(/\d+\.\s*/,'') || sec.id;
+                d.addEventListener('click', function () {
+                    sec.scrollIntoView({ behavior: 'smooth' });
+                });
+                nav.appendChild(d);
+            });
+
+            const dots = Array.from(nav.querySelectorAll('.dot'));
+
+            const observer = new IntersectionObserver(function (entries) {
+                entries.forEach(function (en) {
+                    if (en.isIntersecting) {
+                        const i = sections.indexOf(en.target);
+                        dots.forEach(function (d, j) { d.classList.toggle('on', i === j); });
+                    }
+                });
+            }, { rootMargin: '-40% 0px -50% 0px' });
+
+            sections.forEach(function (sec) { observer.observe(sec); });
+        })();
+    </script>
+</html>
