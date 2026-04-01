@@ -771,7 +771,7 @@
             <header>
                 <p class="eyebrow">2026-03-15 · 数值分析 · 统计学</p>
                 <h2>正则化不完全 $\beta$ 函数 & Student $t$ 分布 CDF 函数</h2>
-                <p class="subtitle">正则化不完全 $\beta$ 函数可计算离散 $t$ 分布的累积概率分布函数，以下介绍一种理论与工程结合的做法。</p>
+                <p class="subtitle">正则化不完全 $\beta$ 函数可计算离散 $t$ 分布的累积概率分布函数，从而易得出 $t$ 分布的概率密度函数，最终可 $t$ 分布临界值表，同理可以导出 F 分布临界值表，以及 $\chi^2$ 分布临界值表。</p>
             </header>
 
             <nav class="toc">
@@ -785,7 +785,7 @@
                     <li><a href="#gauss">高斯积分</a></li>
                     <li><a href="#student-t">计算 Student t 分布的累积分布函数</a></li>
                     <li><a href="#map">全局平滑映射</a></li>
-                    <li><a href="#code">C 语言代码</a></li>
+                    <li><a href="#code">C 语言构建 t 分布临界置信水平表</a></li>
                 </ol>
             </nav>
 
@@ -1073,7 +1073,7 @@
                 <p>因此 Student $t$ 分布的 CDF 结果如下：</p>
                 <div class="fbox">
                     <p class="flbl">累积概率分布函数与正则化不完全贝塔函数关系</p>
-                    \[ \Pr(X\leqslant t)=\begin{cases}
+                    \[ F(t;\nu)=\Pr(X\leqslant t)=\begin{cases}
                         1-\dfrac{1}{2}I\left(\dfrac{\nu}{\nu+t^2};\dfrac{\nu}{2},\dfrac{1}{2}\right)\qquad t>0
                         \\[10pt]
                         \dfrac{1}{2}I\left(\dfrac{\nu}{\nu+t^2};\dfrac{\nu}{2},\dfrac{1}{2}\right)\qquad\ \ \ \quad t\leqslant0
@@ -1138,12 +1138,44 @@
             <div class="orn">· · · · ✦ · · · ·</div>
 
             <section id="code">
-                <h3>9. &ensp; C 语言代码</h3>
-
-                <div class="img-wide" data-src="./demo.png" data-cap="C 语言代码">
-                    <img src="./demo.png" alt="Oops?" loading="lazy" style="width:100%;display:block;">
-                    <p class="img-cap" style="padding:9px 14px 11px;font-size:.8rem;color:var(--soft);font-style:italic;text-align:center;background:var(--warm);border-top:1px solid var(--rule);">C 语言代码</p>
+                <h3>9. &ensp; C 语言构建 t 分布临界置信水平表</h3>
+                <p>现在有了第 1～8 部分的数学理论，我们容易迭代求得 $t$ 分布的 CDF 累积概率分布，再根据定义可知，$t$ 分布的 PDF 概率密度函数是 CDF 的导数，所以：</p>
+                <div class="fbox">
+                    <p class="flbl">导数定义</p>
+                    \[ f(x;\nu)=\lim_{h\to0}\dfrac{F(x+h;\nu)-F(x;\nu)}{h} \]
                 </div>
+
+                <p>为了提高逼近的精度，工程上通常不采用单边差分，而是采用中心差分：</p>
+                <div class="fbox">
+                    <p class="flbl">导数中心差分</p>
+                    \[ \text{PDF}(x;\nu)=f(x;\nu)=\lim_{h\to0}\dfrac{\text{CDF}(x+h;\nu)-\text{CDF}(x-h;\nu)}{2h} \]
+                </div>
+
+                <p>你对比一下，离谱吧，只需要调用两次 incbeta 正则化不完全贝塔函数，再将 $h$ 步长设置极小如 1e-7 浮点数，完全不需要用 $\Gamma$ 函数和复杂的代数解析式，就能得到精确的 PDF 值！</p>
+                <div class="fbox">
+                    <p class="flbl">Student t 分布 PDF 概率密度函数</p>
+                    \[ f(x;\nu)=\dfrac{\Gamma\left(\dfrac{\nu+1}{2}\right)}{\sqrt{\nu\pi}\Gamma\left(\dfrac{\nu}{2}\right)}\left(1+\dfrac{x^2}{\nu}\right)^{-\dfrac{\nu+1}{2}} \]
+                </div>
+
+                <p>此时，为了构建 $t$ 分布临界值表，我们只需要澄清一个道理：由显著性水平 $\alpha$ 可以得到目标累积概率 $p$，除此之外，咱们还有自由度 $\nu$，如何求未知数 $x$？即求解非线性方程：</p>
+                <div class="fbox">
+                    <p class="flbl">目标方程</p>
+                    \[ g(x)=\text{CDF}(x;\nu)-p=0 \]
+                </div>
+
+                <p>考虑 Newton-Raphson 迭代算法：</p>
+                <div class="fbox">
+                    <p class="flbl">牛顿迭代</p>
+                    \[ x_{n+1}=x_n-\dfrac{g(x_n)}{g'(x_n)}=x_n-\dfrac{\text{CDF}(x_n;\nu)-p}{\text{PDF}(x_n;\nu)} \]
+                </div>
+                
+                <p>最后编译代码执行程序得到 Student $t$ 分布临界置信水平表：</p>
+                <div class="img-wide" data-src="./demo.png" data-cap="C 语言代码运行结果">
+                    <img src="./demo.png" alt="Oops?" loading="lazy" style="width:100%;display:block;">
+                    <p class="img-cap" style="padding:9px 14px 11px;font-size:.8rem;color:var(--soft);font-style:italic;text-align:center;background:var(--warm);border-top:1px solid var(--rule);">C 语言代码运行结果</p>
+                </div>
+
+                <p>源码如下：</p>
 
 <pre><code class="language-c" style="font-size: 12px">
 #include &lt;math.h&gt;
@@ -1192,12 +1224,154 @@ double cdf_student_t(double t, double df) {
     return incbeta((t + cache) / (2.0 * cache), df / 2.0, df / 2.0);
 }
 
+double pdf_student_t(double t, double df) {
+    double h = 1e-7;
+    double cdf_plus = cdf_student_t(t + h, df);
+    double cdf_minus = cdf_student_t(t - h, df);
+    return (cdf_plus - cdf_minus) / (2.0 * h);
+}
+
+double newton_raphson_t(double p, double df) {
+    if (p <= 0.0) return -INFINITY;
+    if (p >= 1.0) return INFINITY;
+    if (p == 0.5) return 0.0;
+
+    double x = 0.0;
+    int epochs = 50;
+    double epsilon = 1e-12;
+
+    for (int n = 0; n < epochs; n++) {
+        double g = cdf_student_t(x, df) - p;
+        if (fabs(g) < epsilon) break;
+
+        double g_derivative = pdf_student_t(x, df);
+        if (g_derivative == 0.0) break;
+
+        x = x - g / g_derivative;
+    }
+    return x;
+}
+
+void build_student_t_critical_table() {
+    double single_alpha[] = {0.25, 0.2, 0.15, 0.1, 0.05, 0.025, 0.01, 0.005, 0.001};
+    double size = sizeof(single_alpha) / sizeof(single_alpha[0]);
+
+    printf("===============================================================================================================\n");
+    printf("                                        P{t(v) > t(v;1-alpha)} = alpha\n");
+    printf("---------------------------------------------------------------------------------------------------------------\n");
+    printf(" alpha / 2 |");
+    for (int i = 0; i < size; i++) printf(" %7g  |", single_alpha[i]);
+    printf("\n");
+    printf("   alpha   |");
+    for (int i = 0; i < size; i++) printf(" %7g  |", single_alpha[i] * 2.0);
+    printf("\n");
+    printf("---------------------------------------------------------------------------------------------------------------\n");
+    printf("   df(v)   |\n");
+    printf("---------------------------------------------------------------------------------------------------------------\n");
+    for (double v = 1; v < 16; v++) {
+        printf("    %2.0lf     |", v);
+        for (int i = 0; i < size; i++) {
+            double p = 1.0 - single_alpha[i];
+            double t = newton_raphson_t(p, v);
+            printf(" %8.4lf |", t);
+        }
+        printf("\n");
+    }
+    printf("===============================================================================================================\n");
+}
+
 int main(int argc, char *argv[], char *envs[]) {
-    printf("incbeta(0.5, 5, 4) = %lf\n", incbeta(0.5, 5, 4));
-    printf("cdf_student_t(7.2, 1.2) = %lf\n", cdf_student_t(7.2, 1.2));
+    build_student_t_critical_table();
     return 0;
 }
 </code></pre>
+
+                <h3>彩蛋：补充</h3>
+                <p>F 分布的累积分布函数：</p>
+                <div class="fbox">
+                    <p class="flbl">F 分布 CDF</p>
+                    \[ \text{CDF}(F;\nu_1,\nu_2)=I\left(x;\dfrac{\nu_1}{2},\dfrac{\nu_2}{2}\right) \]
+                </div>
+
+                <p>其中：</p>
+                <div class="fbox">
+                    \[ x=\dfrac{\nu_1F}{\nu_1F+\nu_2}\implies F=\dfrac{\nu_2}{\nu_1}\cdot\dfrac{x}{1-x} \]
+                </div>
+
+                <p>同理类推 Student $t$ 分布计算临界值方法，可以快速求出 F 分布的临界值表。</p>
+
+<pre><code class="language-c" style="font-size: 12px">
+double cdf_f(double F, double df1, double df2) {
+    if (F <= 0) return 0.0;
+    double x = (df1 * F) / (df1 * F + df2);
+    return incbeta(x, df1 / 2.0, df2 / 2.0);
+}
+
+double pdf_f(double F, double df1, double df2) {
+    double h = 1e-7;
+    double cdf_minus = (F - h < 0.0) ? 0.0 : cdf_f(F - h, df1, df2);
+    return (cdf_f(F + h, df1, df2) - cdf_minus) / (2.0 * h);
+}
+
+double newton_raphson_f(double p, double df1, double df2) {
+    if (p <= 0.0) return 0.0;
+    if (p >= 1.0) return INFINITY;
+
+    double x = 1.0;
+    int epochs = 50;
+    double epsilon = 1e-12;
+
+    for (int n = 0; n < epochs; n++) {
+        double g = cdf_f(x, df1, df2) - p;
+        if (fabs(g) < epsilon) break;
+
+        double g_derivative = pdf_f(x, df1, df2);
+        if (g_derivative == 0.0) break;
+
+        x = x - g / g_derivative;
+        if (x <= 0.0) x = 0.0000001;
+    }
+    return x;
+}
+</code></pre>
+
+                <p>卡方 $\chi^2$ 分布衡量是多个标准正态分布的平方和，概率密度函数定义为：</p>
+                <div class="fbox">
+                    <p class="flbl">卡方分布 PDF</p>
+                    \[ f(x;\nu)=\dfrac{x^{\tfrac{\nu}{2}-1}\mathrm{e}^{-\tfrac{x}{2}}}{2^{\tfrac{\nu}{2}}\Gamma\left(\dfrac{\nu}{2}\right)} \]
+                </div>
+
+                <p>当 F 分布自由度 $\nu_2\to\infty$ 时，可得 $\chi^2$ 关系恒等式：</p>
+                <div class="fbox">
+                    <p class="flbl">卡方分布 CDF</p>
+                    \[ \chi^2(\nu_1)=\lim_{\nu_2\to\infty}\left[\nu_1\cdot F\left(\nu_1,\nu_2\right)\right] \]
+                </div>
+
+<pre><code class="language-c" style="font-size: 12px">
+double cdf_approx_chi_square(double p, double df) {
+    double infinity_df2 = 1e6;
+    return df * newton_raphson_f(p, df, infinity_df2);
+}
+</code></pre>
+
+            <p>测试结果：</p>
+
+<pre><code class="language-c" style="font-size: 12px">
+int main(int argc, char *argv[], char *envs[]) {
+    double alpha = 0.01;
+    double p = 1.0 - alpha;
+    double df1 = 5;
+    double df2 = 10;
+    double df = 7;
+
+    printf("alpha = %.3lf, df1 = %.0f, df2 = %.0f, F = %.4lf\n", alpha, df1, df2, newton_raphson_f(p, df1, df2));
+    printf("alpha = %.3lf, df = %.0f, chi^2 = %.4lf\n", alpha, df, cdf_approx_chi_square(p, df));
+    return 0;
+}
+</code></pre>
+
+            <p>alpha = 0.010, df1 = 5, df2 = 10, F = 5.6363</p>
+            <p>alpha = 0.010, df = 7, chi^2 = 18.4754</p>
 
             </section>
 
