@@ -1,0 +1,4177 @@
+\documentclass{article}
+
+\usepackage[fontsize = 12pt]{fontsize}
+\usepackage[fontset = fandol]{ctex}
+\usepackage[table]{xcolor}
+\usepackage{tikz}
+\usepackage{float}
+\usepackage{pdflscape}
+\usepackage{datetime}
+\usepackage{enumitem}
+\usepackage{geometry}
+\usepackage{booktabs}
+\usepackage{multirow}
+\usepackage{hyperref}
+\usepackage{listings}
+\usepackage{amsmath, amssymb, amsfonts, mathrsfs}
+
+\definecolor{MorandiLightCyan}{RGB}{209, 238, 238}
+\definecolor{MorandiBlue}{RGB}{70, 110, 255}
+\definecolor{MorandiGrey}{RGB}{80, 100, 100}
+\definecolor{MorandiPurple}{RGB}{140, 110, 180}
+\definecolor{MorandiCyan}{RGB}{110, 170, 190}
+\definecolor{MorandiRed}{RGB}{220, 130, 130}
+\definecolor{MorandiOrange}{RGB}{250, 210, 160}
+\definecolor{NavyColor}{HTML}{16324F}
+\definecolor{codebg}{HTML}{F7F7F8}
+\definecolor{codeframe}{HTML}{D9DDE3}
+\definecolor{codekw}{HTML}{2563EB}
+\definecolor{codestr}{HTML}{047857}
+
+\definecolor{MorandiLightCyan}{RGB}{209, 238, 238}
+\definecolor{MorandiBlue}{RGB}{70, 110, 255}
+\definecolor{MorandiGrey}{RGB}{80, 100, 100}
+\definecolor{MorandiPurple}{RGB}{140, 110, 180}
+\definecolor{MorandiCyan}{RGB}{110, 170, 190}
+\definecolor{MorandiRed}{RGB}{220, 130, 130}
+\definecolor{MorandiOrange}{RGB}{250, 210, 160}
+\definecolor{NavyColor}{HTML}{16324F}
+
+\definecolor{RowA}{HTML}{4C72B0} % 蓝
+\definecolor{RowB}{HTML}{DD8452} % 橙
+\definecolor{RowC}{HTML}{55A868} % 绿
+\definecolor{RowD}{HTML}{C44E52} % 红
+\definecolor{RowE}{HTML}{8172B3} % 紫
+\definecolor{RowF}{HTML}{937860} % 棕
+\definecolor{RowG}{HTML}{DA8BC3} % 粉
+\definecolor{RowH}{HTML}{8C8C8C} % 灰
+\definecolor{RowI}{HTML}{CCB974} % 卡其
+\definecolor{RowJ}{HTML}{64B5CD} % 青
+\definecolor{RowK}{HTML}{E15759} % 珊瑚红
+\definecolor{RowL}{HTML}{59A14F} % 草绿
+\definecolor{RowM}{HTML}{B07AA1} % 藕荷
+\definecolor{RowN}{HTML}{F28E2B} % 琥珀
+\definecolor{RowO}{HTML}{4E79A7} % 钢蓝
+\definecolor{RowP}{HTML}{76B7B2} % 蓝绿
+
+\newcommand{\rowA}{\rowcolor{RowA!14}}
+\newcommand{\rowB}{\rowcolor{RowB!16}}
+\newcommand{\rowC}{\rowcolor{RowC!16}}
+\newcommand{\rowD}{\rowcolor{RowD!14}}
+\newcommand{\rowE}{\rowcolor{RowE!16}}
+\newcommand{\rowF}{\rowcolor{RowF!16}}
+\newcommand{\rowG}{\rowcolor{RowG!18}}
+\newcommand{\rowH}{\rowcolor{RowH!16}}
+\newcommand{\rowI}{\rowcolor{RowI!22}}
+\newcommand{\rowJ}{\rowcolor{RowJ!22}}
+\newcommand{\rowK}{\rowcolor{RowK!16}}
+\newcommand{\rowL}{\rowcolor{RowL!16}}
+\newcommand{\rowM}{\rowcolor{RowM!18}}
+\newcommand{\rowN}{\rowcolor{RowN!18}}
+\newcommand{\rowO}{\rowcolor{RowO!16}}
+\newcommand{\rowP}{\rowcolor{RowP!22}}
+
+\newcommand{\cube}[1]{
+    \begin{tikzpicture}[baseline = 0ex]
+        \draw[draw = #1, fill = #1!20, thick, rounded corners = 1.5pt] (0,0) rectangle (0.25, 0.25);
+    \end{tikzpicture}
+}
+\newcommand{\best}{}
+
+\lstset{
+    language = bash,
+    backgroundcolor = \color{codebg},
+    frame = single,
+    rulecolor = \color{codeframe},
+    framerule = 0.5pt,
+    framesep = 6pt,
+    xleftmargin = 1em,
+    xrightmargin = 1em,
+    basicstyle = \ttfamily\fontsize{8}{10}\selectfont,
+    keywordstyle = \color{codekw}\bfseries,
+    stringstyle = \color{codestr},
+    commentstyle = \color{gray},
+    numbers = none,
+    breaklines = true,
+    breakatwhitespace = true,
+    columns = fullflexible,
+    keepspaces = true,
+    showstringspaces = false,
+    tabsize = 2
+}
+
+\geometry{
+    a4paper,
+    left = 0.75in,
+    right = 0.75in,
+    top = 1in,
+    bottom = 1in
+}
+
+\hypersetup{
+    colorlinks = true,
+    linkcolor = NavyColor,
+    citecolor = green,
+    urlcolor = magenta
+}
+
+\setitemize[1]{
+    itemsep = 7pt,
+    partopsep = 0pt,
+    parsep = \parskip,
+    topsep = 5pt
+}
+
+\title{\textcolor{NavyColor}{\bfseries DGX Spark GB10 模型推理性能基准报告}}
+\author{Blade-LLM · Illusionna}
+\date{\currenttime,\ \today}
+
+
+
+\begin{document}
+
+\maketitle
+\thispagestyle{empty}
+\tableofcontents
+\thispagestyle{empty}
+\clearpage
+\setcounter{page}{1}
+
+
+
+\section{参数解释}
+
+\begin{itemize}
+    \item  \textbf{测试服务器}：ssh ai@192.168.120.32
+    \item \textbf{pp}：填充 token 数量
+    \item \textbf{tg}：生成 token 数量
+    \item \textbf{c}：并发请求数
+    \item \textbf{d}：已缓存历史上文 token 数量
+    \item \textbf{pp t/s}：提示词（预填充）阶段，每秒处理多少 token
+    \item \textbf{tg t/s}：解码生成阶段，每秒生成多少 token
+    \item \textbf{TTFT (ms)}：从发出请求到收到第一个 token 的延迟
+    \item \textbf{Total (ms)}：从请求发出，到完整响应全部生成完毕的总时间
+    \item \textbf{Warm-up (ms)}：预热所需时间
+    \item \textbf{Median-turn (s)}：所有对话轮次耗时的中位数
+    \item \textbf{Quality}：生成内容质量
+    \item \textbf{Responsiveness}：响应质量性能
+\end{itemize}
+
+
+
+\section{总结报告}
+历史上文深度（d0 / d4096 / d8192）与并发数（c1 / c2 / c4），超长上文历史深度为（d131072），背景透明无色为该工况下的解码器生成速度吞吐的最优值。
+
+
+
+\subsection{超长历史上文吞吐延迟测试}
+\begin{table}[H]
+    \centering
+    \renewcommand{\arraystretch}{1.5}
+    \setlength{\tabcolsep}{4pt}
+    \resizebox{\linewidth}{!}{
+        \begin{tabular}{clc!{\color{codeframe}\vrule}ccc!{\color{codeframe}\vrule}ccc!{\color{codeframe}\vrule}ccc}
+            \bottomrule[1.5pt]
+            \rowcolor{MorandiLightCyan}\multicolumn{3}{c}{\textbf{vLLM:EngineCore}} & \multicolumn{3}{c}{\textbf{pp t/s}} & \multicolumn{3}{c}{\textbf{tg t/s}} & \multicolumn{3}{c}{\textbf{TTFT (s)}} \\
+            \cmidrule(lr){4-6}\cmidrule(lr){7-9}\cmidrule(lr){10-12}
+            ~ & \multicolumn{1}{c}{\textbf{d131072}} & \textbf{GiB} & c1 & c2 & c4 & c1 & c2 & c4 & c1 & c2 & c4 \\
+            \midrule[0.75pt]
+            \cube{MorandiBlue} & vLLM.dev + Qwen3.5-122B-A10B-INT4-AutoRound-Intel + MTP-2 & 106.49 & 1117 & 1096 & 1085 & 32.4 & 25.2 & 23.1 & 106.8 & 163.5 & 274.6 \\
+            \cube{MorandiCyan} & vLLM.dev + Qwen3.5-122B-Hybrid-INT4FP8 + MTP-2 & 108.93 & 1119 & 1101 & 1091 & 33.4 & 13.9 & 10.7 & 106.8 & 162.8 & 273.6 \\
+            \toprule[1.5pt]
+        \end{tabular}
+    }
+\end{table}
+
+% vLLM.dev + Qwen3.5-122B-A10B-INT4-AutoRound-Intel + MTP-2
+% vLLM.dev + Qwen3.5-122B-Hybrid-INT4FP8 + MTP-2
+
+\subsection{一般指标预览}
+\begin{landscape}
+    \thispagestyle{empty}
+    
+    \begin{table}[H]
+        \centering
+        \renewcommand{\arraystretch}{1.2}
+        \setlength{\tabcolsep}{1pt}
+        \resizebox{\linewidth}{!}{
+            \begin{tabular}{p{35em}|*{5}{c}|*{9}{c}|*{9}{c}|*{9}{c}}
+                \bottomrule[1.5pt]
+                ~ & ~ & ~ & ~ & ~ & ~ & \multicolumn{9}{c}{\textbf{pp t/s}} & \multicolumn{9}{c}{\textbf{tg t/s}} & \multicolumn{9}{c}{\textbf{TTFT (ms)}} \\
+
+                \cmidrule(lr){7-15}\cmidrule(lr){16-24}\cmidrule(lr){25-33}
+
+                ~ & ~ & ~ & ~ & ~ & ~ & \multicolumn{3}{c}{d0} & \multicolumn{3}{c}{d4096} & \multicolumn{3}{c}{d8192} & \multicolumn{3}{c}{d0} & \multicolumn{3}{c}{d4096} & \multicolumn{3}{c}{d8192} & \multicolumn{3}{c}{d0} & \multicolumn{3}{c}{d4096} & \multicolumn{3}{c}{d8192} \\
+
+                \cmidrule(lr){7-9}\cmidrule(lr){10-12}\cmidrule(lr){13-15}\cmidrule(lr){16-18}\cmidrule(lr){19-21}\cmidrule(lr){22-24}\cmidrule(lr){25-27}\cmidrule(lr){28-30}\cmidrule(lr){31-33}
+
+                \multicolumn{1}{c}{\textbf{Params}} & \textbf{GiB} & \textbf{Quality} & \textbf{Responsiveness} & \textbf{Warm-up} & \textbf{Median-turn} & c1 & c2 & c4 & c1 & c2 & c4 & c1 & c2 & c4 & c1 & c2 & c4 & c1 & c2 & c4 & c1 & c2 & c4 & c1 & c2 & c4 & c1 & c2 & c4 & c1 & c2 & c4 \\
+
+                \midrule[0.75pt]
+
+                \rowA\cube{RowA}~ds4 + DeepSeek-V4-Flash-IQ2XXS & 110.63 & 90 & 12 & 8865ms & 11.3s & 1157 & 1075 & 1119 & 1167 & 1122 & 1130 & 1108 & 1066 & 1062 & 24.5 & 49.7 & 81.9 & 28.1 & 50.4 & 34.6 & 25.1 & 47.6 & 23.7 & 2100 & 3715 & 7261 & 5588 & 10826 & 18860 & 9583 & 19124 & 31650 \\
+
+                \rowB\cube{RowB}~ds4 + DeepSeek-V4-Flash-IQ2XXS + MTP-2 & 108.19 & 83 & 13 & 96923ms & 10.8s & 365 & 163 & 133 & 355 & 253 & 224 & 336 & 275 & 254 & 21.1 & 17.5 & 15.8 & 20.7 & 13.7 & 10.1 & 19.8 & 9.3 & 7.7 & 5850 & 14456 & 31574 & 16330 & 30766 & 59151 & 28715 & 47925 & 88481 \\
+
+                \rowC\cube{RowC}~SGLang.build + Qwen3.6-27B-INT4-AutoRound-Intel + MTP-2 & 89.65 & 97 & 22 & 1446ms & 6.9s & 402 & 402 & 414 & 416 & 412 & 410 & 405 & 403 & 406 & 17.0 & 29.8 & 56.6 & 16.5 & 29.7 & 14.8 & 16.8 & 30.3 & 10.1 & 5566 & 10005 & 19669 & 15183 & 29588 & 52135 & 25739 & 50660 & 82728 \\
+
+                \rowD\cube{RowD}~SGLang.build + Qwen3.6-27B-INT4-AutoRound-Intel + MTP-4 & 90.00 & 97 & 26 & 12474ms & 6.0s & 412 & 403 & 412 & 416 & 411 & 410 & 405 & 401 & 404 & 20.8 & 29.5 & 53.0 & 20.9 & 30.8 & 14.6 & 18.8 & 33.0 & 10.1 & 5483 & 10014 & 19765 & 15240 & 29647 & 52037 & 25736 & 50935 & 83137 \\
+
+                \rowE\cube{RowE}~SGLang.build + Qwen3.6-27B-INT4-AutoRound-Intel + MTP-8 & 90.32 & 97 & 27 & 10201ms & 5.9s & 394 & 401 & 403 & 417 & 410 & 394 & 406 & 390 & 405 & 16.1 & 28.2 & 42.4 & 17.7 & 35.7 & 13.8 & 17.6 & 30.0 & 9.7 & 5792 & 10020 & 20179 & 15289 & 29731 & 54343 & 25798 & 52256 & 82832 \\
+
+                \rowF\cube{RowF}~SGLang.pull + Qwen3.6-27B-INT4-AutoRound-Intel + MTP-2 & 89.01 & 97 & 23 & 1349ms & 6.8s & 415 & 416 & 427 & 424 & 425 & 423 & 416 & 414 & 415 & 17.7 & 27.9 & 53.8 & 17.1 & 31.0 & 15.3 & 17.3 & 31.3 & 10.3 & 5380 & 9668 & 19092 & 14911 & 28675 & 50439 & 25020 & 49342 & 81006 \\
+
+                \rowG\cube{RowG}~SGLang.pull + Qwen3.6-27B-INT4-AutoRound-Intel + MTP-4 & 90.65 & 97 & 27 & 1296ms & 5.9s & 426 & 412 & 378 & 415 & 407 & 415 & 412 & 412 & 412 & 20.2 & 30.4 & 56.8 & 19.6 & 31.4 & 15.0 & 19.4 & 34.2 & 10.4 & 5345 & 9817 & 21611 & 15317 & 29967 & 51483 & 25366 & 49455 & 81594 \\
+
+                \rowH\cube{RowH}~SGLang.pull + Qwen3.6-27B-INT4-AutoRound-Intel + MTP-8 & 90.56 & 97 & 26 & 1574ms & 6.0s & 422 & 408 & 422 & 434 & 424 & 426 & 425 & 420 & 422 & 18.5 & 25.1 & 47.6 & 13.3 & 34.1 & 15.0 & 18.8 & 30.1 & 10.1 & 5488 & 9819 & 19272 & 14708 & 28718 & 50129 & 24634 & 48495 & 79365 \\
+
+                \rowI\cube{RowI}~SGLang.runtime + Qwen3.6-27B-INT4-AutoRound-Intel + MTP-2 & 89.85 & 97 & 22 & 2210ms & 6.9s & 412 & 402 & 407 & 415 & 411 & 404 & 396 & 397 & 400 & 16.1 & 30.6 & 53.2 & 17.0 & 28.8 & 14.6 & 17.0 & 30.6 & 10.1 & 5415 & 10003 & 20023 & 15214 & 29687 & 52846 & 26260 & 51414 & 84178 \\
+
+                \rowJ\cube{RowJ}~SGLang.runtime + Qwen3.6-27B-INT4-AutoRound-Intel + MTP-4 & 90.14 & 97 & 26 & 2537ms & 6.0s & 409 & 405 & 409 & 409 & 402 & 399 & 396 & 394 & 397 & 22.7 & 32.4 & 58.2 & 20.3 & 34.2 & 14.8 & 21.0 & 33.6 & 10.1 & 5479 & 9944 & 19898 & 15486 & 30383 & 53581 & 26275 & 51763 & 84571 \\
+
+                \rowL\cube{RowL}~SGLang.runtime + Qwen3.6-27B-INT4-AutoRound-Intel + MTP-8 & 90.94 & 97 & 23 & 16813ms & 6.7s & 411 & 394 & 346 & 404 & 380 & 361 & 359 & 372 & 378 & 20.5 & 25.3 & 42.2 & 15.5 & 25.4 & 12.6 & 19.9 & 25.0 & 9.3 & 5574 & 10232 & 23665 & 15793 & 32152 & 59081 & 29051 & 54770 & 89624 \\
+
+                \rowM\cube{RowM}~vLLM.dev + Qwen3.6-27B-INT4-AutoRound-Intel + MTP-2 & 98.43 & 97 & 17 & 3668ms & 8.8s & 453 & 410 & 401 & 442 & 444 & 448 & 441 & 442 & 439 & 17.0 & 27.1 & 46.6 & 17.5 & 31.5 & 56.0 & 16.9 & 30.1 & 25.8 & 4828 & 9899 & 20473 & 14209 & 27595 & 54743 & 23515 & 46308 & 90431 \\
+
+                \rowN\cube{RowN}~vLLM.dev + Qwen3.6-27B-INT4-AutoRound-Intel + MTP-4 & 98.50 & 97 & 18 & 3152ms & 8.4s & 454 & 354 & 395 & 443 & 442 & 450 & 440 & 440 & 441 & 20.2 & 25.2 & 53.9 & 18.1 & 31.2 & 62.3 & 18.5 & 36.6 & 26.8 & 4829 & 11598 & 20736 & 14211 & 27697 & 54589 & 23603 & 46459 & 90115 \\
+
+                \rowO\cube{RowO}~vLLM.dev + Qwen3.6-27B-INT4-AutoRound-Intel + MTP-8 & 98.50 & 53 & 17 & 2695ms & 8.6s & 453 & 352 & 447 & 431 & 443 & 448 & 438 & 436 & 440 & 19.5 & 26.5 & 42.6 & 14.2 & 31.2 & 44.6 & 17.3 & 30.5 & 24.5 & 4909 & 11792 & 18235 & 14640 & 27630 & 54759 & 23746 & 46809 & 90408 \\
+
+                \rowP\cube{RowP}~vLLM.build + Qwen3.6-27B-INT4-AutoRound-Intel + MTP-2 & 98.19 & 96 & 14 & 599ms & 10.1s & 429 & 389 & 375 & 425 & 423 & 425 & 417 & 417 & 418 & 16.0 & 29.4 & 48.6 & 17.1 & 30.8 & 57.8 & 16.5 & 29.5 & 24.9 & 5054 & 10411 & 21837 & 14746 & 28942 & 57733 & 24814 & 49062 & 95065 \\
+
+                \rowJ\cube{RowJ}~vLLM.build + Qwen3.6-27B-INT4-AutoRound-Intel + MTP-4 & 100.3 & 97 & 31 & 16820ms & 5.3s & 980 & 913 & 954 & 969 & 949 & 899 & 926 & 919 & 854 & 27.1 & 51.2 & 91.3 & 24.0 & 53.4 & 81.5 & 28.7 & 39.0 & 20.6 & 2327 & 4442 & 8554 & 6575 & 12878 & 24662 & 11299 & 20354 & 35126 \\
+
+                \rowA\cube{RowA}~vLLM.build + Qwen3.6-27B-INT4-AutoRound-Intel + MTP-8 & 98.75 & 53 & 25 & 15674ms & 6.1s & 912 & 914 & 933 & 956 & 942 & 962 & 953 & 943 & 953 & 21.7 & 46.0 & 69.4 & 26.9 & 46.1 & 77.3 & 22.5 & 46.7 & 50.6 & 2525 & 4452 & 8715 & 6704 & 12970 & 25470 & 11015 & 21622 & 41748 \\
+
+                \rowB\cube{RowB}~vLLM.build + Qwen3.6-27B-INT4-AutoRound-Intel + DFlash-2 & 96.91 & 43 & 15 & 32629ms & 9.3s & 990 & 901 & 885 & 1026 & 998 & 1013 & 1014 & 1005 & 992 & 28.1 & 48.0 & 79.6 & 25.0 & 46.1 & 79.7 & 23.4 & 42.1 & 49.6 & 2312 & 4522 & 9188 & 6224 & 12254 & 24226 & 10332 & 20325 & 40530 \\
+
+                \rowC\cube{RowC}~vLLM.build + Qwen3.6-27B-INT4-AutoRound-Intel + DFlash-4 & 95.42 & 43 & 17 & 32549ms & 8.6s & 951 & 792 & 885 & 1023 & 1004 & 1002 & 1015 & 1003 & 999 & 32.7 & 47.0 & 77.6 & 26.1 & 49.9 & 84.1 & 23.7 & 40.1 & 50.3 & 2382 & 5101 & 9170 & 6214 & 12184 & 24470 & 10302 & 20368 & 40238 \\
+
+                \rowD\cube{RowD}~vLLM.build + Qwen3.6-27B-INT4-AutoRound-Intel + DFlash-8 & 95.28 & 43 & 8 & 587ms & 15.5s & 406 & 344 & 383 & 429 & 429 & 421 & 429 & 426 & 418 & 20.6 & 30.1 & 44.7 & 17.5 & 29.8 & 48.3 & 14.5 & 25.0 & 27.0 & 5351 & 11858 & 21305 & 14577 & 28569 & 58246 & 24120 & 47920 & 96609 \\
+
+                \rowE\cube{RowE}~vLLM.build + Qwen3.6-27B-INT4-AutoRound-Intel + DFlash-15 & 95.46 & 47 & 23 & 32836ms & 6.8s & 970 & 877 & 962 & 1016 & 993 & 992 & 1004 & 989 & 992 & 35.3 & 61.1 & 78.9 & 30.5 & 42.4 & 56.5 & 20.7 & 37.7 & 37.8 & 2332 & 4621 & 8449 & 6263 & 12300 & 24336 & 10412 & 20642 & 40316 \\
+
+                \best\cube{black}~vLLM.dflash + Qwen3.6-27B-INT4-AutoRound-Intel + DFlash-15 & 97.02 & 97 & 42 & 49539ms & 3.8s & 974 & 854 & 972 & 1012 & 992 & 992 & 1009 & 994 & 988 & 53.9 & 56.2 & 79.0 & 34.0 & 69.7 & 73.0 & 34.7 & 66.9 & 66.8 & 2353 & 4777 & 8359 & 6316 & 12320 & 24636 & 10392 & 20531 & 40917 \\
+
+                \rowG\cube{RowG}~LLaMA.cpp + Qwen3.6-27B-Q4\_K\_M + MTP-2 & 37.96 & 90 & 25 & 676ms & 6.1s & 807 & 737 & 750 & 797 & 769 & 768 & 754 & 739 & 729 & 18.3 & 19.9 & 23.2 & 21.4 & 19.9 & 23.1 & 20.3 & 20.2 & 14.4 & 2805 & 5412 & 10736 & 7978 & 15832 & 31736 & 13854 & 27567 & 50000 \\
+
+                \rowH\cube{RowH}~LLaMA.cpp + Qwen3.6-27B-Q4\_K\_M + MTP-4 & 39.13 & 93 & 29 & 501ms & 5.5s & 794 & 722 & 729 & 785 & 756 & 762 & 750 & 735 & 723 & 24.6 & 22.9 & 26.2 & 21.3 & 25.1 & 28.2 & 21.8 & 26.6 & 16.5 & 2807 & 5503 & 10958 & 8058 & 16070 & 32099 & 13885 & 27680 & 50517 \\
+
+                \rowI\cube{RowI}~LLaMA.cpp + Qwen3.6-27B-Q4\_K\_M + MTP-8 & 41.47 & 100 & 27 & 785ms & 5.8s & 797 & 707 & 729 & 787 & 748 & 756 & 749 & 731 & 720 & 19.6 & 18.6 & 26.1 & 27.3 & 25.5 & 27.4 & 23.1 & 20.8 & 18.0 & 2828 & 5586 & 11072 & 8063 & 16207 & 32295 & 13929 & 27826 & 52446 \\
+
+                \rowJ\cube{RowJ}~vLLM.dev + Qwen3.5-122B-A10B-INT4-AutoRound-Intel + MTP-2 & 98.88 & 100 & 48 & 12355ms & 3.1s & 1457 & 1435 & 1675 & 2421 & 2162 & 2205 & 2329 & 2195 & 2217 & 39.4 & 59.4 & 79.7 & 38.1 & 59.7 & 74.4 & 39.3 & 61.4 & 58.2 & 2120 & 2941 & 5178 & 3048 & 5625 & 10827 & 4900 & 9303 & 17696 \\
+
+                \rowK\cube{RowK}~vLLM.dev + Qwen3.5-122B-A10B-INT4-AutoRound-Intel + MTP-4 & 99.32 & 97 & 46 & 1366ms & 3.3s & 1896 & 1407 & 1753 & 2333 & 2168 & 2160 & 2219 & 2200 & 2195 & 39.1 & 50.8 & 74.1 & 37.5 & 53.7 & 70.5 & 38.6 & 59.6 & 56.5 & 1348 & 3087 & 4782 & 2870 & 5608 & 11009 & 4851 & 9244 & 17846 \\
+
+                \rowL\cube{RowL}~vLLM.dev + Qwen3.5-122B-A10B-INT4-AutoRound-Intel + MTP-8 & 99.13 & 73 & 40 & 1620ms & 4.0s & 1813 & 1243 & 2027 & 2327 & 2151 & 2155 & 2157 & 2155 & 2180 & 33.0 & 47.7 & 75.4 & 27.4 & 44.5 & 58.0 & 26.3 & 42.6 & 49.3 & 1435 & 3848 & 3929 & 2915 & 5622 & 10950 & 5024 & 9410 & 17893 \\
+
+                \rowM\cube{RowM}~vLLM.dflash + Qwen3.5-122B-A10B-INT4-AutoRound-Intel + DFlash-2 & 98.93 & 97 & 48 & 50594ms & 3.1s & 1631 & 1636 & 1787 & 2185 & 2187 & 2315 & 2306 & 2278 & 2301 & 42.5 & 63.5 & 66.7 & 40.9 & 57.5 & 69.4 & 39.5 & 58.1 & 54.5 & 1544 & 2568 & 4714 & 3059 & 5586 & 10556 & 4680 & 8943 & 17265 \\
+
+                \best\cube{black}~vLLM.dflash + Qwen3.5-122B-A10B-INT4-AutoRound-Intel + DFlash-8 & 100.2 & 100 & 46 & 52185ms & 3.3s & 2279 & 1860 & 2176 & 2245 & 2178 & 2336 & 2316 & 2093 & 2090 & 52.5 & 63.8 & 91.7 & 49.1 & 54.3 & 80.0 & 44.8 & 43.2 & 52.1 & 1128 & 2150 & 3707 & 2965 & 5593 & 10481 & 4650 & 9768 & 17098 \\
+
+                \rowO\cube{RowO}~vLLM.dflash + Qwen3.5-122B-A10B-INT4-AutoRound-Intel + DFlash-15 & 100.1 & 100 & 40 & 55349ms & 3.9s & 2131 & 1782 & 2060 & 2180 & 2149 & 2267 & 2248 & 2250 & 2231 & 35.9 & 55.9 & 73.4 & 39.3 & 50.5 & 68.6 & 36.9 & 48.7 & 57.4 & 1155 & 2228 & 3908 & 3013 & 5641 & 10778 & 4749 & 9025 & 17936 \\
+
+                \rowP\cube{RowP}~vLLM.dev + Qwen3.5-122B-Hybrid-INT4FP8 + MTP-2 & 99.22 & 100 & 48 & 1449ms & 3.1s & 2006 & 1718 & 1827 & 2421 & 2241 & 2175 & 2255 & 2228 & 2127 & 40.0 & 59.7 & 80.5 & 39.9 & 62.3 & 75.7 & 38.7 & 60.4 & 59.9 & 1245 & 2357 & 4359 & 2725 & 5456 & 10955 & 4728 & 9144 & 18482 \\
+
+                \rowA\cube{RowA}~vLLM.dev + Qwen3.5-122B-Hybrid-INT4FP8 + MTP-4 & 99.27 & 97 & 47 & 1455ms & 3.3s & 1965 & 1422 & 1772 & 2317 & 2204 & 2155 & 2216 & 2169 & 2108 & 40.3 & 49.5 & 79.2 & 38.4 & 56.6 & 71.8 & 40.3 & 61.3 & 56.4 & 1278 & 3065 & 4766 & 2853 & 5520 & 11018 & 4823 & 9387 & 18593 \\
+
+                \rowB\cube{RowB}~vLLM.dev + Qwen3.5-122B-Hybrid-INT4FP8 + MTP-8 & 99.44 & 73 & 44 & 1580ms & 3.5s & 1875 & 1297 & 2051 & 2337 & 2165 & 2112 & 2181 & 2152 & 2093 & 31.8 & 48.6 & 77.7 & 29.4 & 48.4 & 60.5 & 28.6 & 47.2 & 50.8 & 1361 & 3708 & 3911 & 2864 & 5585 & 11192 & 4931 & 9423 & 18673 \\
+
+                \rowC\cube{RowC}~vLLM.dev + Qwen3.6-27B & 96.49 & 93 & 4 & 1282ms & 26.5s & 1339 & 1209 & 1311 & 1374 & 1338 & 1367 & 1358 & 1331 & 1348 & 4.4 & 8.6 & 16.7 & 4.4 & 8.4 & 16.0 & 4.4 & 8.5 & 13.5 & 1841 & 3264 & 6095 & 4778 & 8871 & 17479 & 7846 & 15188 & 28343 \\
+
+                \rowD\cube{RowD}~vLLM.dflash + Qwen3.6-27B-NVFP4 + DFlash-8 & 96.19 & 97 & 37 & 52326ms & 4.3s & 1942 & 1437 & 1991 & 2037 & 1896 & 1815 & 1912 & 1871 & 1746 & 29.6 & 49.3 & 87.5 & 30.1 & 60.4 & 84.0 & 30.8 & 47.6 & 73.5 & 1337 & 3482 & 4043 & 3248 & 6440 & 13454 & 5586 & 10854 & 23245 \\
+
+                \rowE\cube{RowE}~vLLM.dflash + Qwen3.6-27B-NVFP4 + DFlash-15 & 96.86 & 90 & 33 & 46755ms & 4.8s & 1492 & 1734 & 1943 & 1852 & 1751 & 1701 & 1938 & 1873 & 1750 & 33.0 & 49.3 & 69.0 & 35.3 & 55.4 & 71.0 & 26.2 & 42.8 & 63.9 & 1699 & 2289 & 4118 & 3593 & 7005 & 14305 & 5558 & 10845 & 23097 \\
+
+                \rowF\cube{RowF}~vLLM.dflash + Qwen3.6-27B-AWQ-INT4 + DFlash-15 & 96.43 & 100 & 35 & 53867ms & 4.5s & 757 & 783 & 895 & 924 & 909 & 905 & 929 & 912 & 920 & 38.9 & 53.0 & 80.0 & 42.2 & 54.5 & 90.9 & 32.9 & 54.2 & 65.7 & 2999 & 5203 & 9110 & 6913 & 13441 & 26930 & 11291 & 22381 & 44008 \\
+
+                \rowG\cube{RowG}~vLLM.dflash + Qwen3.6-27B-GPTQ-INT4 + DFlash-15 & 96.57 & 97 & 39 & 52788ms & 4.0s & 939 & 875 & 972 & 1005 & 984 & 1000 & 1006 & 996 & 994 & 26.4 & 52.5 & 84.3 & 36.2 & 62.7 & 86.6 & 32.9 & 48.1 & 75.0 & 2401 & 4653 & 8366 & 6323 & 12445 & 24440 & 10385 & 20486 & 40761 \\
+
+                \rowH\cube{RowH}~vLLM.dflash + Qwen3.6-27B-FP8 + DFlash-15 & 97.02 & 100 & 27 & 49748ms & 5.7s & 1746 & 1014 & 636 & 871 & 559 & 366 & 918 & 429 & 342 & 23.0 & 46.8 & 63.7 & 31.3 & 45.6 & 64.3 & 29.6 & 45.0 & 49.0 & 1439 & 4348 & 12927 & 7311 & 21902 & 66974 & 11408 & 47600 & 118998 \\
+
+                \rowI\cube{RowI}~vLLM.dflash + Qwen3.6-27B-AEON-NVFP4-MTP-XS + DFlash-15 & 92.45 & 83 & 13 & 87219ms & 10.7s & 990 & 976 & 1165 & 741 & 956 & 973 & 987 & 1057 & 943 & 16.7 & 21.1 & 32.1 & 17.3 & 16.1 & 27.3 & 7.1 & 19.5 & 13.4 & 2832 & 4266 & 7034 & 9774 & 13212 & 25737 & 11019 & 19362 & 41352 \\
+
+                \rowJ\cube{RowJ}~LLaMA.cpp + Qwen3.6-27B-UD-Q4\_K\_XL + MTP-2 & 39.32 & 93 & 12 & 1529ms & 11.2s & 290 & 177 & 149 & 279 & 233 & 215 & 274 & 236 & 233 & 14.5 & 10.4 & 9.0 & 15.4 & 6.5 & 5.0 & 15.9 & 4.6 & 3.5 & 7508 & 15321 & 31359 & 22458 & 37590 & 68362 & 37824 & 62347 & 106886 \\
+
+                \toprule[1.5pt]
+            \end{tabular}
+        }
+    \end{table}
+\end{landscape}
+
+
+
+\subsection{对比总结}
+\begin{itemize}
+    \item \textbf{综合最优}：$\bigstar$ vLLM.dflash + Q3.5-122B-A10B-INT4 + DFlash-8，质量满分 100，单流 TTFT 全场最低 1.13s（d0/c1），解码 tg 全场最高 91.7 t/s（d0/c4），预填充 pp 亦达 2279 t/s，中位轮次仅 3.3s，在 TTFT、TPS、Quality 中是延迟、吞吐场景的首选。
+    \item \textbf{响应最佳}：vLLM.dev + Q3.5-122B-A10B Hybrid-INT4FP8 + MTP-2，质量 100、响应 48，TTFT 1.25s、pp 峰值 2421 t/s、tg 80.5 t/s、中位轮次 3.1s，各项指标几乎贴平 vLLM.dflash + Q3.5-122B-A10B-INT4 + DFlash-8，响应与预填充更强、峰值 tg 略低，是更稳健的次优选择。
+    \item \textbf{首字延迟 TTFT}：最低的 TTFT 是 122B-A10B MoE，d0/c1 落在 1.13--1.28s，2200--2421 t/s 的预填充吞吐，约为 27B 稠密档（400--1000 t/s）的 2--5 倍，27B 中仅 NVFP4 的 pp 能上探 ~1900--2000，TTFT 最低也要 1.34s。
+    \item \textbf{解码吞吐 TPS}：122B-A10B 的 tg 在 c4 并发普遍 75--92 t/s 且深上文衰减平缓（d4096/c4 80、d8192/c4 52 t/s）；27B 稠密模型中仅 vLLM.build + MTP-4（d0/c4 91.3）、NVFP4 + DFlash-8（87.5）能短暂逼近，但深上文高并发下回落更快。
+    \item \textbf{低延迟}：vLLM.dflash + Q3.6-27B-NVFP4 + DFlash-8 —— TTFT 低至 1.34s、pp 峰值 1991 t/s，但 tg 在 30--88 间剧烈波动、响应仅 37，深上文高并发衰减明显，适合高 QPS 短输出。
+    \item \textbf{投机解码}：草稿步数并非越大越好，122B 上 MTP-2 / DFlash-2（响应 48）最佳，加大到 MTP-8 / DFlash-15 后 tg 与响应回落（响应降至 40）且质量骤降（MTP-8 质量 73）；27B 上 vLLM.dev MTP-8 质量跌至 53、vLLM.build DFlash-2/4/8 质量仅 43，DFlash-8 是 122B 兼顾 TTFT、TPS 与质量的较优解，过深步数引发质量反噬。
+    \item \textbf{DeepSeek-V4-Flash 的 MTP 反噬}：DeepSeek-V4-Flash-IQ2XXS 单跑尚可（pp ~1100、tg 峰值 81.9、质量 90），叠加 MTP-2 后预填充崩塌至 133--365 t/s、tg 跌至 15--21 t/s、质量降至 83、TTFT 同步抬高（d0/c1 5.85s），在 DGX Spark GB10 硬件上为显著负优化。
+    \item \textbf{FP8 量化模型}：vLLM.dflash + Q3.6-27B-FP8 + DFlash-15 虽质量 100，却随并发与深度急剧劣化——pp 由 d0/c1 的 1746 t/s 跌到 d8192/c4 的 342 t/s，TTFT 同步爆炸至 119s（d8192/c4），稳定性最差，不宜高并发长上文。
+    \item \textbf{超长 128K 上文}：vLLM.dev 122B-A10B MTP-2 的 tg（c1/c2/c4 = 32.4 / 25.2 / 23.1）在多并发下保持力远优于 Hybrid-INT4FP8（33.4 / 13.9 / 10.7），两者 pp ~1100、TTFT 仅 107--275ms，极长上文且多并发时 A10B 更稳。
+    \item \textbf{小体积}：LLaMA.cpp + Q3.6-27B（Q4\_K\_M / UD-Q4\_K\_XL）显存占用仅 38--41GiB（约为其余方案的 40\%），MTP-8 档质量满分 100，但 tg 仅 ~18--28 t/s、TTFT 较高（d0/c1 ~2.8s）且深上文 / 并发下进一步走低，适合显存受限、吞吐要求不高的部署。
+\end{itemize}
+
+
+
+\section{模型测评}
+\subsection{DeepSeek-V4-Flash}
+\subsubsection{测试环境 ds4 + DeepSeek-V4-Flash-IQ2XXS}
+\begin{lstlisting}
+./ds4/ds4-server \
+    -m ./models/DeepSeek-V4-Flash-IQ2XXS-w2Q2K-AProjQ8-SExpQ8-OutQ8-chat-v2-imatrix.gguf \
+    --host 0.0.0.0 \
+    --port 4321 \
+    --ctx 32768 \
+    --tokens 131072 \
+    --kv-disk-dir ./tmp-ds4-kv \
+    --kv-disk-space-mb 8192 \
+    --warm-weights
+
+tool-eval-bench --base-url http://127.0.0.1:4321 --short --perf
+\end{lstlisting}
+
+\begin{table}[H]
+    \centering
+    \renewcommand{\arraystretch}{1.2}
+    \setlength{\tabcolsep}{8pt}
+    \begin{tabular}{ccccccc}
+        \bottomrule[1.5pt]
+        \rowcolor{MorandiLightCyan}\multicolumn{7}{c}{\small
+            GPU \textbf{110.63GiB} $\bullet$ Warm-up \textbf{8865ms} $\bullet$ Quality \textbf{90/100} $\bullet$ Responsiveness \textbf{12/100} $\bullet$ Median turn \textbf{11.3s}
+        } \\
+
+        \midrule[0.75pt]
+        \multicolumn{1}{c}{} & \textbf{Depth} & \textbf{Concurrency} & \textbf{pp t/s} & \textbf{tg t/s} & \textbf{TTFT (ms)} & \textbf{Total (ms)} \\
+    
+        \cmidrule(r){1-3}\cmidrule(l){4-7}
+        \multicolumn{7}{l}{\textit{Aggregate throughput\quad(pp2048 / tg128)}} \\
+        \addlinespace[1pt]
+
+        \multirow{3}{*}{\cube{MorandiBlue}} & \multirow{3}{*}{d0} & c1 & 1,157 & 24.5 & \textbf{2,100} & \textbf{7,002} \\
+        ~ & ~ & c2 & 1,075 & 49.7 & 3,715 & 8,067 \\
+        ~ & ~ & c4 & 1,119 & \textbf{81.9} & 7,261 & 12,274 \\
+
+        \cmidrule(lr){1-7}
+
+        \multirow{3}{*}{\cube{MorandiPurple}} & \multirow{3}{*}{d4096} & c1 & \textbf{1,167} & 28.1 & 5,588 & 9,821 \\
+        ~ & ~ & c2 & 1,122 & 50.4 & 10,826 & 15,289 \\
+        ~ & ~ & c4 & 1,130 & 34.6 & 18,860 & 25,110 \\
+    
+        \cmidrule(lr){1-7}
+
+        \multirow{3}{*}{\cube{MorandiCyan}} & \multirow{3}{*}{d8192} & c1 & 1,108 & 25.1 & 9,583 & 14,373 \\
+        ~ & ~ & c2 & 1,066 & 47.6 & 19,124 & 23,864 \\
+        ~ & ~ & c4 & 1,062 & 23.7 & 31,650 & 40,714 \\
+
+        \midrule[0.75pt]
+        \multicolumn{7}{l}{\textit{Per-stream\quad(single request, per concurrent client)}} \\
+        \addlinespace[1pt]
+
+        \multirow{3}{*}{\cube{MorandiOrange}} & \multirow{3}{*}{-} & c1 & 411 & 27.5 & 16,343 & - \\
+        ~ & ~ & c2 & 296 & 22.1 & - & - \\
+        ~ & ~ & c4 & 274 & 19.5 & - & - \\
+        \toprule[1.5pt]
+    \end{tabular}
+\end{table}
+
+
+
+\subsubsection{测试环境 ds4 + DeepSeek-V4-Flash-IQ2XXS + MTP-2}
+\begin{lstlisting}
+./ds4/ds4-server \
+    -m ./models/DeepSeek-V4-Flash-IQ2XXS-w2Q2K-AProjQ8-SExpQ8-OutQ8-chat-v2-imatrix.gguf \
+    --mtp ./models/DeepSeek-V4-Flash-MTP-Q4K-Q8_0-F32.gguf \
+    --mtp-draft 2 \
+    --host 0.0.0.0 \
+    --port 4321 \
+    --ctx 32768 \
+    --tokens 65536 \
+    --kv-disk-dir ./tmp-ds4-kv \
+    --kv-disk-space-mb 16384 \
+    --warm-weights
+
+tool-eval-bench --base-url http://127.0.0.1:4321 --short --perf
+\end{lstlisting}
+
+\begin{table}[H]
+    \centering
+    \renewcommand{\arraystretch}{1.2}
+    \setlength{\tabcolsep}{8pt}
+    \begin{tabular}{ccccccc}
+        \bottomrule[1.5pt]
+        \rowcolor{MorandiLightCyan}\multicolumn{7}{c}{\small
+            GPU \textbf{108.19GiB} $\bullet$ Warm-up \textbf{96923ms} $\bullet$ Quality \textbf{83/100} $\bullet$ Responsiveness \textbf{13/100} $\bullet$ Median turn \textbf{10.8s}
+        } \\
+
+        \midrule[0.75pt]
+        \multicolumn{1}{c}{} & \textbf{Depth} & \textbf{Concurrency} & \textbf{pp t/s} & \textbf{tg t/s} & \textbf{TTFT (ms)} & \textbf{Total (ms)} \\
+
+        \cmidrule(r){1-3}\cmidrule(l){4-7}
+        \multicolumn{7}{l}{\textit{Aggregate throughput\quad(pp2048 / tg128)}} \\
+        \addlinespace[1pt]
+
+        \multirow{3}{*}{\cube{MorandiBlue}} & \multirow{3}{*}{d0} & c1 & \textbf{365} & \textbf{21.1} & \textbf{5,850} & \textbf{11,241} \\
+        ~ & ~ & c2 & 163 & 17.5 & 14,456 & 19,668 \\
+        ~ & ~ & c4 & 133 & 15.8 & 31,574 & 37,057 \\
+
+        \cmidrule(lr){1-7}
+
+        \multirow{3}{*}{\cube{MorandiPurple}} & \multirow{3}{*}{d4096} & c1 & 355 & 20.7 & 16,330 & 21,996 \\
+        ~ & ~ & c2 & 253 & 13.7 & 30,766 & 35,740 \\
+        ~ & ~ & c4 & 224 & 10.1 & 59,151 & 64,890 \\
+
+        \cmidrule(lr){1-7}
+
+        \multirow{3}{*}{\cube{MorandiCyan}} & \multirow{3}{*}{d8192} & c1 & 336 & 19.8 & 28,715 & 34,581 \\
+        ~ & ~ & c2 & 275 & 9.3 & 47,925 & 53,665 \\
+        ~ & ~ & c4 & 254 & 7.7 & 88,481 & 94,061 \\
+
+        \midrule[0.75pt]
+        \multicolumn{7}{l}{\textit{Per-stream\quad(single request, per concurrent client)}} \\
+        \addlinespace[1pt]
+
+        \multirow{3}{*}{\cube{MorandiOrange}} & \multirow{3}{*}{--} & c1 & 365 & 21.1 & 5,850 & -- \\
+        ~ & ~ & c2 & 275 & 17.5 & -- & -- \\
+        ~ & ~ & c4 & 254 & 15.8 & -- & -- \\
+        \toprule[1.5pt]
+    \end{tabular}
+\end{table}
+
+
+
+\subsubsection{生产环境 ds4 + DeepSeek-V4-Flash-IQ2XXS + MTP-2}
+\begin{lstlisting}
+IMAGE="i-dgx-spark-gb10:ds4flash"
+
+MODEL_PATH="./models/DeepSeek-V4-Flash-IQ2XXS-w2Q2K-AProjQ8-SExpQ8-OutQ8-chat-v2-imatrix.gguf"
+MTP_PATH="./models/DeepSeek-V4-Flash-MTP-Q4K-Q8_0-F32.gguf"
+
+MODEL_NAME=$(basename "$MODEL_PATH")
+MTP_NAME=$(basename "$MTP_PATH")
+
+docker run \
+    --rm -it \
+    --gpus all \
+    --name "DeepSeek-V4-Flash" \
+    -v "${MODEL_PATH}:/workspace/${MODEL_NAME}" \
+    -v "${MTP_PATH}:/workspace/${MTP_NAME}" \
+    -p 4321:4321 \
+    --ipc=host \
+    --entrypoint /workspace/ds4/ds4-server \
+    ${IMAGE} \
+        -m "/workspace/${MODEL_NAME}" \
+        --mtp "/workspace/${MTP_NAME}" \
+        --mtp-draft 2 \
+        --host 0.0.0.0 \
+        --port 4321 \
+        --ctx 32768 \
+        --tokens 65536 \
+        --kv-disk-dir /tmp/ds4-kv \
+        --kv-disk-space-mb 16384 \
+        --warm-weights
+
+tool-eval-bench --base-url http://127.0.0.1:4321 --short --perf
+\end{lstlisting}
+
+\begin{table}[H]
+    \centering
+    \renewcommand{\arraystretch}{1.2}
+    \setlength{\tabcolsep}{8pt}
+    \begin{tabular}{ccccccc}
+        \bottomrule[1.5pt]
+        \rowcolor{MorandiLightCyan}\multicolumn{7}{c}{\small
+            GPU \textbf{108.17GiB} $\bullet$ Warm-up \textbf{96522ms} $\bullet$ Quality \textbf{90/100} $\bullet$ Responsiveness \textbf{12/100} $\bullet$ Median turn \textbf{11.0s}
+        } \\
+
+        \midrule[0.75pt]
+        \multicolumn{1}{c}{} & \textbf{Depth} & \textbf{Concurrency} & \textbf{pp t/s} & \textbf{tg t/s} & \textbf{TTFT (ms)} & \textbf{Total (ms)} \\
+
+        \cmidrule(r){1-3}\cmidrule(l){4-7}
+        \multicolumn{7}{l}{\textit{Aggregate throughput\quad(pp2048 / tg128)}} \\
+        \addlinespace[1pt]
+
+        \multirow{3}{*}{\cube{MorandiBlue}} & \multirow{3}{*}{d0} & c1 & \textbf{380} & 20.8 & \textbf{5,798} & \textbf{11,260} \\
+        ~ & ~ & c2 & 171 & 17.1 & 13,659 & 19,308 \\
+        ~ & ~ & c4 & 134 & 15.8 & 30,839 & 36,411 \\
+
+        \cmidrule(lr){1-7}
+
+        \multirow{3}{*}{\cube{MorandiPurple}} & \multirow{3}{*}{d4096} & c1 & 346 & \textbf{21.0} & 17,070 & 22,580 \\
+        ~ & ~ & c2 & 249 & 14.2 & 31,189 & 36,064 \\
+        ~ & ~ & c4 & 223 & 10.2 & 59,386 & 65,045 \\
+
+        \cmidrule(lr){1-7}
+
+        \multirow{3}{*}{\cube{MorandiCyan}} & \multirow{3}{*}{d8192} & c1 & 342 & 20.9 & 28,357 & 33,950 \\
+        ~ & ~ & c2 & 275 & 9.9 & 48,611 & 54,118 \\
+        ~ & ~ & c4 & 255 & 8.0 & 88,756 & 94,069 \\
+
+        \midrule[0.75pt]
+        \multicolumn{7}{l}{\textit{Per-stream\quad(single request, per concurrent client)}} \\
+        \addlinespace[1pt]
+
+        \multirow{3}{*}{\cube{MorandiOrange}} & \multirow{3}{*}{--} & c1 & 380 & 21.0 & 17,070 & -- \\
+        ~ & ~ & c2 & 275 & 17.1 & -- & -- \\
+        ~ & ~ & c4 & 255 & 15.8 & -- & -- \\
+        \toprule[1.5pt]
+    \end{tabular}
+\end{table}
+
+
+
+\subsection{Qwen3.6-27B}
+\subsubsection{SGLang.build + Qwen3.6-27B-INT4-AutoRound-Intel + MTP-2}
+\begin{lstlisting}
+MODEL_PATH="./models/Qwen3.6-27B-INT4-AutoRound-Intel"
+MODEL_NAME=$(basename "$MODEL_PATH")
+SGLANG_IMAGE="i-dgx-spark-gb10:sglang.build"
+
+docker run \
+    --rm -it \
+    --gpus all \
+    --name ${MODEL_NAME} \
+    -v ${MODEL_PATH}:/models/${MODEL_NAME} \
+    -p 4321:4321 \
+    --ipc=host \
+    -e SGLANG_ENABLE_SPEC_V2=1 \
+    --health-cmd 'curl -sf http://localhost:4321/health || exit 1' \
+    --health-interval 10s \
+    --health-timeout 5s \
+    --health-retries 60 \
+    --health-start-period 900s \
+    ${SGLANG_IMAGE} sglang serve \
+        --model-path /models/${MODEL_NAME} \
+        --served-model-name ${MODEL_NAME} \
+        --host 0.0.0.0 \
+        --port 4321 \
+        --mem-fraction-static 0.75 \
+        --context-length 262144 \
+        --max-running-requests 16 \
+        --cuda-graph-max-bs 16 \
+        --max-prefill-tokens 16384 \
+        --chunked-prefill-size 8192 \
+        --quantization auto-round \
+        --kv-cache-dtype fp8_e5m2 \
+        --reasoning-parser qwen3 \
+        --tool-call-parser qwen3_coder \
+        --attention-backend flashinfer \
+        --mamba-scheduler-strategy extra_buffer \
+        --speculative-algorithm NEXTN \
+        --speculative-num-steps 2 \
+        --speculative-eagle-topk 1 \
+        --speculative-num-draft-tokens 3 \
+        --trust-remote-code
+
+HF_HUB_OFFLINE=1 tool-eval-bench \
+    --base-url http://127.0.0.1:4321 \
+    --short --perf \
+    --benchy-args "--tokenizer ./models/Qwen3.6-27B-INT4-AutoRound-Intel"
+\end{lstlisting}
+
+\begin{table}[H]
+    \centering
+    \renewcommand{\arraystretch}{1.2}
+    \setlength{\tabcolsep}{8pt}
+    \begin{tabular}{ccccccc}
+        \bottomrule[1.5pt]
+        \rowcolor{MorandiLightCyan}\multicolumn{7}{c}{\small
+            GPU \textbf{89.65GiB} $\bullet$ Warm-up \textbf{1446ms} $\bullet$ Quality \textbf{97/100} $\bullet$ Responsiveness \textbf{22/100} $\bullet$ Median turn \textbf{6.9s}
+        } \\
+
+        \midrule[0.75pt]
+        \multicolumn{1}{c}{} & \textbf{Depth} & \textbf{Concurrency} & \textbf{pp t/s} & \textbf{tg t/s} & \textbf{TTFT (ms)} & \textbf{Total (ms)} \\
+
+        \cmidrule(r){1-3}\cmidrule(l){4-7}
+        \multicolumn{7}{l}{\textit{Aggregate throughput\quad(pp2048 / tg128)}} \\
+        \addlinespace[1pt]
+
+        \multirow{3}{*}{\cube{MorandiBlue}} & \multirow{3}{*}{d0} & c1 & 402 & 17.0 & \textbf{5,566} & \textbf{12,668} \\
+        ~ & ~ & c2 & 402 & 29.8 & 10,005 & 17,673 \\
+        ~ & ~ & c4 & 414 & \textbf{56.6} & 19,669 & 27,693 \\
+
+        \cmidrule(lr){1-7}
+
+        \multirow{3}{*}{\cube{MorandiPurple}} & \multirow{3}{*}{d4096} & c1 & \textbf{416} & 16.5 & 15,183 & 22,500 \\
+        ~ & ~ & c2 & 412 & 29.7 & 29,588 & 37,240 \\
+        ~ & ~ & c4 & 410 & 14.8 & 52,135 & 63,760 \\
+
+        \cmidrule(lr){1-7}
+
+        \multirow{3}{*}{\cube{MorandiCyan}} & \multirow{3}{*}{d8192} & c1 & 405 & 16.8 & 25,739 & 32,948 \\
+        ~ & ~ & c2 & 403 & 30.3 & 50,660 & 58,294 \\
+        ~ & ~ & c4 & 406 & 10.1 & 82,728 & 99,411 \\
+
+        \midrule[0.75pt]
+        \multicolumn{7}{l}{\textit{Per-stream\quad(single request, per concurrent client)}} \\
+        \addlinespace[1pt]
+
+        \multirow{3}{*}{\cube{MorandiOrange}} & \multirow{3}{*}{--} & c1 & 416 & 17.0 & 5,566 & -- \\
+        ~ & ~ & c2 & 412 & 30.3 & -- & -- \\
+        ~ & ~ & c4 & 414 & 56.6 & -- & -- \\
+        \toprule[1.5pt]
+    \end{tabular}
+\end{table}
+
+
+
+\subsubsection{SGLang.build + Qwen3.6-27B-INT4-AutoRound-Intel + MTP-4}
+\begin{lstlisting}
+MODEL_PATH="./models/Qwen3.6-27B-INT4-AutoRound-Intel"
+MODEL_NAME=$(basename "$MODEL_PATH")
+SGLANG_IMAGE="i-dgx-spark-gb10:sglang.build"
+
+docker run \
+    --rm -it \
+    --gpus all \
+    --name ${MODEL_NAME} \
+    -v ${MODEL_PATH}:/models/${MODEL_NAME} \
+    -p 4321:4321 \
+    --ipc=host \
+    -e SGLANG_ENABLE_SPEC_V2=1 \
+    --health-cmd 'curl -sf http://localhost:4321/health || exit 1' \
+    --health-interval 10s \
+    --health-timeout 5s \
+    --health-retries 60 \
+    --health-start-period 900s \
+    ${SGLANG_IMAGE} sglang serve \
+        --model-path /models/${MODEL_NAME} \
+        --served-model-name ${MODEL_NAME} \
+        --host 0.0.0.0 \
+        --port 4321 \
+        --mem-fraction-static 0.75 \
+        --context-length 262144 \
+        --max-running-requests 16 \
+        --cuda-graph-max-bs 16 \
+        --max-prefill-tokens 16384 \
+        --chunked-prefill-size 8192 \
+        --quantization auto-round \
+        --kv-cache-dtype fp8_e5m2 \
+        --reasoning-parser qwen3 \
+        --tool-call-parser qwen3_coder \
+        --attention-backend flashinfer \
+        --mamba-scheduler-strategy extra_buffer \
+        --speculative-algorithm NEXTN \
+        --speculative-num-steps 4 \
+        --speculative-eagle-topk 1 \
+        --speculative-num-draft-tokens 5 \
+        --trust-remote-code
+
+HF_HUB_OFFLINE=1 tool-eval-bench \
+    --base-url http://127.0.0.1:4321 \
+    --short --perf \
+    --benchy-args "--tokenizer ./models/Qwen3.6-27B-INT4-AutoRound-Intel"
+\end{lstlisting}
+
+\begin{table}[H]
+    \centering
+    \renewcommand{\arraystretch}{1.2}
+    \setlength{\tabcolsep}{8pt}
+    \begin{tabular}{ccccccc}
+        \bottomrule[1.5pt]
+        \rowcolor{MorandiLightCyan}\multicolumn{7}{c}{\small
+            GPU \textbf{90.00GiB} $\bullet$ Warm-up \textbf{12474ms} $\bullet$ Quality \textbf{97/100} $\bullet$ Responsiveness \textbf{26/100} $\bullet$ Median turn \textbf{6.0s}
+        } \\
+
+        \midrule[0.75pt]
+        \multicolumn{1}{c}{} & \textbf{Depth} & \textbf{Concurrency} & \textbf{pp t/s} & \textbf{tg t/s} & \textbf{TTFT (ms)} & \textbf{Total (ms)} \\
+
+        \cmidrule(r){1-3}\cmidrule(l){4-7}
+        \multicolumn{7}{l}{\textit{Aggregate throughput\quad(pp2048 / tg128)}} \\
+        \addlinespace[1pt]
+
+        \multirow{3}{*}{\cube{MorandiBlue}} & \multirow{3}{*}{d0} & c1 & 412 & 20.8 & \textbf{5,483} & \textbf{11,166} \\
+        ~ & ~ & c2 & 403 & 29.5 & 10,014 & 17,018 \\
+        ~ & ~ & c4 & 412 & \textbf{53.0} & 19,765 & 27,444 \\
+
+        \cmidrule(lr){1-7}
+
+        \multirow{3}{*}{\cube{MorandiPurple}} & \multirow{3}{*}{d4096} & c1 & \textbf{416} & 20.9 & 15,240 & 20,904 \\
+        ~ & ~ & c2 & 411 & 30.8 & 29,647 & 36,456 \\
+        ~ & ~ & c4 & 410 & 14.6 & 52,037 & 63,517 \\
+
+        \cmidrule(lr){1-7}
+
+        \multirow{3}{*}{\cube{MorandiCyan}} & \multirow{3}{*}{d8192} & c1 & 405 & 18.8 & 25,736 & 32,061 \\
+        ~ & ~ & c2 & 401 & 33.0 & 50,935 & 57,632 \\
+        ~ & ~ & c4 & 404 & 10.1 & 83,137 & 99,022 \\
+
+        \midrule[0.75pt]
+        \multicolumn{7}{l}{\textit{Per-stream\quad(single request, per concurrent client)}} \\
+        \addlinespace[1pt]
+
+        \multirow{3}{*}{\cube{MorandiOrange}} & \multirow{3}{*}{--} & c1 & 416 & 20.9 & 15,240 & -- \\
+        ~ & ~ & c2 & 411 & 33.0 & -- & -- \\
+        ~ & ~ & c4 & 412 & 53.0 & -- & -- \\
+        \toprule[1.5pt]
+    \end{tabular}
+\end{table}
+
+
+
+
+
+
+
+
+
+
+\subsubsection{SGLang.build + Qwen3.6-27B-INT4-AutoRound-Intel + MTP-8}
+\begin{lstlisting}
+MODEL_PATH="./models/Qwen3.6-27B-INT4-AutoRound-Intel"
+MODEL_NAME=$(basename "$MODEL_PATH")
+SGLANG_IMAGE="i-dgx-spark-gb10:sglang.build"
+
+docker run \
+    --rm -it \
+    --gpus all \
+    --name ${MODEL_NAME} \
+    -v ${MODEL_PATH}:/models/${MODEL_NAME} \
+    -p 4321:4321 \
+    --ipc=host \
+    -e SGLANG_ENABLE_SPEC_V2=1 \
+    --health-cmd 'curl -sf http://localhost:4321/health || exit 1' \
+    --health-interval 10s \
+    --health-timeout 5s \
+    --health-retries 60 \
+    --health-start-period 900s \
+    ${SGLANG_IMAGE} sglang serve \
+        --model-path /models/${MODEL_NAME} \
+        --served-model-name ${MODEL_NAME} \
+        --host 0.0.0.0 \
+        --port 4321 \
+        --mem-fraction-static 0.75 \
+        --context-length 262144 \
+        --max-running-requests 16 \
+        --cuda-graph-max-bs 16 \
+        --max-prefill-tokens 16384 \
+        --chunked-prefill-size 8192 \
+        --quantization auto-round \
+        --kv-cache-dtype fp8_e5m2 \
+        --reasoning-parser qwen3 \
+        --tool-call-parser qwen3_coder \
+        --attention-backend flashinfer \
+        --mamba-scheduler-strategy extra_buffer \
+        --speculative-algorithm NEXTN \
+        --speculative-num-steps 8 \
+        --speculative-eagle-topk 1 \
+        --speculative-num-draft-tokens 9 \
+        --trust-remote-code
+
+HF_HUB_OFFLINE=1 tool-eval-bench \
+    --base-url http://127.0.0.1:4321 \
+    --short --perf \
+    --benchy-args "--tokenizer ./models/Qwen3.6-27B-INT4-AutoRound-Intel"
+\end{lstlisting}
+
+\begin{table}[H]
+    \centering
+    \renewcommand{\arraystretch}{1.2}
+    \setlength{\tabcolsep}{8pt}
+    \begin{tabular}{ccccccc}
+        \bottomrule[1.5pt]
+        \rowcolor{MorandiLightCyan}\multicolumn{7}{c}{\small
+            GPU \textbf{90.32GiB} $\bullet$ Warm-up \textbf{10201ms} $\bullet$ Quality \textbf{97/100} $\bullet$ Responsiveness \textbf{27/100} $\bullet$ Median turn \textbf{5.9s}
+        } \\
+
+        \midrule[0.75pt]
+        \multicolumn{1}{c}{} & \textbf{Depth} & \textbf{Concurrency} & \textbf{pp t/s} & \textbf{tg t/s} & \textbf{TTFT (ms)} & \textbf{Total (ms)} \\
+
+        \cmidrule(r){1-3}\cmidrule(l){4-7}
+        \multicolumn{7}{l}{\textit{Aggregate throughput\quad(pp2048 / tg128)}} \\
+        \addlinespace[1pt]
+
+        \multirow{3}{*}{\cube{MorandiBlue}} & \multirow{3}{*}{d0} & c1 & 394 & 16.1 & \textbf{5,792} & \textbf{13,182} \\
+        ~ & ~ & c2 & 401 & 28.2 & 10,020 & 17,520 \\
+        ~ & ~ & c4 & 403 & \textbf{42.4} & 20,179 & 29,206 \\
+
+        \cmidrule(lr){1-7}
+
+        \multirow{3}{*}{\cube{MorandiPurple}} & \multirow{3}{*}{d4096} & c1 & \textbf{417} & 17.7 & 15,289 & 21,968 \\
+        ~ & ~ & c2 & 410 & 35.7 & 29,731 & 35,790 \\
+        ~ & ~ & c4 & 394 & 13.8 & 54,343 & 67,017 \\
+
+        \cmidrule(lr){1-7}
+
+        \multirow{3}{*}{\cube{MorandiCyan}} & \multirow{3}{*}{d8192} & c1 & 406 & 17.6 & 25,798 & 32,516 \\
+        ~ & ~ & c2 & 390 & 30.0 & 52,256 & 59,507 \\
+        ~ & ~ & c4 & 405 & 9.7 & 82,832 & 101,635 \\
+
+        \midrule[0.75pt]
+        \multicolumn{7}{l}{\textit{Per-stream\quad(single request, per concurrent client)}} \\
+        \addlinespace[1pt]
+
+        \multirow{3}{*}{\cube{MorandiOrange}} & \multirow{3}{*}{--} & c1 & 417 & 17.7 & 15,289 & -- \\
+        ~ & ~ & c2 & 410 & 35.7 & -- & -- \\
+        ~ & ~ & c4 & 405 & 42.4 & -- & -- \\
+        \toprule[1.5pt]
+    \end{tabular}
+\end{table}
+
+
+
+\subsubsection{SGLang.pull + Qwen3.6-27B-INT4-AutoRound-Intel + MTP-2}
+\begin{lstlisting}
+MODEL_PATH="./models/Qwen3.6-27B-INT4-AutoRound-Intel"
+MODEL_NAME=$(basename "$MODEL_PATH")
+SGLANG_IMAGE="i-dgx-spark-gb10:sglang.pull"
+
+docker run \
+    --rm -it \
+    --gpus all \
+    --name ${MODEL_NAME} \
+    -v ${MODEL_PATH}:/models/${MODEL_NAME} \
+    -p 4321:4321 \
+    --ipc=host \
+    -e SGLANG_ENABLE_SPEC_V2=1 \
+    --health-cmd 'curl -sf http://localhost:4321/health || exit 1' \
+    --health-interval 10s \
+    --health-timeout 5s \
+    --health-retries 60 \
+    --health-start-period 900s \
+    ${SGLANG_IMAGE} sglang serve \
+        --model-path /models/${MODEL_NAME} \
+        --served-model-name ${MODEL_NAME} \
+        --host 0.0.0.0 \
+        --port 4321 \
+        --mem-fraction-static 0.75 \
+        --context-length 262144 \
+        --max-running-requests 16 \
+        --cuda-graph-max-bs 16 \
+        --max-prefill-tokens 16384 \
+        --chunked-prefill-size 8192 \
+        --quantization auto-round \
+        --kv-cache-dtype fp8_e5m2 \
+        --reasoning-parser qwen3 \
+        --tool-call-parser qwen3_coder \
+        --attention-backend flashinfer \
+        --mamba-scheduler-strategy extra_buffer \
+        --speculative-algorithm NEXTN \
+        --speculative-num-steps 2 \
+        --speculative-eagle-topk 1 \
+        --speculative-num-draft-tokens 3 \
+        --trust-remote-code
+
+HF_HUB_OFFLINE=1 tool-eval-bench \
+    --base-url http://127.0.0.1:4321 \
+    --short --perf \
+    --benchy-args "--tokenizer ./models/Qwen3.6-27B-INT4-AutoRound-Intel"
+\end{lstlisting}
+
+\begin{table}[H]
+    \centering
+    \renewcommand{\arraystretch}{1.2}
+    \setlength{\tabcolsep}{8pt}
+    \begin{tabular}{ccccccc}
+        \bottomrule[1.5pt]
+        \rowcolor{MorandiLightCyan}\multicolumn{7}{c}{\small
+            GPU \textbf{89.01GiB} $\bullet$ Warm-up \textbf{1349ms} $\bullet$ Quality \textbf{97/100} $\bullet$ Responsiveness \textbf{23/100} $\bullet$ Median turn \textbf{6.8s}
+        } \\
+
+        \midrule[0.75pt]
+        \multicolumn{1}{c}{} & \textbf{Depth} & \textbf{Concurrency} & \textbf{pp t/s} & \textbf{tg t/s} & \textbf{TTFT (ms)} & \textbf{Total (ms)} \\
+
+        \cmidrule(r){1-3}\cmidrule(l){4-7}
+        \multicolumn{7}{l}{\textit{Aggregate throughput\quad(pp2048 / tg128)}} \\
+        \addlinespace[1pt]
+
+        \multirow{3}{*}{\cube{MorandiBlue}} & \multirow{3}{*}{d0} & c1 & 415 & 17.7 & \textbf{5,380} & \textbf{12,197} \\
+        ~ & ~ & c2 & 416 & 27.9 & 9,668 & 17,420 \\
+        ~ & ~ & c4 & \textbf{427} & \textbf{53.8} & 19,092 & 27,301 \\
+
+        \cmidrule(lr){1-7}
+
+        \multirow{3}{*}{\cube{MorandiPurple}} & \multirow{3}{*}{d4096} & c1 & 424 & 17.1 & 14,911 & 21,995 \\
+        ~ & ~ & c2 & 425 & 31.0 & 28,675 & 35,912 \\
+        ~ & ~ & c4 & 423 & 15.3 & 50,439 & 61,646 \\
+
+        \cmidrule(lr){1-7}
+
+        \multirow{3}{*}{\cube{MorandiCyan}} & \multirow{3}{*}{d8192} & c1 & 416 & 17.3 & 25,020 & 32,022 \\
+        ~ & ~ & c2 & 414 & 31.3 & 49,342 & 56,730 \\
+        ~ & ~ & c4 & 415 & 10.3 & 81,006 & 97,721 \\
+
+        \midrule[0.75pt]
+        \multicolumn{7}{l}{\textit{Per-stream\quad(single request, per concurrent client)}} \\
+        \addlinespace[1pt]
+
+        \multirow{3}{*}{\cube{MorandiOrange}} & \multirow{3}{*}{--} & c1 & 424 & 17.7 & 5,380 & -- \\
+        ~ & ~ & c2 & 425 & 31.3 & -- & -- \\
+        ~ & ~ & c4 & 427 & 53.8 & -- & -- \\
+        \toprule[1.5pt]
+    \end{tabular}
+\end{table}
+
+
+
+\subsubsection{SGLang.pull + Qwen3.6-27B-INT4-AutoRound-Intel + MTP-4}
+\begin{lstlisting}
+MODEL_PATH="./models/Qwen3.6-27B-INT4-AutoRound-Intel"
+MODEL_NAME=$(basename "$MODEL_PATH")
+SGLANG_IMAGE="i-dgx-spark-gb10:sglang.pull"
+
+docker run \
+    --rm -it \
+    --gpus all \
+    --name ${MODEL_NAME} \
+    -v ${MODEL_PATH}:/models/${MODEL_NAME} \
+    -p 4321:4321 \
+    --ipc=host \
+    -e SGLANG_ENABLE_SPEC_V2=1 \
+    --health-cmd 'curl -sf http://localhost:4321/health || exit 1' \
+    --health-interval 10s \
+    --health-timeout 5s \
+    --health-retries 60 \
+    --health-start-period 900s \
+    ${SGLANG_IMAGE} sglang serve \
+        --model-path /models/${MODEL_NAME} \
+        --served-model-name ${MODEL_NAME} \
+        --host 0.0.0.0 \
+        --port 4321 \
+        --mem-fraction-static 0.75 \
+        --context-length 262144 \
+        --max-running-requests 16 \
+        --cuda-graph-max-bs 16 \
+        --max-prefill-tokens 16384 \
+        --chunked-prefill-size 8192 \
+        --quantization auto-round \
+        --kv-cache-dtype fp8_e5m2 \
+        --reasoning-parser qwen3 \
+        --tool-call-parser qwen3_coder \
+        --attention-backend flashinfer \
+        --mamba-scheduler-strategy extra_buffer \
+        --speculative-algorithm NEXTN \
+        --speculative-num-steps 4 \
+        --speculative-eagle-topk 1 \
+        --speculative-num-draft-tokens 5 \
+        --trust-remote-code
+
+HF_HUB_OFFLINE=1 tool-eval-bench \
+    --base-url http://127.0.0.1:4321 \
+    --short --perf \
+    --benchy-args "--tokenizer ./models/Qwen3.6-27B-INT4-AutoRound-Intel"
+\end{lstlisting}
+
+\begin{table}[H]
+    \centering
+    \renewcommand{\arraystretch}{1.2}
+    \setlength{\tabcolsep}{8pt}
+    \begin{tabular}{ccccccc}
+        \bottomrule[1.5pt]
+        \rowcolor{MorandiLightCyan}\multicolumn{7}{c}{\small
+            GPU \textbf{90.65GiB} $\bullet$ Warm-up \textbf{1296ms} $\bullet$ Quality \textbf{97/100} $\bullet$ Responsiveness \textbf{27/100} $\bullet$ Median turn \textbf{5.9s}
+        } \\
+
+        \midrule[0.75pt]
+        \multicolumn{1}{c}{} & \textbf{Depth} & \textbf{Concurrency} & \textbf{pp t/s} & \textbf{tg t/s} & \textbf{TTFT (ms)} & \textbf{Total (ms)} \\
+
+        \cmidrule(r){1-3}\cmidrule(l){4-7}
+        \multicolumn{7}{l}{\textit{Aggregate throughput\quad(pp2048 / tg128)}} \\
+        \addlinespace[1pt]
+
+        \multirow{3}{*}{\cube{MorandiBlue}} & \multirow{3}{*}{d0} & c1 & \textbf{426} & 20.2 & \textbf{5,345} & \textbf{11,199} \\
+        ~ & ~ & c2 & 412 & 30.4 & 9,817 & 16,948 \\
+        ~ & ~ & c4 & 378 & \textbf{56.8} & 21,611 & 28,952 \\
+
+        \cmidrule(lr){1-7}
+
+        \multirow{3}{*}{\cube{MorandiPurple}} & \multirow{3}{*}{d4096} & c1 & 415 & 19.6 & 15,317 & 21,351 \\
+        ~ & ~ & c2 & 407 & 31.4 & 29,967 & 36,644 \\
+        ~ & ~ & c4 & 415 & 15.0 & 51,483 & 61,923 \\
+
+        \cmidrule(lr){1-7}
+
+        \multirow{3}{*}{\cube{MorandiCyan}} & \multirow{3}{*}{d8192} & c1 & 412 & 19.4 & 25,366 & 31,479 \\
+        ~ & ~ & c2 & 412 & 34.2 & 49,455 & 56,016 \\
+        ~ & ~ & c4 & 412 & 10.4 & 81,594 & 96,860 \\
+
+        \midrule[0.75pt]
+        \multicolumn{7}{l}{\textit{Per-stream\quad(single request, per concurrent client)}} \\
+        \addlinespace[1pt]
+
+        \multirow{3}{*}{\cube{MorandiOrange}} & \multirow{3}{*}{--} & c1 & 426 & 20.2 & 5,345 & -- \\
+        ~ & ~ & c2 & 412 & 34.2 & -- & -- \\
+        ~ & ~ & c4 & 415 & 56.8 & -- & -- \\
+        \toprule[1.5pt]
+    \end{tabular}
+\end{table}
+
+
+
+\subsubsection{SGLang.pull + Qwen3.6-27B-INT4-AutoRound-Intel + MTP-8}
+\begin{lstlisting}
+MODEL_PATH="./models/Qwen3.6-27B-INT4-AutoRound-Intel"
+MODEL_NAME=$(basename "$MODEL_PATH")
+SGLANG_IMAGE="i-dgx-spark-gb10:sglang.pull"
+
+docker run \
+    --rm -it \
+    --gpus all \
+    --name ${MODEL_NAME} \
+    -v ${MODEL_PATH}:/models/${MODEL_NAME} \
+    -p 4321:4321 \
+    --ipc=host \
+    -e SGLANG_ENABLE_SPEC_V2=1 \
+    --health-cmd 'curl -sf http://localhost:4321/health || exit 1' \
+    --health-interval 10s \
+    --health-timeout 5s \
+    --health-retries 60 \
+    --health-start-period 900s \
+    ${SGLANG_IMAGE} sglang serve \
+        --model-path /models/${MODEL_NAME} \
+        --served-model-name ${MODEL_NAME} \
+        --host 0.0.0.0 \
+        --port 4321 \
+        --mem-fraction-static 0.75 \
+        --context-length 262144 \
+        --max-running-requests 16 \
+        --cuda-graph-max-bs 16 \
+        --max-prefill-tokens 16384 \
+        --chunked-prefill-size 8192 \
+        --quantization auto-round \
+        --kv-cache-dtype fp8_e5m2 \
+        --reasoning-parser qwen3 \
+        --tool-call-parser qwen3_coder \
+        --attention-backend flashinfer \
+        --mamba-scheduler-strategy extra_buffer \
+        --speculative-algorithm NEXTN \
+        --speculative-num-steps 8 \
+        --speculative-eagle-topk 1 \
+        --speculative-num-draft-tokens 9 \
+        --trust-remote-code
+
+HF_HUB_OFFLINE=1 tool-eval-bench \
+    --base-url http://127.0.0.1:4321 \
+    --short --perf \
+    --benchy-args "--tokenizer ./models/Qwen3.6-27B-INT4-AutoRound-Intel"
+\end{lstlisting}
+
+\begin{table}[H]
+    \centering
+    \renewcommand{\arraystretch}{1.2}
+    \setlength{\tabcolsep}{8pt}
+    \begin{tabular}{ccccccc}
+        \bottomrule[1.5pt]
+        \rowcolor{MorandiLightCyan}\multicolumn{7}{c}{\small
+            GPU \textbf{90.56GiB} $\bullet$ Warm-up \textbf{1574ms} $\bullet$ Quality \textbf{97/100} $\bullet$ Responsiveness \textbf{26/100} $\bullet$ Median turn \textbf{6.0s}
+        } \\
+
+        \midrule[0.75pt]
+        \multicolumn{1}{c}{} & \textbf{Depth} & \textbf{Concurrency} & \textbf{pp t/s} & \textbf{tg t/s} & \textbf{TTFT (ms)} & \textbf{Total (ms)} \\
+
+        \cmidrule(r){1-3}\cmidrule(l){4-7}
+        \multicolumn{7}{l}{\textit{Aggregate throughput\quad(pp2048 / tg128)}} \\
+        \addlinespace[1pt]
+
+        \multirow{3}{*}{\cube{MorandiBlue}} & \multirow{3}{*}{d0} & c1 & 422 & 18.5 & \textbf{5,488} & \textbf{11,835} \\
+        ~ & ~ & c2 & 408 & 25.1 & 9,819 & 17,308 \\
+        ~ & ~ & c4 & 422 & \textbf{47.6} & 19,272 & 27,611 \\
+
+        \cmidrule(lr){1-7}
+
+        \multirow{3}{*}{\cube{MorandiPurple}} & \multirow{3}{*}{d4096} & c1 & \textbf{434} & 13.3 & 14,708 & 23,747 \\
+        ~ & ~ & c2 & 424 & 34.1 & 28,718 & 35,187 \\
+        ~ & ~ & c4 & 426 & 15.0 & 50,129 & 61,411 \\
+
+        \cmidrule(lr){1-7}
+
+        \multirow{3}{*}{\cube{MorandiCyan}} & \multirow{3}{*}{d8192} & c1 & 425 & 18.8 & 24,634 & 30,882 \\
+        ~ & ~ & c2 & 420 & 30.1 & 48,495 & 55,607 \\
+        ~ & ~ & c4 & 422 & 10.1 & 79,365 & 96,546 \\
+
+        \midrule[0.75pt]
+        \multicolumn{7}{l}{\textit{Per-stream\quad(single request, per concurrent client)}} \\
+        \addlinespace[1pt]
+
+        \multirow{3}{*}{\cube{MorandiOrange}} & \multirow{3}{*}{--} & c1 & 434 & 18.8 & 24,634 & -- \\
+        ~ & ~ & c2 & 424 & 34.1 & -- & -- \\
+        ~ & ~ & c4 & 426 & 47.6 & -- & -- \\
+        \toprule[1.5pt]
+    \end{tabular}
+\end{table}
+
+
+
+
+\subsubsection{SGLang.runtime + Qwen3.6-27B-INT4-AutoRound-Intel + MTP-2}
+\begin{lstlisting}
+MODEL_PATH="./models/Qwen3.6-27B-INT4-AutoRound-Intel"
+MODEL_NAME=$(basename "$MODEL_PATH")
+SGLANG_IMAGE="i-dgx-spark-gb10:sglang.runtime"
+
+docker run \
+    --rm -it \
+    --gpus all \
+    --name ${MODEL_NAME} \
+    -v ${MODEL_PATH}:/models/${MODEL_NAME} \
+    -p 4321:4321 \
+    --ipc=host \
+    -e SGLANG_ENABLE_SPEC_V2=1 \
+    --health-cmd 'curl -sf http://localhost:4321/health || exit 1' \
+    --health-interval 10s \
+    --health-timeout 5s \
+    --health-retries 60 \
+    --health-start-period 900s \
+    ${SGLANG_IMAGE} python3 -m sglang.launch_server \
+        --model-path /models/${MODEL_NAME} \
+        --served-model-name ${MODEL_NAME} \
+        --host 0.0.0.0 \
+        --port 4321 \
+        --mem-fraction-static 0.75 \
+        --context-length 262144 \
+        --max-running-requests 16 \
+        --cuda-graph-max-bs 16 \
+        --max-prefill-tokens 16384 \
+        --chunked-prefill-size 8192 \
+        --quantization auto-round \
+        --kv-cache-dtype fp8_e5m2 \
+        --reasoning-parser qwen3 \
+        --tool-call-parser qwen3_coder \
+        --attention-backend flashinfer \
+        --mamba-scheduler-strategy extra_buffer \
+        --speculative-algorithm NEXTN \
+        --speculative-num-steps 2 \
+        --speculative-eagle-topk 1 \
+        --speculative-num-draft-tokens 3 \
+        --trust-remote-code
+
+HF_HUB_OFFLINE=1 tool-eval-bench \
+    --base-url http://127.0.0.1:4321 \
+    --short --perf \
+    --benchy-args "--tokenizer ./models/Qwen3.6-27B-INT4-AutoRound-Intel"
+\end{lstlisting}
+
+\begin{table}[H]
+    \centering
+    \renewcommand{\arraystretch}{1.2}
+    \setlength{\tabcolsep}{8pt}
+    \begin{tabular}{ccccccc}
+        \bottomrule[1.5pt]
+        \rowcolor{MorandiLightCyan}\multicolumn{7}{c}{\small
+            GPU \textbf{89.85GiB} $\bullet$ Warm-up \textbf{2210ms} $\bullet$ Quality \textbf{97/100} $\bullet$ Responsiveness \textbf{22/100} $\bullet$ Median turn \textbf{6.9s}
+        } \\
+
+        \midrule[0.75pt]
+        \multicolumn{1}{c}{} & \textbf{Depth} & \textbf{Concurrency} & \textbf{pp t/s} & \textbf{tg t/s} & \textbf{TTFT (ms)} & \textbf{Total (ms)} \\
+
+        \cmidrule(r){1-3}\cmidrule(l){4-7}
+        \multicolumn{7}{l}{\textit{Aggregate throughput\quad(pp2048 / tg128)}} \\
+        \addlinespace[1pt]
+
+        \multirow{3}{*}{\cube{MorandiBlue}} & \multirow{3}{*}{d0} & c1 & 412 & 16.1 & \textbf{5,415} & \textbf{12,960} \\
+        ~ & ~ & c2 & 402 & 30.6 & 10,003 & 17,612 \\
+        ~ & ~ & c4 & 407 & \textbf{53.2} & 20,023 & 28,248 \\
+
+        \cmidrule(lr){1-7}
+
+        \multirow{3}{*}{\cube{MorandiPurple}} & \multirow{3}{*}{d4096} & c1 & \textbf{415} & 17.0 & 15,214 & 22,329 \\
+        ~ & ~ & c2 & 411 & 28.8 & 29,687 & 37,570 \\
+        ~ & ~ & c4 & 404 & 14.6 & 52,846 & 64,504 \\
+
+        \cmidrule(lr){1-7}
+
+        \multirow{3}{*}{\cube{MorandiCyan}} & \multirow{3}{*}{d8192} & c1 & 396 & 17.0 & 26,260 & 33,376 \\
+        ~ & ~ & c2 & 397 & 30.6 & 51,414 & 58,864 \\
+        ~ & ~ & c4 & 400 & 10.1 & 84,178 & 100,848 \\
+
+        \midrule[0.75pt]
+        \multicolumn{7}{l}{\textit{Per-stream\quad(single request, per concurrent client)}} \\
+        \addlinespace[1pt]
+
+        \multirow{3}{*}{\cube{MorandiOrange}} & \multirow{3}{*}{--} & c1 & 415 & 17.0 & 15,214 & -- \\
+        ~ & ~ & c2 & 411 & 30.6 & -- & -- \\
+        ~ & ~ & c4 & 407 & 53.2 & -- & -- \\
+        \toprule[1.5pt]
+    \end{tabular}
+\end{table}
+
+
+
+\subsubsection{SGLang.runtime + Qwen3.6-27B-INT4-AutoRound-Intel + MTP-4}
+\begin{lstlisting}
+MODEL_PATH="./models/Qwen3.6-27B-INT4-AutoRound-Intel"
+MODEL_NAME=$(basename "$MODEL_PATH")
+SGLANG_IMAGE="i-dgx-spark-gb10:sglang.runtime"
+
+docker run \
+    --rm -it \
+    --gpus all \
+    --name ${MODEL_NAME} \
+    -v ${MODEL_PATH}:/models/${MODEL_NAME} \
+    -p 4321:4321 \
+    --ipc=host \
+    -e SGLANG_ENABLE_SPEC_V2=1 \
+    --health-cmd 'curl -sf http://localhost:4321/health || exit 1' \
+    --health-interval 10s \
+    --health-timeout 5s \
+    --health-retries 60 \
+    --health-start-period 900s \
+    ${SGLANG_IMAGE} python3 -m sglang.launch_server \
+        --model-path /models/${MODEL_NAME} \
+        --served-model-name ${MODEL_NAME} \
+        --host 0.0.0.0 \
+        --port 4321 \
+        --mem-fraction-static 0.75 \
+        --context-length 262144 \
+        --max-running-requests 16 \
+        --cuda-graph-max-bs 16 \
+        --max-prefill-tokens 16384 \
+        --chunked-prefill-size 8192 \
+        --quantization auto-round \
+        --kv-cache-dtype fp8_e5m2 \
+        --reasoning-parser qwen3 \
+        --tool-call-parser qwen3_coder \
+        --attention-backend flashinfer \
+        --mamba-scheduler-strategy extra_buffer \
+        --speculative-algorithm NEXTN \
+        --speculative-num-steps 4 \
+        --speculative-eagle-topk 1 \
+        --speculative-num-draft-tokens 5 \
+        --trust-remote-code
+
+HF_HUB_OFFLINE=1 tool-eval-bench \
+    --base-url http://127.0.0.1:4321 \
+    --short --perf \
+    --benchy-args "--tokenizer ./models/Qwen3.6-27B-INT4-AutoRound-Intel"
+\end{lstlisting}
+
+\begin{table}[H]
+    \centering
+    \renewcommand{\arraystretch}{1.2}
+    \setlength{\tabcolsep}{8pt}
+    \begin{tabular}{ccccccc}
+        \bottomrule[1.5pt]
+        \rowcolor{MorandiLightCyan}\multicolumn{7}{c}{\small
+            GPU \textbf{90.14GiB} $\bullet$ Warm-up \textbf{2537ms} $\bullet$ Quality \textbf{97/100} $\bullet$ Responsiveness \textbf{26/100} $\bullet$ Median turn \textbf{6.0s}
+        } \\
+
+        \midrule[0.75pt]
+        \multicolumn{1}{c}{} & \textbf{Depth} & \textbf{Concurrency} & \textbf{pp t/s} & \textbf{tg t/s} & \textbf{TTFT (ms)} & \textbf{Total (ms)} \\
+
+        \cmidrule(r){1-3}\cmidrule(l){4-7}
+        \multicolumn{7}{l}{\textit{Aggregate throughput\quad(pp2048 / tg128)}} \\
+        \addlinespace[1pt]
+
+        \multirow{3}{*}{\cube{MorandiBlue}} & \multirow{3}{*}{d0} & c1 & \textbf{409} & 22.7 & \textbf{5,479} & \textbf{10,671} \\
+        ~ & ~ & c2 & 405 & 32.4 & 9,944 & 16,689 \\
+        ~ & ~ & c4 & \textbf{409} & \textbf{58.2} & 19,898 & 27,143 \\
+
+        \cmidrule(lr){1-7}
+
+        \multirow{3}{*}{\cube{MorandiPurple}} & \multirow{3}{*}{d4096} & c1 & \textbf{409} & 20.3 & 15,486 & 21,342 \\
+        ~ & ~ & c2 & 402 & 34.2 & 30,383 & 36,944 \\
+        ~ & ~ & c4 & 399 & 14.8 & 53,581 & 64,286 \\
+
+        \cmidrule(lr){1-7}
+
+        \multirow{3}{*}{\cube{MorandiCyan}} & \multirow{3}{*}{d8192} & c1 & 396 & 21.0 & 26,275 & 31,917 \\
+        ~ & ~ & c2 & 394 & 33.6 & 51,763 & 58,352 \\
+        ~ & ~ & c4 & 397 & 10.1 & 84,571 & 100,418 \\
+
+        \midrule[0.75pt]
+        \multicolumn{7}{l}{\textit{Per-stream\quad(single request, per concurrent client)}} \\
+        \addlinespace[1pt]
+
+        \multirow{3}{*}{\cube{MorandiOrange}} & \multirow{3}{*}{--} & c1 & 409 & 22.7 & 5,479 & -- \\
+        ~ & ~ & c2 & 405 & 34.2 & -- & -- \\
+        ~ & ~ & c4 & 409 & 58.2 & -- & -- \\
+        \toprule[1.5pt]
+    \end{tabular}
+\end{table}
+
+
+
+\subsubsection{SGLang.runtime + Qwen3.6-27B-INT4-AutoRound-Intel + MTP-8}
+\begin{lstlisting}
+MODEL_PATH="./models/Qwen3.6-27B-INT4-AutoRound-Intel"
+MODEL_NAME=$(basename "$MODEL_PATH")
+SGLANG_IMAGE="i-dgx-spark-gb10:sglang.runtime"
+
+docker run \
+    --rm -it \
+    --gpus all \
+    --name ${MODEL_NAME} \
+    -v ${MODEL_PATH}:/models/${MODEL_NAME} \
+    -p 4321:4321 \
+    --ipc=host \
+    -e SGLANG_ENABLE_SPEC_V2=1 \
+    --health-cmd 'curl -sf http://localhost:4321/health || exit 1' \
+    --health-interval 10s \
+    --health-timeout 5s \
+    --health-retries 60 \
+    --health-start-period 900s \
+    ${SGLANG_IMAGE} python3 -m sglang.launch_server \
+        --model-path /models/${MODEL_NAME} \
+        --served-model-name ${MODEL_NAME} \
+        --host 0.0.0.0 \
+        --port 4321 \
+        --mem-fraction-static 0.75 \
+        --context-length 262144 \
+        --max-running-requests 16 \
+        --cuda-graph-max-bs 16 \
+        --max-prefill-tokens 16384 \
+        --chunked-prefill-size 8192 \
+        --quantization auto-round \
+        --kv-cache-dtype fp8_e5m2 \
+        --reasoning-parser qwen3 \
+        --tool-call-parser qwen3_coder \
+        --attention-backend flashinfer \
+        --mamba-scheduler-strategy extra_buffer \
+        --speculative-algorithm NEXTN \
+        --speculative-num-steps 8 \
+        --speculative-eagle-topk 1 \
+        --speculative-num-draft-tokens 9 \
+        --trust-remote-code
+
+HF_HUB_OFFLINE=1 tool-eval-bench \
+    --base-url http://127.0.0.1:4321 \
+    --short --perf \
+    --benchy-args "--tokenizer ../models/Qwen3.6-27B-INT4-AutoRound-Intel"
+\end{lstlisting}
+
+\begin{table}[H]
+    \centering
+    \renewcommand{\arraystretch}{1.2}
+    \setlength{\tabcolsep}{8pt}
+    \begin{tabular}{ccccccc}
+        \bottomrule[1.5pt]
+        \rowcolor{MorandiLightCyan}\multicolumn{7}{c}{\small
+            GPU \textbf{90.94GiB} $\bullet$ Warm-up \textbf{16813ms} $\bullet$ Quality \textbf{97/100} $\bullet$ Responsiveness \textbf{23/100} $\bullet$ Median turn \textbf{6.7s}
+        } \\
+
+        \midrule[0.75pt]
+        \multicolumn{1}{c}{} & \textbf{Depth} & \textbf{Concurrency} & \textbf{pp t/s} & \textbf{tg t/s} & \textbf{TTFT (ms)} & \textbf{Total (ms)} \\
+
+        \cmidrule(r){1-3}\cmidrule(l){4-7}
+        \multicolumn{7}{l}{\textit{Aggregate throughput\quad(pp2048 / tg128)}} \\
+        \addlinespace[1pt]
+
+        \multirow{3}{*}{\cube{MorandiBlue}} & \multirow{3}{*}{d0} & c1 & \textbf{411} & 20.5 & \textbf{5,574} & \textbf{11,288} \\
+        ~ & ~ & c2 & 394 & 25.3 & 10,232 & 18,605 \\
+        ~ & ~ & c4 & 346 & \textbf{42.2} & 23,665 & 32,676 \\
+
+        \cmidrule(lr){1-7}
+
+        \multirow{3}{*}{\cube{MorandiPurple}} & \multirow{3}{*}{d4096} & c1 & 404 & 15.5 & 15,793 & 23,500 \\
+        ~ & ~ & c2 & 380 & 25.4 & 32,152 & 41,046 \\
+        ~ & ~ & c4 & 361 & 12.6 & 59,081 & 71,013 \\
+
+        \cmidrule(lr){1-7}
+
+        \multirow{3}{*}{\cube{MorandiCyan}} & \multirow{3}{*}{d8192} & c1 & 359 & 19.9 & 29,051 & 34,940 \\
+        ~ & ~ & c2 & 372 & 25.0 & 54,770 & 63,292 \\
+        ~ & ~ & c4 & 378 & 9.3 & 89,624 & 105,330 \\
+
+        \midrule[0.75pt]
+        \multicolumn{7}{l}{\textit{Per-stream\quad(single request, per concurrent client)}} \\
+        \addlinespace[1pt]
+
+        \multirow{3}{*}{\cube{MorandiOrange}} & \multirow{3}{*}{--} & c1 & 411 & 20.5 & 5,574 & -- \\
+        ~ & ~ & c2 & 394 & 25.4 & -- & -- \\
+        ~ & ~ & c4 & 378 & 42.2 & -- & -- \\
+        \toprule[1.5pt]
+    \end{tabular}
+\end{table}
+
+
+
+\subsubsection{vLLM.dev + Qwen3.6-27B-INT4-AutoRound-Intel + MTP-2}
+\begin{lstlisting}
+MODEL_PATH="./models/Qwen3.6-27B-INT4-AutoRound-Intel"
+MODEL_NAME=$(basename "$MODEL_PATH")
+VLLM_IMAGE="i-dgx-spark-gb10:vllm0.19.1.dev"
+
+docker run \
+    --rm -it \
+    --gpus all \
+    --name ${MODEL_NAME} \
+    -v ${MODEL_PATH}:/models/${MODEL_NAME} \
+    -p 4321:4321 \
+    --ipc=host \
+    --health-cmd 'curl -sf http://localhost:4321/health || exit 1' \
+    --health-interval 10s \
+    --health-timeout 5s \
+    --health-retries 60 \
+    --health-start-period 900s \
+    --entrypoint vllm ${VLLM_IMAGE} \
+        serve /models/${MODEL_NAME} \
+        --served-model-name ${MODEL_NAME} \
+        --host 0.0.0.0 \
+        --port 4321 \
+        --gpu-memory-utilization 0.8 \
+        --max-model-len 262144 \
+        --max-num-seqs 4 \
+        --max-num-batched-tokens 16384 \
+        --speculative-config '{"method": "mtp", "num_speculative_tokens": 2}' \
+        --reasoning-parser qwen3 \
+        --tool-call-parser qwen3_coder \
+        --load-format instanttensor \
+        --attention-backend flashinfer \
+        --kv-cache-dtype fp8 \
+        --quantization gptq_marlin \
+        --enable-prefix-caching \
+        --enable-chunked-prefill \
+        --enable-auto-tool-choice \
+        --trust-remote-code
+
+HF_HUB_OFFLINE=1 tool-eval-bench \
+    --base-url http://127.0.0.1:4321 \
+    --short --perf \
+    --benchy-args "--tokenizer ./models/Qwen3.6-27B-INT4-AutoRound-Intel"
+\end{lstlisting}
+
+\begin{table}[H]
+    \centering
+    \renewcommand{\arraystretch}{1.2}
+    \setlength{\tabcolsep}{8pt}
+    \begin{tabular}{ccccccc}
+        \bottomrule[1.5pt]
+        \rowcolor{MorandiLightCyan}\multicolumn{7}{c}{\small
+            GPU \textbf{98.43GiB} $\bullet$ Warm-up \textbf{3668ms} $\bullet$ Quality \textbf{97/100} $\bullet$ Responsiveness \textbf{17/100} $\bullet$ Median turn \textbf{8.8s}
+        } \\
+
+        \midrule[0.75pt]
+        \multicolumn{1}{c}{} & \textbf{Depth} & \textbf{Concurrency} & \textbf{pp t/s} & \textbf{tg t/s} & \textbf{TTFT (ms)} & \textbf{Total (ms)} \\
+
+        \cmidrule(r){1-3}\cmidrule(l){4-7}
+        \multicolumn{7}{l}{\textit{Aggregate throughput\quad(pp2048 / tg128)}} \\
+        \addlinespace[1pt]
+
+        \multirow{3}{*}{\cube{MorandiBlue}} & \multirow{3}{*}{d0} & c1 & \textbf{453} & 17.0 & \textbf{4,828} & \textbf{12,070} \\
+        ~ & ~ & c2 & 410 & 27.1 & 9,899 & 18,465 \\
+        ~ & ~ & c4 & 401 & 46.6 & 20,473 & 29,273 \\
+
+        \cmidrule(lr){1-7}
+
+        \multirow{3}{*}{\cube{MorandiPurple}} & \multirow{3}{*}{d4096} & c1 & 442 & 17.5 & 14,209 & 21,241 \\
+        ~ & ~ & c2 & 444 & 31.5 & 27,595 & 35,179 \\
+        ~ & ~ & c4 & 448 & \textbf{56.0} & 54,743 & 63,048 \\
+
+        \cmidrule(lr){1-7}
+
+        \multirow{3}{*}{\cube{MorandiCyan}} & \multirow{3}{*}{d8192} & c1 & 441 & 16.9 & 23,515 & 30,773 \\
+        ~ & ~ & c2 & 442 & 30.1 & 46,308 & 54,148 \\
+        ~ & ~ & c4 & 439 & 25.8 & 90,431 & 100,113 \\
+
+        \midrule[0.75pt]
+        \multicolumn{7}{l}{\textit{Per-stream\quad(single request, per concurrent client)}} \\
+        \addlinespace[1pt]
+
+        \multirow{3}{*}{\cube{MorandiOrange}} & \multirow{3}{*}{--} & c1 & 453 & 17.5 & 14,209 & -- \\
+        ~ & ~ & c2 & 444 & 31.5 & -- & -- \\
+        ~ & ~ & c4 & 448 & 56.0 & -- & -- \\
+        \toprule[1.5pt]
+    \end{tabular}
+\end{table}
+
+
+
+
+
+
+
+
+
+
+\subsubsection{vLLM.dev + Qwen3.6-27B-INT4-AutoRound-Intel + MTP-4}
+\begin{lstlisting}
+MODEL_PATH="./models/Qwen3.6-27B-INT4-AutoRound-Intel"
+MODEL_NAME=$(basename "$MODEL_PATH")
+VLLM_IMAGE="i-dgx-spark-gb10:vllm0.19.1.dev"
+
+docker run \
+    --rm -it \
+    --gpus all \
+    --name ${MODEL_NAME} \
+    -v ${MODEL_PATH}:/models/${MODEL_NAME} \
+    -p 4321:4321 \
+    --ipc=host \
+    --health-cmd 'curl -sf http://localhost:4321/health || exit 1' \
+    --health-interval 10s \
+    --health-timeout 5s \
+    --health-retries 60 \
+    --health-start-period 900s \
+    --entrypoint vllm ${VLLM_IMAGE} \
+        serve /models/${MODEL_NAME} \
+        --served-model-name ${MODEL_NAME} \
+        --host 0.0.0.0 \
+        --port 4321 \
+        --gpu-memory-utilization 0.8 \
+        --max-model-len 262144 \
+        --max-num-seqs 4 \
+        --max-num-batched-tokens 16384 \
+        --speculative-config '{"method": "mtp", "num_speculative_tokens": 4}' \
+        --reasoning-parser qwen3 \
+        --tool-call-parser qwen3_coder \
+        --load-format instanttensor \
+        --attention-backend flashinfer \
+        --kv-cache-dtype fp8 \
+        --quantization gptq_marlin \
+        --enable-prefix-caching \
+        --enable-chunked-prefill \
+        --enable-auto-tool-choice \
+        --trust-remote-code
+
+HF_HUB_OFFLINE=1 tool-eval-bench \
+    --base-url http://127.0.0.1:4321 \
+    --short --perf \
+    --benchy-args "--tokenizer ./models/Qwen3.6-27B-INT4-AutoRound-Intel"
+\end{lstlisting}
+
+\begin{table}[H]
+    \centering
+    \renewcommand{\arraystretch}{1.2}
+    \setlength{\tabcolsep}{8pt}
+    \begin{tabular}{ccccccc}
+        \bottomrule[1.5pt]
+        \rowcolor{MorandiLightCyan}\multicolumn{7}{c}{\small
+            GPU \textbf{98.50GiB} $\bullet$ Warm-up \textbf{3152ms} $\bullet$ Quality \textbf{97/100} $\bullet$ Responsiveness \textbf{18/100} $\bullet$ Median turn \textbf{8.4s}
+        } \\
+
+        \midrule[0.75pt]
+        \multicolumn{1}{c}{} & \textbf{Depth} & \textbf{Concurrency} & \textbf{pp t/s} & \textbf{tg t/s} & \textbf{TTFT (ms)} & \textbf{Total (ms)} \\
+
+        \cmidrule(r){1-3}\cmidrule(l){4-7}
+        \multicolumn{7}{l}{\textit{Aggregate throughput\quad(pp2048 / tg128)}} \\
+        \addlinespace[1pt]
+
+        \multirow{3}{*}{\cube{MorandiBlue}} & \multirow{3}{*}{d0} & c1 & \textbf{454} & 20.2 & \textbf{4,829} & \textbf{10,847} \\
+        ~ & ~ & c2 & 354 & 25.2 & 11,598 & 20,081 \\
+        ~ & ~ & c4 & 395 & 53.9 & 20,736 & 27,922 \\
+
+        \cmidrule(lr){1-7}
+
+        \multirow{3}{*}{\cube{MorandiPurple}} & \multirow{3}{*}{d4096} & c1 & 443 & 18.1 & 14,211 & 20,957 \\
+        ~ & ~ & c2 & 442 & 31.2 & 27,697 & 34,944 \\
+        ~ & ~ & c4 & 450 & \textbf{62.3} & 54,589 & 61,714 \\
+
+        \cmidrule(lr){1-7}
+
+        \multirow{3}{*}{\cube{MorandiCyan}} & \multirow{3}{*}{d8192} & c1 & 440 & 18.5 & 23,603 & 30,192 \\
+        ~ & ~ & c2 & 440 & 36.6 & 46,459 & 53,027 \\
+        ~ & ~ & c4 & 441 & 26.8 & 90,115 & 98,980 \\
+
+        \midrule[0.75pt]
+        \multicolumn{7}{l}{\textit{Per-stream\quad(single request, per concurrent client)}} \\
+        \addlinespace[1pt]
+
+        \multirow{3}{*}{\cube{MorandiOrange}} & \multirow{3}{*}{--} & c1 & 454 & 20.2 & 4,829 & -- \\
+        ~ & ~ & c2 & 442 & 36.6 & -- & -- \\
+        ~ & ~ & c4 & 450 & 62.3 & -- & -- \\
+        \toprule[1.5pt]
+    \end{tabular}
+\end{table}
+
+
+
+\subsubsection{vLLM.dev + Qwen3.6-27B-INT4-AutoRound-Intel + MTP-8}
+\begin{lstlisting}
+MODEL_PATH="./models/Qwen3.6-27B-INT4-AutoRound-Intel"
+MODEL_NAME=$(basename "$MODEL_PATH")
+VLLM_IMAGE="i-dgx-spark-gb10:vllm0.19.1.dev"
+
+docker run \
+    --rm -it \
+    --gpus all \
+    --name ${MODEL_NAME} \
+    -v ${MODEL_PATH}:/models/${MODEL_NAME} \
+    -p 4321:4321 \
+    --ipc=host \
+    --health-cmd 'curl -sf http://localhost:4321/health || exit 1' \
+    --health-interval 10s \
+    --health-timeout 5s \
+    --health-retries 60 \
+    --health-start-period 900s \
+    --entrypoint vllm ${VLLM_IMAGE} \
+        serve /models/${MODEL_NAME} \
+        --served-model-name ${MODEL_NAME} \
+        --host 0.0.0.0 \
+        --port 4321 \
+        --gpu-memory-utilization 0.8 \
+        --max-model-len 262144 \
+        --max-num-seqs 4 \
+        --max-num-batched-tokens 16384 \
+        --speculative-config '{"method": "mtp", "num_speculative_tokens": 8}' \
+        --reasoning-parser qwen3 \
+        --tool-call-parser qwen3_coder \
+        --load-format instanttensor \
+        --attention-backend flashinfer \
+        --kv-cache-dtype fp8 \
+        --quantization gptq_marlin \
+        --enable-prefix-caching \
+        --enable-chunked-prefill \
+        --enable-auto-tool-choice \
+        --trust-remote-code
+
+HF_HUB_OFFLINE=1 tool-eval-bench \
+    --base-url http://127.0.0.1:4321 \
+    --short --perf \
+    --benchy-args "--tokenizer ./models/Qwen3.6-27B-INT4-AutoRound-Intel"
+\end{lstlisting}
+
+\begin{table}[H]
+    \centering
+    \renewcommand{\arraystretch}{1.2}
+    \setlength{\tabcolsep}{8pt}
+    \begin{tabular}{ccccccc}
+        \bottomrule[1.5pt]
+        \rowcolor{MorandiLightCyan}\multicolumn{7}{c}{\small
+            GPU \textbf{98.50GiB} $\bullet$ Warm-up \textbf{2695ms} $\bullet$ Quality \textbf{53/100} $\bullet$ Responsiveness \textbf{17/100} $\bullet$ Median turn \textbf{8.6s}
+        } \\
+
+        \midrule[0.75pt]
+        \multicolumn{1}{c}{} & \textbf{Depth} & \textbf{Concurrency} & \textbf{pp t/s} & \textbf{tg t/s} & \textbf{TTFT (ms)} & \textbf{Total (ms)} \\
+
+        \cmidrule(r){1-3}\cmidrule(l){4-7}
+        \multicolumn{7}{l}{\textit{Aggregate throughput\quad(pp2048 / tg128)}} \\
+        \addlinespace[1pt]
+
+        \multirow{3}{*}{\cube{MorandiBlue}} & \multirow{3}{*}{d0} & c1 & \textbf{453} & 19.5 & \textbf{4,909} & \textbf{11,102} \\
+        ~ & ~ & c2 & 352 & 26.5 & 11,792 & 19,951 \\
+        ~ & ~ & c4 & 447 & 42.6 & 18,235 & 27,472 \\
+
+        \cmidrule(lr){1-7}
+
+        \multirow{3}{*}{\cube{MorandiPurple}} & \multirow{3}{*}{d4096} & c1 & 431 & 14.2 & 14,640 & 23,301 \\
+        ~ & ~ & c2 & 443 & 31.2 & 27,630 & 34,789 \\
+        ~ & ~ & c4 & 448 & \textbf{44.6} & 54,759 & 63,419 \\
+
+        \cmidrule(lr){1-7}
+
+        \multirow{3}{*}{\cube{MorandiCyan}} & \multirow{3}{*}{d8192} & c1 & 438 & 17.3 & 23,746 & 30,755 \\
+        ~ & ~ & c2 & 436 & 30.5 & 46,809 & 54,134 \\
+        ~ & ~ & c4 & 440 & 24.5 & 90,408 & 100,781 \\
+
+        \midrule[0.75pt]
+        \multicolumn{7}{l}{\textit{Per-stream\quad(single request, per concurrent client)}} \\
+        \addlinespace[1pt]
+
+        \multirow{3}{*}{\cube{MorandiOrange}} & \multirow{3}{*}{--} & c1 & 453 & 19.5 & 4,909 & -- \\
+        ~ & ~ & c2 & 443 & 31.2 & -- & -- \\
+        ~ & ~ & c4 & 448 & 44.6 & -- & -- \\
+        \toprule[1.5pt]
+    \end{tabular}
+\end{table}
+
+
+
+\subsubsection{vLLM.build + Qwen3.6-27B-INT4-AutoRound-Intel + MTP-2}
+\begin{lstlisting}
+MODEL_PATH="./models/Qwen3.6-27B-INT4-AutoRound-Intel"
+MODEL_NAME=$(basename "$MODEL_PATH")
+VLLM_IMAGE="i-dgx-spark-gb10:vllm0.20.0.build"
+
+docker run \
+    --rm -it \
+    --gpus all \
+    --name ${MODEL_NAME} \
+    -v ${MODEL_PATH}:/models/${MODEL_NAME} \
+    -p 4321:4321 \
+    --ipc=host \
+    --health-cmd 'curl -sf http://localhost:4321/health || exit 1' \
+    --health-interval 10s \
+    --health-timeout 5s \
+    --health-retries 60 \
+    --health-start-period 900s \
+    --entrypoint vllm ${VLLM_IMAGE} \
+        serve /models/${MODEL_NAME} \
+        --served-model-name ${MODEL_NAME} \
+        --host 0.0.0.0 \
+        --port 4321 \
+        --gpu-memory-utilization 0.8 \
+        --max-model-len 262144 \
+        --max-num-seqs 4 \
+        --max-num-batched-tokens 16384 \
+        --speculative-config '{"method": "mtp", "num_speculative_tokens": 2}' \
+        --reasoning-parser qwen3 \
+        --tool-call-parser qwen3_coder \
+        --load-format instanttensor \
+        --attention-backend flashinfer \
+        --kv-cache-dtype fp8 \
+        --quantization gptq_marlin \
+        --enable-prefix-caching \
+        --enable-chunked-prefill \
+        --enable-auto-tool-choice \
+        --trust-remote-code
+
+HF_HUB_OFFLINE=1 tool-eval-bench \
+    --base-url http://127.0.0.1:4321 \
+    --short --perf \
+    --benchy-args "--tokenizer ./models/Qwen3.6-27B-INT4-AutoRound-Intel"
+\end{lstlisting}
+
+\begin{table}[H]
+    \centering
+    \renewcommand{\arraystretch}{1.2}
+    \setlength{\tabcolsep}{8pt}
+    \begin{tabular}{ccccccc}
+        \bottomrule[1.5pt]
+        \rowcolor{MorandiLightCyan}\multicolumn{7}{c}{\small
+            GPU \textbf{98.19GiB} $\bullet$ Warm-up \textbf{599ms} $\bullet$ Quality \textbf{96/100} $\bullet$ Responsiveness \textbf{14/100} $\bullet$ Median turn \textbf{10.1s}
+        } \\
+
+        \midrule[0.75pt]
+        \multicolumn{1}{c}{} & \textbf{Depth} & \textbf{Concurrency} & \textbf{pp t/s} & \textbf{tg t/s} & \textbf{TTFT (ms)} & \textbf{Total (ms)} \\
+
+        \cmidrule(r){1-3}\cmidrule(l){4-7}
+        \multicolumn{7}{l}{\textit{Aggregate throughput\quad(pp2048 / tg128)}} \\
+        \addlinespace[1pt]
+
+        \multirow{3}{*}{\cube{MorandiBlue}} & \multirow{3}{*}{d0} & c1 & \textbf{429} & 16.0 & \textbf{5,054} & \textbf{12,789} \\
+        ~ & ~ & c2 & 389 & 29.4 & 10,411 & 18,309 \\
+        ~ & ~ & c4 & 375 & 48.6 & 21,837 & 30,146 \\
+
+        \cmidrule(lr){1-7}
+
+        \multirow{3}{*}{\cube{MorandiPurple}} & \multirow{3}{*}{d4096} & c1 & 425 & 17.1 & 14,746 & 21,955 \\
+        ~ & ~ & c2 & 423 & 30.8 & 28,942 & 36,659 \\
+        ~ & ~ & c4 & 425 & \textbf{57.8} & 57,733 & 65,785 \\
+
+        \cmidrule(lr){1-7}
+
+        \multirow{3}{*}{\cube{MorandiCyan}} & \multirow{3}{*}{d8192} & c1 & 417 & 16.5 & 24,814 & 32,301 \\
+        ~ & ~ & c2 & 417 & 29.5 & 49,062 & 56,968 \\
+        ~ & ~ & c4 & 418 & 24.9 & 95,065 & 104,683 \\
+
+        \midrule[0.75pt]
+        \multicolumn{7}{l}{\textit{Per-stream\quad(single request, per concurrent client)}} \\
+        \addlinespace[1pt]
+
+        \multirow{3}{*}{\cube{MorandiOrange}} & \multirow{3}{*}{--} & c1 & 429 & 17.1 & 14,746 & -- \\
+        ~ & ~ & c2 & 423 & 30.8 & -- & -- \\
+        ~ & ~ & c4 & 425 & 57.8 & -- & -- \\
+        \toprule[1.5pt]
+    \end{tabular}
+\end{table}
+
+
+
+\subsubsection{vLLM.build + Qwen3.6-27B-INT4-AutoRound-Intel + MTP-4}
+\begin{lstlisting}
+MODEL_PATH="./models/Qwen3.6-27B-INT4-AutoRound-Intel"
+MODEL_NAME=$(basename "$MODEL_PATH")
+VLLM_IMAGE="i-dgx-spark-gb10:vllm0.20.0.build"
+
+docker run \
+    --rm -it \
+    --gpus all \
+    --name ${MODEL_NAME} \
+    -v ${MODEL_PATH}:/models/${MODEL_NAME} \
+    -p 4321:4321 \
+    --ipc=host \
+    --health-cmd 'curl -sf http://localhost:4321/health || exit 1' \
+    --health-interval 10s \
+    --health-timeout 5s \
+    --health-retries 60 \
+    --health-start-period 900s \
+    --entrypoint vllm ${VLLM_IMAGE} \
+        serve /models/${MODEL_NAME} \
+        --served-model-name ${MODEL_NAME} \
+        --host 0.0.0.0 \
+        --port 4321 \
+        --gpu-memory-utilization 0.8 \
+        --max-model-len 262144 \
+        --max-num-seqs 4 \
+        --max-num-batched-tokens 16384 \
+        --speculative-config '{"method": "mtp", "num_speculative_tokens": 4}' \
+        --reasoning-parser qwen3 \
+        --tool-call-parser qwen3_coder \
+        --load-format instanttensor \
+        --attention-backend flashinfer \
+        --kv-cache-dtype fp8 \
+        --quantization gptq_marlin \
+        --enable-prefix-caching \
+        --enable-chunked-prefill \
+        --enable-auto-tool-choice \
+        --trust-remote-code
+
+HF_HUB_OFFLINE=1 tool-eval-bench \
+    --base-url http://127.0.0.1:4321 \
+    --short --perf \
+    --benchy-args "--tokenizer ./models/Qwen3.6-27B-INT4-AutoRound-Intel"
+\end{lstlisting}
+
+\begin{table}[H]
+    \centering
+    \renewcommand{\arraystretch}{1.2}
+    \setlength{\tabcolsep}{8pt}
+    \begin{tabular}{ccccccc}
+        \bottomrule[1.5pt]
+        \rowcolor{MorandiLightCyan}\multicolumn{7}{c}{\small
+            GPU \textbf{100.30GiB} $\bullet$ Warm-up \textbf{16820ms} $\bullet$ Quality \textbf{97/100} $\bullet$ Responsiveness \textbf{31/100} $\bullet$ Median turn \textbf{5.3s}
+        } \\
+
+        \midrule[0.75pt]
+        \multicolumn{1}{c}{} & \textbf{Depth} & \textbf{Concurrency} & \textbf{pp t/s} & \textbf{tg t/s} & \textbf{TTFT (ms)} & \textbf{Total (ms)} \\
+
+        \cmidrule(r){1-3}\cmidrule(l){4-7}
+        \multicolumn{7}{l}{\textit{Aggregate throughput\quad(pp2048 / tg128)}} \\
+        \addlinespace[1pt]
+
+        \multirow{3}{*}{\cube{MorandiBlue}} & \multirow{3}{*}{d0} & c1 & \textbf{980} & 27.1 & \textbf{2,327} & \textbf{6,816} \\
+        ~ & ~ & c2 & 913 & 51.2 & 4,442 & 8,831 \\
+        ~ & ~ & c4 & 954 & \textbf{91.3} & 8,554 & 13,126 \\
+
+        \cmidrule(lr){1-7}
+
+        \multirow{3}{*}{\cube{MorandiPurple}} & \multirow{3}{*}{d4096} & c1 & 969 & 24.0 & 6,575 & 11,676 \\
+        ~ & ~ & c2 & 949 & 53.4 & 12,878 & 17,059 \\
+        ~ & ~ & c4 & 899 & 81.5 & 24,662 & 29,437 \\
+
+        \cmidrule(lr){1-7}
+
+        \multirow{3}{*}{\cube{MorandiCyan}} & \multirow{3}{*}{d8192} & c1 & 926 & 28.7 & 11,299 & 15,523 \\
+        ~ & ~ & c2 & 919 & 39.0 & 20,354 & 25,765 \\
+        ~ & ~ & c4 & 854 & 20.6 & 35,126 & 41,546 \\
+
+        \midrule[0.75pt]
+        \multicolumn{7}{l}{\textit{Per-stream\quad(single request, per concurrent client)}} \\
+        \addlinespace[1pt]
+
+        \multirow{3}{*}{\cube{MorandiOrange}} & \multirow{3}{*}{--} & c1 & 980 & 28.7 & 11,299 & -- \\
+        ~ & ~ & c2 & 949 & 53.4 & -- & -- \\
+        ~ & ~ & c4 & 954 & 91.3 & -- & -- \\
+        \toprule[1.5pt]
+    \end{tabular}
+\end{table}
+
+
+
+\subsubsection{vLLM.build + Qwen3.6-27B-INT4-AutoRound-Intel + MTP-8}
+\begin{lstlisting}
+MODEL_PATH="./models/Qwen3.6-27B-INT4-AutoRound-Intel"
+MODEL_NAME=$(basename "$MODEL_PATH")
+VLLM_IMAGE="i-dgx-spark-gb10:vllm0.20.0.build"
+
+docker run \
+    --rm -it \
+    --gpus all \
+    --name ${MODEL_NAME} \
+    -v ${MODEL_PATH}:/models/${MODEL_NAME} \
+    -p 4321:4321 \
+    --ipc=host \
+    --health-cmd 'curl -sf http://localhost:4321/health || exit 1' \
+    --health-interval 10s \
+    --health-timeout 5s \
+    --health-retries 60 \
+    --health-start-period 900s \
+    --entrypoint vllm ${VLLM_IMAGE} \
+        serve /models/${MODEL_NAME} \
+        --served-model-name ${MODEL_NAME} \
+        --host 0.0.0.0 \
+        --port 4321 \
+        --gpu-memory-utilization 0.8 \
+        --max-model-len 262144 \
+        --max-num-seqs 4 \
+        --max-num-batched-tokens 16384 \
+        --speculative-config '{"method": "mtp", "num_speculative_tokens": 8}' \
+        --reasoning-parser qwen3 \
+        --tool-call-parser qwen3_coder \
+        --load-format instanttensor \
+        --attention-backend flashinfer \
+        --kv-cache-dtype fp8 \
+        --quantization gptq_marlin \
+        --enable-prefix-caching \
+        --enable-chunked-prefill \
+        --enable-auto-tool-choice \
+        --trust-remote-code
+
+HF_HUB_OFFLINE=1 tool-eval-bench \
+    --base-url http://127.0.0.1:4321 \
+    --short --perf \
+    --benchy-args "--tokenizer ./models/Qwen3.6-27B-INT4-AutoRound-Intel"
+\end{lstlisting}
+
+\begin{table}[H]
+    \centering
+    \renewcommand{\arraystretch}{1.2}
+    \setlength{\tabcolsep}{8pt}
+    \begin{tabular}{ccccccc}
+        \bottomrule[1.5pt]
+        \rowcolor{MorandiLightCyan}\multicolumn{7}{c}{\small
+            GPU \textbf{98.75GiB} $\bullet$ Warm-up \textbf{15674ms} $\bullet$ Quality \textbf{53/100} $\bullet$ Responsiveness \textbf{25/100} $\bullet$ Median turn \textbf{6.1s}
+        } \\
+
+        \midrule[0.75pt]
+        \multicolumn{1}{c}{} & \textbf{Depth} & \textbf{Concurrency} & \textbf{pp t/s} & \textbf{tg t/s} & \textbf{TTFT (ms)} & \textbf{Total (ms)} \\
+
+        \cmidrule(r){1-3}\cmidrule(l){4-7}
+        \multicolumn{7}{l}{\textit{Aggregate throughput\quad(pp2048 / tg128)}} \\
+        \addlinespace[1pt]
+
+        \multirow{3}{*}{\cube{MorandiBlue}} & \multirow{3}{*}{d0} & c1 & 912 & 21.7 & \textbf{2,525} & \textbf{8,145} \\
+        ~ & ~ & c2 & 914 & 46.0 & 4,452 & 9,360 \\
+        ~ & ~ & c4 & 933 & 69.4 & 8,715 & 14,494 \\
+
+        \cmidrule(lr){1-7}
+
+        \multirow{3}{*}{\cube{MorandiPurple}} & \multirow{3}{*}{d4096} & c1 & 956 & 26.9 & 6,704 & 11,181 \\
+        ~ & ~ & c2 & 942 & 46.1 & 12,970 & 17,461 \\
+        ~ & ~ & c4 & \textbf{962} & \textbf{77.3} & 25,470 & 30,537 \\
+
+        \cmidrule(lr){1-7}
+
+        \multirow{3}{*}{\cube{MorandiCyan}} & \multirow{3}{*}{d8192} & c1 & 953 & 22.5 & 11,015 & 16,438 \\
+        ~ & ~ & c2 & 943 & 46.7 & 21,622 & 26,333 \\
+        ~ & ~ & c4 & 953 & 50.6 & 41,748 & 47,153 \\
+
+        \midrule[0.75pt]
+        \multicolumn{7}{l}{\textit{Per-stream\quad(single request, per concurrent client)}} \\
+        \addlinespace[1pt]
+
+        \multirow{3}{*}{\cube{MorandiOrange}} & \multirow{3}{*}{--} & c1 & 956 & 26.9 & 6,704 & -- \\
+        ~ & ~ & c2 & 943 & 46.7 & -- & -- \\
+        ~ & ~ & c4 & 962 & 77.3 & -- & -- \\
+        \toprule[1.5pt]
+    \end{tabular}
+\end{table}
+
+
+
+\subsubsection{vLLM.build + Qwen3.6-27B-INT4-AutoRound-Intel + DFlash-2}
+\begin{lstlisting}
+TARGET_PATH="./models/Qwen3.6-27B-INT4-AutoRound-Intel"
+DRAFT_PATH="./models/Qwen3.6-27B-DFlash"
+TARGET_NAME=$(basename "$TARGET_PATH")
+DRAFT_NAME=$(basename "$DRAFT_PATH")
+VLLM_IMAGE="i-dgx-spark-gb10:vllm0.20.0.build"
+
+docker run \
+    --rm -it \
+    --gpus all \
+    --name ${TARGET_NAME}-dflash \
+    -v $(pwd)/${TARGET_PATH}:/models/${TARGET_NAME} \
+    -v $(pwd)/${DRAFT_PATH}:/models/${DRAFT_NAME} \
+    -p 4321:4321 \
+    --ipc=host \
+    --health-cmd 'curl -sf http://localhost:4321/health || exit 1' \
+    --health-interval 10s \
+    --health-timeout 5s \
+    --health-retries 60 \
+    --health-start-period 900s \
+    --entrypoint vllm ${VLLM_IMAGE} \
+        serve /models/${TARGET_NAME} \
+        --served-model-name ${TARGET_NAME} \
+        --host 0.0.0.0 \
+        --port 4321 \
+        --gpu-memory-utilization 0.8 \
+        --max-model-len 262144 \
+        --max-num-seqs 4 \
+        --max-num-batched-tokens 16384 \
+        --speculative-config '{"model": "/models/'${DRAFT_NAME}'", "method": "dflash", "num_speculative_tokens": 3}' \
+        --reasoning-parser qwen3 \
+        --tool-call-parser qwen3_coder \
+        --attention-backend FLASH_ATTN \
+        --enable-prefix-caching \
+        --enable-chunked-prefill \
+        --enable-auto-tool-choice \
+        --trust-remote-code
+
+HF_HUB_OFFLINE=1 tool-eval-bench \
+    --base-url http://127.0.0.1:4321 \
+    --short --perf \
+    --benchy-args "--tokenizer ./models/Qwen3.6-27B-INT4-AutoRound-Intel"
+\end{lstlisting}
+
+\begin{table}[H]
+    \centering
+    \renewcommand{\arraystretch}{1.2}
+    \setlength{\tabcolsep}{8pt}
+    \begin{tabular}{ccccccc}
+        \bottomrule[1.5pt]
+        \rowcolor{MorandiLightCyan}\multicolumn{7}{c}{\small
+            GPU \textbf{96.91GiB} $\bullet$ Warm-up \textbf{32629ms} $\bullet$ Quality \textbf{43/100} $\bullet$ Responsiveness \textbf{15/100} $\bullet$ Median turn \textbf{9.3s}
+        } \\
+
+        \midrule[0.75pt]
+        \multicolumn{1}{c}{} & \textbf{Depth} & \textbf{Concurrency} & \textbf{pp t/s} & \textbf{tg t/s} & \textbf{TTFT (ms)} & \textbf{Total (ms)} \\
+
+        \cmidrule(r){1-3}\cmidrule(l){4-7}
+        \multicolumn{7}{l}{\textit{Aggregate throughput\quad(pp2048 / tg128)}} \\
+        \addlinespace[1pt]
+
+        \multirow{3}{*}{\cube{MorandiBlue}} & \multirow{3}{*}{d0} & c1 & 990 & 28.1 & \textbf{2,312} & \textbf{6,629} \\
+        ~ & ~ & c2 & 901 & 48.0 & 4,522 & 9,387 \\
+        ~ & ~ & c4 & 885 & 79.6 & 9,188 & 14,221 \\
+
+        \cmidrule(lr){1-7}
+
+        \multirow{3}{*}{\cube{MorandiPurple}} & \multirow{3}{*}{d4096} & c1 & \textbf{1,026} & 25.0 & 6,224 & 11,103 \\
+        ~ & ~ & c2 & 998 & 46.1 & 12,254 & 17,202 \\
+        ~ & ~ & c4 & 1,013 & \textbf{79.7} & 24,226 & 29,741 \\
+
+        \cmidrule(lr){1-7}
+
+        \multirow{3}{*}{\cube{MorandiCyan}} & \multirow{3}{*}{d8192} & c1 & 1,014 & 23.4 & 10,332 & 15,557 \\
+        ~ & ~ & c2 & 1,005 & 42.1 & 20,325 & 25,950 \\
+        ~ & ~ & c4 & 992 & 49.6 & 40,530 & 48,015 \\
+
+        \midrule[0.75pt]
+        \multicolumn{7}{l}{\textit{Per-stream\quad(single request, per concurrent client)}} \\
+        \addlinespace[1pt]
+
+        \multirow{3}{*}{\cube{MorandiOrange}} & \multirow{3}{*}{--} & c1 & 1,026 & 28.1 & 2,312 & -- \\
+        ~ & ~ & c2 & 1,005 & 48.0 & -- & -- \\
+        ~ & ~ & c4 & 1,013 & 79.7 & -- & -- \\
+        \toprule[1.5pt]
+    \end{tabular}
+\end{table}
+
+
+
+\subsubsection{vLLM.build + Qwen3.6-27B-INT4-AutoRound-Intel + DFlash-4}
+\begin{lstlisting}
+TARGET_PATH="./models/Qwen3.6-27B-INT4-AutoRound-Intel"
+DRAFT_PATH="./models/Qwen3.6-27B-DFlash"
+TARGET_NAME=$(basename "$TARGET_PATH")
+DRAFT_NAME=$(basename "$DRAFT_PATH")
+VLLM_IMAGE="i-dgx-spark-gb10:vllm0.20.0.build"
+
+docker run \
+    --rm -it \
+    --gpus all \
+    --name ${TARGET_NAME}-dflash \
+    -v $(pwd)/${TARGET_PATH}:/models/${TARGET_NAME} \
+    -v $(pwd)/${DRAFT_PATH}:/models/${DRAFT_NAME} \
+    -p 4321:4321 \
+    --ipc=host \
+    --health-cmd 'curl -sf http://localhost:4321/health || exit 1' \
+    --health-interval 10s \
+    --health-timeout 5s \
+    --health-retries 60 \
+    --health-start-period 900s \
+    --entrypoint vllm ${VLLM_IMAGE} \
+        serve /models/${TARGET_NAME} \
+        --served-model-name ${TARGET_NAME} \
+        --host 0.0.0.0 \
+        --port 4321 \
+        --gpu-memory-utilization 0.8 \
+        --max-model-len 262144 \
+        --max-num-seqs 4 \
+        --max-num-batched-tokens 16384 \
+        --speculative-config '{"model": "/models/'${DRAFT_NAME}'", "method": "dflash", "num_speculative_tokens": 4}' \
+        --reasoning-parser qwen3 \
+        --tool-call-parser qwen3_coder \
+        --attention-backend FLASH_ATTN \
+        --enable-prefix-caching \
+        --enable-chunked-prefill \
+        --enable-auto-tool-choice \
+        --trust-remote-code
+
+HF_HUB_OFFLINE=1 tool-eval-bench \
+    --base-url http://127.0.0.1:4321 \
+    --short --perf \
+    --benchy-args "--tokenizer ./models/Qwen3.6-27B-INT4-AutoRound-Intel"
+\end{lstlisting}
+
+\begin{table}[H]
+    \centering
+    \renewcommand{\arraystretch}{1.2}
+    \setlength{\tabcolsep}{8pt}
+    \begin{tabular}{ccccccc}
+        \bottomrule[1.5pt]
+        \rowcolor{MorandiLightCyan}\multicolumn{7}{c}{\small
+            GPU \textbf{95.42GiB} $\bullet$ Warm-up \textbf{32549ms} $\bullet$ Quality \textbf{43/100} $\bullet$ Responsiveness \textbf{17/100} $\bullet$ Median turn \textbf{8.6s}
+        } \\
+
+        \midrule[0.75pt]
+        \multicolumn{1}{c}{} & \textbf{Depth} & \textbf{Concurrency} & \textbf{pp t/s} & \textbf{tg t/s} & \textbf{TTFT (ms)} & \textbf{Total (ms)} \\
+
+        \cmidrule(r){1-3}\cmidrule(l){4-7}
+        \multicolumn{7}{l}{\textit{Aggregate throughput\quad(pp2048 / tg128)}} \\
+        \addlinespace[1pt]
+
+        \multirow{3}{*}{\cube{MorandiBlue}} & \multirow{3}{*}{d0} & c1 & 951 & 32.7 & \textbf{2,382} & \textbf{6,084} \\
+        ~ & ~ & c2 & 792 & 47.0 & 5,101 & 9,782 \\
+        ~ & ~ & c4 & 885 & 77.6 & 9,170 & 14,055 \\
+
+        \cmidrule(lr){1-7}
+
+        \multirow{3}{*}{\cube{MorandiPurple}} & \multirow{3}{*}{d4096} & c1 & \textbf{1,023} & 26.1 & 6,214 & 10,903 \\
+        ~ & ~ & c2 & 1,004 & 49.9 & 12,184 & 16,888 \\
+        ~ & ~ & c4 & 1,002 & \textbf{84.1} & 24,470 & 29,757 \\
+
+        \cmidrule(lr){1-7}
+
+        \multirow{3}{*}{\cube{MorandiCyan}} & \multirow{3}{*}{d8192} & c1 & 1,015 & 23.7 & 10,302 & 15,491 \\
+        ~ & ~ & c2 & 1,003 & 40.1 & 20,368 & 25,802 \\
+        ~ & ~ & c4 & 999 & 50.3 & 40,238 & 47,372 \\
+
+        \midrule[0.75pt]
+        \multicolumn{7}{l}{\textit{Per-stream\quad(single request, per concurrent client)}} \\
+        \addlinespace[1pt]
+
+        \multirow{3}{*}{\cube{MorandiOrange}} & \multirow{3}{*}{--} & c1 & 1,023 & 32.7 & 2,382 & -- \\
+        ~ & ~ & c2 & 1004 & 49.9 & -- & -- \\
+        ~ & ~ & c4 & 1,002 & 84.1 & -- & -- \\
+        \toprule[1.5pt]
+    \end{tabular}
+\end{table}
+
+
+
+\subsubsection{vLLM.build + Qwen3.6-27B-INT4-AutoRound-Intel + DFlash-8}
+\begin{lstlisting}
+TARGET_PATH="./models/Qwen3.6-27B-INT4-AutoRound-Intel"
+DRAFT_PATH="./models/Qwen3.6-27B-DFlash"
+TARGET_NAME=$(basename "$TARGET_PATH")
+DRAFT_NAME=$(basename "$DRAFT_PATH")
+VLLM_IMAGE="i-dgx-spark-gb10:vllm0.20.0.build"
+
+docker run \
+    --rm -it \
+    --gpus all \
+    --name ${TARGET_NAME}-dflash \
+    -v $(pwd)/${TARGET_PATH}:/models/${TARGET_NAME} \
+    -v $(pwd)/${DRAFT_PATH}:/models/${DRAFT_NAME} \
+    -p 4321:4321 \
+    --ipc=host \
+    --health-cmd 'curl -sf http://localhost:4321/health || exit 1' \
+    --health-interval 10s \
+    --health-timeout 5s \
+    --health-retries 60 \
+    --health-start-period 900s \
+    --entrypoint vllm ${VLLM_IMAGE} \
+        serve /models/${TARGET_NAME} \
+        --served-model-name ${TARGET_NAME} \
+        --host 0.0.0.0 \
+        --port 4321 \
+        --gpu-memory-utilization 0.8 \
+        --max-model-len 262144 \
+        --max-num-seqs 4 \
+        --max-num-batched-tokens 16384 \
+        --speculative-config '{"model": "/models/'${DRAFT_NAME}'", "method": "dflash", "num_speculative_tokens": 8}' \
+        --reasoning-parser qwen3 \
+        --tool-call-parser qwen3_coder \
+        --attention-backend FLASH_ATTN \
+        --enable-prefix-caching \
+        --enable-chunked-prefill \
+        --enable-auto-tool-choice \
+        --trust-remote-code
+
+HF_HUB_OFFLINE=1 tool-eval-bench \
+    --base-url http://127.0.0.1:4321 \
+    --short --perf \
+    --benchy-args "--tokenizer ./models/Qwen3.6-27B-INT4-AutoRound-Intel"
+\end{lstlisting}
+
+\begin{table}[H]
+    \centering
+    \renewcommand{\arraystretch}{1.2}
+    \setlength{\tabcolsep}{8pt}
+    \begin{tabular}{ccccccc}
+        \bottomrule[1.5pt]
+        \rowcolor{MorandiLightCyan}\multicolumn{7}{c}{\small
+            GPU \textbf{95.28GiB} $\bullet$ Warm-up \textbf{587ms} $\bullet$ Quality \textbf{43/100} $\bullet$ Responsiveness \textbf{8/100} $\bullet$ Median turn \textbf{15.5s}
+        } \\
+
+        \midrule[0.75pt]
+        \multicolumn{1}{c}{} & \textbf{Depth} & \textbf{Concurrency} & \textbf{pp t/s} & \textbf{tg t/s} & \textbf{TTFT (ms)} & \textbf{Total (ms)} \\
+
+        \cmidrule(r){1-3}\cmidrule(l){4-7}
+        \multicolumn{7}{l}{\textit{Aggregate throughput\quad(pp2048 / tg128)}} \\
+        \addlinespace[1pt]
+
+        \multirow{3}{*}{\cube{MorandiBlue}} & \multirow{3}{*}{d0} & c1 & 406 & 20.6 & \textbf{5,351} & \textbf{11,309} \\
+        ~ & ~ & c2 & 344 & 30.1 & 11,858 & 18,836 \\
+        ~ & ~ & c4 & 383 & 44.7 & 21,305 & 28,982 \\
+
+        \cmidrule(lr){1-7}
+
+        \multirow{3}{*}{\cube{MorandiPurple}} & \multirow{3}{*}{d4096} & c1 & \textbf{429} & 17.5 & 14,577 & 21,619 \\
+        ~ & ~ & c2 & \textbf{429} & 29.8 & 28,569 & 36,546 \\
+        ~ & ~ & c4 & 421 & \textbf{48.3} & 58,246 & 67,266 \\
+
+        \cmidrule(lr){1-7}
+
+        \multirow{3}{*}{\cube{MorandiCyan}} & \multirow{3}{*}{d8192} & c1 & \textbf{429} & 14.5 & 24,120 & 32,707 \\
+        ~ & ~ & c2 & 426 & 25.0 & 47,920 & 57,321 \\
+        ~ & ~ & c4 & 418 & 27.0 & 96,609 & 109,596 \\
+
+        \midrule[0.75pt]
+        \multicolumn{7}{l}{\textit{Per-stream\quad(single request, per concurrent client)}} \\
+        \addlinespace[1pt]
+
+        \multirow{3}{*}{\cube{MorandiOrange}} & \multirow{3}{*}{--} & c1 & 429 & 20.6 & 5,351 & -- \\
+        ~ & ~ & c2 & 429 & 30.1 & -- & -- \\
+        ~ & ~ & c4 & 421 & 48.3 & -- & -- \\
+        \toprule[1.5pt]
+    \end{tabular}
+\end{table}
+
+
+
+\subsubsection{vLLM.build + Qwen3.6-27B-INT4-AutoRound-Intel + DFlash-15}
+\begin{lstlisting}
+TARGET_PATH="./models/Qwen3.6-27B-INT4-AutoRound-Intel"
+DRAFT_PATH="./models/Qwen3.6-27B-DFlash"
+TARGET_NAME=$(basename "$TARGET_PATH")
+DRAFT_NAME=$(basename "$DRAFT_PATH")
+VLLM_IMAGE="i-dgx-spark-gb10:vllm0.20.0.build"
+
+docker run \
+    --rm -it \
+    --gpus all \
+    --name ${TARGET_NAME}-dflash \
+    -v $(pwd)/${TARGET_PATH}:/models/${TARGET_NAME} \
+    -v $(pwd)/${DRAFT_PATH}:/models/${DRAFT_NAME} \
+    -p 4321:4321 \
+    --ipc=host \
+    --health-cmd 'curl -sf http://localhost:4321/health || exit 1' \
+    --health-interval 10s \
+    --health-timeout 5s \
+    --health-retries 60 \
+    --health-start-period 900s \
+    --entrypoint vllm ${VLLM_IMAGE} \
+        serve /models/${TARGET_NAME} \
+        --served-model-name ${TARGET_NAME} \
+        --host 0.0.0.0 \
+        --port 4321 \
+        --gpu-memory-utilization 0.8 \
+        --max-model-len 262144 \
+        --max-num-seqs 4 \
+        --max-num-batched-tokens 16384 \
+        --speculative-config '{"model": "/models/'${DRAFT_NAME}'", "method": "dflash", "num_speculative_tokens": 15}' \
+        --reasoning-parser qwen3 \
+        --tool-call-parser qwen3_coder \
+        --attention-backend FLASH_ATTN \
+        --enable-prefix-caching \
+        --enable-chunked-prefill \
+        --enable-auto-tool-choice \
+        --trust-remote-code
+
+HF_HUB_OFFLINE=1 tool-eval-bench \
+    --base-url http://127.0.0.1:4321 \
+    --short --perf \
+    --benchy-args "--tokenizer ./models/Qwen3.6-27B-INT4-AutoRound-Intel"
+\end{lstlisting}
+
+\begin{table}[H]
+    \centering
+    \renewcommand{\arraystretch}{1.2}
+    \setlength{\tabcolsep}{8pt}
+    \begin{tabular}{ccccccc}
+        \bottomrule[1.5pt]
+        \rowcolor{MorandiLightCyan}\multicolumn{7}{c}{\small
+            GPU \textbf{95.46GiB} $\bullet$ Warm-up \textbf{32836ms} $\bullet$ Quality \textbf{47/100} $\bullet$ Responsiveness \textbf{23/100} $\bullet$ Median turn \textbf{6.8s}
+        } \\
+
+        \midrule[0.75pt]
+        \multicolumn{1}{c}{} & \textbf{Depth} & \textbf{Concurrency} & \textbf{pp t/s} & \textbf{tg t/s} & \textbf{TTFT (ms)} & \textbf{Total (ms)} \\
+
+        \cmidrule(r){1-3}\cmidrule(l){4-7}
+        \multicolumn{7}{l}{\textit{Aggregate throughput\quad(pp2048 / tg128)}} \\
+        \addlinespace[1pt]
+
+        \multirow{3}{*}{\cube{MorandiBlue}} & \multirow{3}{*}{d0} & c1 & 970 & 35.3 & \textbf{2,332} & \textbf{5,742} \\
+        ~ & ~ & c2 & 877 & 61.1 & 4,621 & 8,030 \\
+        ~ & ~ & c4 & 962 & \textbf{78.9} & 8,449 & 13,626 \\
+
+        \cmidrule(lr){1-7}
+
+        \multirow{3}{*}{\cube{MorandiPurple}} & \multirow{3}{*}{d4096} & c1 & \textbf{1,016} & 30.5 & 6,263 & 10,249 \\
+        ~ & ~ & c2 & 993 & 42.4 & 12,300 & 17,299 \\
+        ~ & ~ & c4 & 992 & 56.5 & 24,336 & 31,500 \\
+
+        \cmidrule(lr){1-7}
+
+        \multirow{3}{*}{\cube{MorandiCyan}} & \multirow{3}{*}{d8192} & c1 & 1,004 & 20.7 & 10,412 & 16,376 \\
+        ~ & ~ & c2 & 989 & 37.7 & 20,642 & 26,947 \\
+        ~ & ~ & c4 & 992 & 37.8 & 40,316 & 49,430 \\
+
+        \midrule[0.75pt]
+        \multicolumn{7}{l}{\textit{Per-stream\quad(single request, per concurrent client)}} \\
+        \addlinespace[1pt]
+
+        \multirow{3}{*}{\cube{MorandiOrange}} & \multirow{3}{*}{--} & c1 & 1,016 & 35.3 & 2,332 & -- \\
+        ~ & ~ & c2 & 993 & 61.1 & -- & -- \\
+        ~ & ~ & c4 & 992 & 78.9 & -- & -- \\
+        \toprule[1.5pt]
+    \end{tabular}
+\end{table}
+
+
+\subsubsection{vLLM.dflash + Qwen3.6-27B-INT4-AutoRound-Intel + DFlash-15}
+\begin{lstlisting}
+TARGET_PATH="./models/Qwen3.6-27B-INT4-AutoRound-Intel"
+DRAFT_PATH="./models/Qwen3.6-27B-DFlash"
+TARGET_NAME=$(basename "$TARGET_PATH")
+DRAFT_NAME=$(basename "$DRAFT_PATH")
+VLLM_IMAGE="i-dgx-spark-gb10:vllm.dflash"
+
+docker run \
+    --rm -it \
+    --gpus all \
+    --name ${TARGET_NAME}-dflash \
+    -v $(pwd)/${TARGET_PATH}:/models/${TARGET_NAME} \
+    -v $(pwd)/${DRAFT_PATH}:/models/${DRAFT_NAME} \
+    -p 4321:4321 \
+    --ipc=host \
+    --health-cmd 'curl -sf http://localhost:4321/health || exit 1' \
+    --health-interval 10s \
+    --health-timeout 5s \
+    --health-retries 60 \
+    --health-start-period 900s \
+    --entrypoint vllm ${VLLM_IMAGE} \
+        serve /models/${TARGET_NAME} \
+        --served-model-name ${TARGET_NAME} \
+        --host 0.0.0.0 \
+        --port 4321 \
+        --gpu-memory-utilization 0.8 \
+        --max-model-len 262144 \
+        --max-num-seqs 4 \
+        --max-num-batched-tokens 16384 \
+        --speculative-config '{"model": "/models/'${DRAFT_NAME}'", "method": "dflash", "num_speculative_tokens": 15}' \
+        --reasoning-parser qwen3 \
+        --tool-call-parser qwen3_coder \
+        --attention-backend FLASH_ATTN \
+        --enable-prefix-caching \
+        --enable-chunked-prefill \
+        --enable-auto-tool-choice \
+        --trust-remote-code
+
+HF_HUB_OFFLINE=1 tool-eval-bench \
+    --base-url http://127.0.0.1:4321 \
+    --short --perf \
+    --benchy-args "--tokenizer ./models/Qwen3.6-27B-INT4-AutoRound-Intel"
+\end{lstlisting}
+
+\begin{table}[H]
+    \centering
+    \renewcommand{\arraystretch}{1.2}
+    \setlength{\tabcolsep}{8pt}
+    \begin{tabular}{ccccccc}
+        \bottomrule[1.5pt]
+        \rowcolor{MorandiLightCyan}\multicolumn{7}{c}{\small
+            GPU \textbf{97.02GiB} $\bullet$ Warm-up \textbf{49539ms} $\bullet$ Quality \textbf{97/100} $\bullet$ Responsiveness \textbf{42/100} $\bullet$ Median turn \textbf{3.8s}
+        } \\
+
+        \midrule[0.75pt]
+        \multicolumn{1}{c}{} & \textbf{Depth} & \textbf{Concurrency} & \textbf{pp t/s} & \textbf{tg t/s} & \textbf{TTFT (ms)} & \textbf{Total (ms)} \\
+
+        \cmidrule(r){1-3}\cmidrule(l){4-7}
+        \multicolumn{7}{l}{\textit{Aggregate throughput\quad(pp2048 / tg128)}} \\
+        \addlinespace[1pt]
+
+        \multirow{3}{*}{\cube{MorandiBlue}} & \multirow{3}{*}{d0} & c1 & 974 & 53.9 & \textbf{2,353} & \textbf{4,484} \\
+        ~ & ~ & c2 & 854 & 56.2 & 4,777 & 8,621 \\
+        ~ & ~ & c4 & 972 & \textbf{79.0} & 8,359 & 13,384 \\
+
+        \cmidrule(lr){1-7}
+
+        \multirow{3}{*}{\cube{MorandiPurple}} & \multirow{3}{*}{d4096} & c1 & \textbf{1,012} & 34.0 & 6,316 & 9,844 \\
+        ~ & ~ & c2 & 992 & 69.7 & 12,320 & 15,483 \\
+        ~ & ~ & c4 & 992 & 73.0 & 24,636 & 29,898 \\
+
+        \cmidrule(lr){1-7}
+
+        \multirow{3}{*}{\cube{MorandiCyan}} & \multirow{3}{*}{d8192} & c1 & 1,009 & 34.7 & 10,392 & 13,842 \\
+        ~ & ~ & c2 & 994 & 66.9 & 20,531 & 23,775 \\
+        ~ & ~ & c4 & 988 & 66.8 & 40,917 & 45,994 \\
+
+        \midrule[0.75pt]
+        \multicolumn{7}{l}{\textit{Per-stream\quad(single request, per concurrent client)}} \\
+        \addlinespace[1pt]
+
+        \multirow{3}{*}{\cube{MorandiOrange}} & \multirow{3}{*}{--} & c1 & 1,012 & 53.9 & 2,353 & -- \\
+        ~ & ~ & c2 & 994 & 69.7 & -- & -- \\
+        ~ & ~ & c4 & 992 & 79.0 & -- & -- \\
+        \toprule[1.5pt]
+    \end{tabular}
+\end{table}
+
+
+
+\subsubsection{LLaMA.cpp + Qwen3.6-27B-Q4\_K\_M + MTP-2}
+\begin{lstlisting}
+llama-server \
+    -m ./models/Qwen3.6-27B-Q4_K_M.gguf \
+    --alias Qwen3.6-27B-Q4_K_M.gguf \
+    --host 127.0.0.1 \
+    --port 4321 \
+    -ngl 99 \
+    -c 262144 \
+    -b 8192 \
+    -ub 4096 \
+    -np 4 \
+    -t -1 \
+    --cache-ram 0 \
+    --cache-reuse 512 \
+    -fa on \
+    --reasoning on \
+    --spec-type draft-mtp \
+    --spec-draft-n-max 2 \
+    --jinja
+
+HF_HUB_OFFLINE=1 tool-eval-bench \
+    --base-url http://127.0.0.1:4321 \
+    --short --perf \
+    --benchy-args "--tokenizer ./models/Qwen3.6-27B"
+\end{lstlisting}
+
+\begin{table}[H]
+    \centering
+    \renewcommand{\arraystretch}{1.2}
+    \setlength{\tabcolsep}{8pt}
+    \begin{tabular}{ccccccc}
+        \bottomrule[1.5pt]
+        \rowcolor{MorandiLightCyan}\multicolumn{7}{c}{\small
+            GPU \textbf{37.96GiB} $\bullet$ Warm-up \textbf{676ms} $\bullet$ Quality \textbf{90/100} $\bullet$ Responsiveness \textbf{25/100} $\bullet$ Median turn \textbf{6.1s}
+        } \\
+
+        \midrule[0.75pt]
+        \multicolumn{1}{c}{} & \textbf{Depth} & \textbf{Concurrency} & \textbf{pp t/s} & \textbf{tg t/s} & \textbf{TTFT (ms)} & \textbf{Total (ms)} \\
+
+        \cmidrule(r){1-3}\cmidrule(l){4-7}
+        \multicolumn{7}{l}{\textit{Aggregate throughput\quad(pp2048 / tg128)}} \\
+        \addlinespace[1pt]
+
+        \multirow{3}{*}{\cube{MorandiBlue}} & \multirow{3}{*}{d0} & c1 & \textbf{807} & 18.3 & \textbf{2,805} & \textbf{9,547} \\
+        ~ & ~ & c2 & 737 & 19.9 & 5,412 & 17,774 \\
+        ~ & ~ & c4 & 750 & \textbf{23.2} & 10,736 & 31,544 \\
+
+        \cmidrule(lr){1-7}
+
+        \multirow{3}{*}{\cube{MorandiPurple}} & \multirow{3}{*}{d4096} & c1 & 797 & 21.4 & 7,978 & 13,683 \\
+        ~ & ~ & c2 & 769 & 19.9 & 15,832 & 28,111 \\
+        ~ & ~ & c4 & 768 & 23.1 & 31,736 & 52,586 \\
+
+        \cmidrule(lr){1-7}
+
+        \multirow{3}{*}{\cube{MorandiCyan}} & \multirow{3}{*}{d8192} & c1 & 754 & 20.3 & 13,854 & 19,896 \\
+        ~ & ~ & c2 & 739 & 20.2 & 27,567 & 39,709 \\
+        ~ & ~ & c4 & 729 & 14.4 & 50,000 & 74,823 \\
+
+        \midrule[0.75pt]
+        \multicolumn{7}{l}{\textit{Per-stream\quad(single request, per concurrent client)}} \\
+        \addlinespace[1pt]
+
+        \multirow{3}{*}{\cube{MorandiOrange}} & \multirow{3}{*}{--} & c1 & 807 & 21.4 & 7,978 & -- \\
+        ~ & ~ & c2 & 769 & 20.2 & -- & -- \\
+        ~ & ~ & c4 & 768 & 23.2 & -- & -- \\
+        \toprule[1.5pt]
+    \end{tabular}
+\end{table}
+
+
+
+\subsubsection{LLaMA.cpp + Qwen3.6-27B-Q4\_K\_M + MTP-4}
+\begin{lstlisting}
+llama-server \
+    -m ./models/Qwen3.6-27B-Q4_K_M.gguf \
+    --alias Qwen3.6-27B-Q4_K_M.gguf \
+    --host 127.0.0.1 \
+    --port 4321 \
+    -ngl 99 \
+    -c 262144 \
+    -b 8192 \
+    -ub 4096 \
+    -np 4 \
+    -t -1 \
+    --cache-ram 0 \
+    --cache-reuse 512 \
+    -fa on \
+    --reasoning on \
+    --spec-type draft-mtp \
+    --spec-draft-n-max 4 \
+    --jinja
+
+HF_HUB_OFFLINE=1 tool-eval-bench \
+    --base-url http://127.0.0.1:4321 \
+    --short --perf \
+    --benchy-args "--tokenizer ./models/Qwen3.6-27B"
+\end{lstlisting}
+
+\begin{table}[H]
+    \centering
+    \renewcommand{\arraystretch}{1.2}
+    \setlength{\tabcolsep}{8pt}
+    \begin{tabular}{ccccccc}
+        \bottomrule[1.5pt]
+        \rowcolor{MorandiLightCyan}\multicolumn{7}{c}{\small
+            GPU \textbf{39.13GiB} $\bullet$ Warm-up \textbf{501ms} $\bullet$ Quality \textbf{93/100} $\bullet$ Responsiveness \textbf{29/100} $\bullet$ Median turn \textbf{5.5s}
+        } \\
+
+        \midrule[0.75pt]
+        \multicolumn{1}{c}{} & \textbf{Depth} & \textbf{Concurrency} & \textbf{pp t/s} & \textbf{tg t/s} & \textbf{TTFT (ms)} & \textbf{Total (ms)} \\
+
+        \cmidrule(r){1-3}\cmidrule(l){4-7}
+        \multicolumn{7}{l}{\textit{Aggregate throughput\quad(pp2048 / tg128)}} \\
+        \addlinespace[1pt]
+
+        \multirow{3}{*}{\cube{MorandiBlue}} & \multirow{3}{*}{d0} & c1 & \textbf{794} & 24.6 & \textbf{2,807} & \textbf{7,783} \\
+        ~ & ~ & c2 & 722 & 22.9 & 5,503 & 15,739 \\
+        ~ & ~ & c4 & 729 & 26.2 & 10,958 & 28,317 \\
+
+        \cmidrule(lr){1-7}
+
+        \multirow{3}{*}{\cube{MorandiPurple}} & \multirow{3}{*}{d4096} & c1 & 785 & 21.3 & 8,058 & 13,847 \\
+        ~ & ~ & c2 & 756 & 25.1 & 16,070 & 25,208 \\
+        ~ & ~ & c4 & 762 & \textbf{28.2} & 32,099 & 48,843 \\
+
+        \cmidrule(lr){1-7}
+
+        \multirow{3}{*}{\cube{MorandiCyan}} & \multirow{3}{*}{d8192} & c1 & 750 & 21.8 & 13,885 & 19,529 \\
+        ~ & ~ & c2 & 735 & 26.6 & 27,680 & 36,773 \\
+        ~ & ~ & c4 & 723 & 16.5 & 50,517 & 70,598 \\
+
+        \midrule[0.75pt]
+        \multicolumn{7}{l}{\textit{Per-stream\quad(single request, per concurrent client)}} \\
+        \addlinespace[1pt]
+
+        \multirow{3}{*}{\cube{MorandiOrange}} & \multirow{3}{*}{--} & c1 & 794 & 24.6 & 2,807 & -- \\
+        ~ & ~ & c2 & 756 & 26.6 & -- & -- \\
+        ~ & ~ & c4 & 762 & 28.2 & -- & -- \\
+        \toprule[1.5pt]
+    \end{tabular}
+\end{table}
+
+
+
+\subsubsection{LLaMA.cpp + Qwen3.6-27B-Q4\_K\_M + MTP-8}
+\begin{lstlisting}
+llama-server \
+    -m ./models/Qwen3.6-27B-Q4_K_M.gguf \
+    --alias Qwen3.6-27B-Q4_K_M.gguf \
+    --host 127.0.0.1 \
+    --port 4321 \
+    -ngl 99 \
+    -c 262144 \
+    -b 8192 \
+    -ub 4096 \
+    -np 4 \
+    -t -1 \
+    --cache-ram 0 \
+    --cache-reuse 512 \
+    -fa on \
+    --reasoning on \
+    --spec-type draft-mtp \
+    --spec-draft-n-max 8 \
+    --jinja
+
+HF_HUB_OFFLINE=1 tool-eval-bench \
+    --base-url http://127.0.0.1:4321 \
+    --short --perf \
+    --benchy-args "--tokenizer ./models/Qwen3.6-27B"
+\end{lstlisting}
+
+\begin{table}[H]
+    \centering
+    \renewcommand{\arraystretch}{1.2}
+    \setlength{\tabcolsep}{8pt}
+    \begin{tabular}{ccccccc}
+        \bottomrule[1.5pt]
+        \rowcolor{MorandiLightCyan}\multicolumn{7}{c}{\small
+            GPU \textbf{41.47GiB} $\bullet$ Warm-up \textbf{785ms} $\bullet$ Quality \textbf{100/100} $\bullet$ Responsiveness \textbf{27/100} $\bullet$ Median turn \textbf{5.8s}
+        } \\
+
+        \midrule[0.75pt]
+        \multicolumn{1}{c}{} & \textbf{Depth} & \textbf{Concurrency} & \textbf{pp t/s} & \textbf{tg t/s} & \textbf{TTFT (ms)} & \textbf{Total (ms)} \\
+
+        \cmidrule(r){1-3}\cmidrule(l){4-7}
+        \multicolumn{7}{l}{\textit{Aggregate throughput\quad(pp2048 / tg128)}} \\
+        \addlinespace[1pt]
+
+        \multirow{3}{*}{\cube{MorandiBlue}} & \multirow{3}{*}{d0} & c1 & \textbf{797} & 19.6 & \textbf{2,828} & \textbf{9,088} \\
+        ~ & ~ & c2 & 707 & 18.6 & 5,586 & 18,295 \\
+        ~ & ~ & c4 & 729 & 26.1 & 11,072 & 27,639 \\
+
+        \cmidrule(lr){1-7}
+
+        \multirow{3}{*}{\cube{MorandiPurple}} & \multirow{3}{*}{d4096} & c1 & 787 & 27.3 & 8,063 & 12,494 \\
+        ~ & ~ & c2 & 748 & 25.5 & 16,207 & 25,502 \\
+        ~ & ~ & c4 & 756 & \textbf{27.4} & 32,295 & 48,293 \\
+
+        \cmidrule(lr){1-7}
+
+        \multirow{3}{*}{\cube{MorandiCyan}} & \multirow{3}{*}{d8192} & c1 & 749 & 23.1 & 13,929 & 19,206 \\
+        ~ & ~ & c2 & 731 & 20.8 & 27,826 & 39,236 \\
+        ~ & ~ & c4 & 720 & 18.0 & 52,446 & 70,228 \\
+
+        \midrule[0.75pt]
+        \multicolumn{7}{l}{\textit{Per-stream\quad(single request, per concurrent client)}} \\
+        \addlinespace[1pt]
+
+        \multirow{3}{*}{\cube{MorandiOrange}} & \multirow{3}{*}{--} & c1 & 797 & 27.3 & 8,063 & -- \\
+        ~ & ~ & c2 & 748 & 25.5 & -- & -- \\
+        ~ & ~ & c4 & 756 & 27.4 & -- & -- \\
+        \toprule[1.5pt]
+    \end{tabular}
+\end{table}
+
+
+
+\subsection{Qwen3.5-122B}
+\subsubsection{vLLM.dev + Qwen3.5-122B-A10B-INT4-AutoRound-Intel + MTP-2}
+\begin{lstlisting}
+MODEL_PATH="./models/Qwen3.5-122B-A10B-INT4-AutoRound-Intel"
+MODEL_NAME=$(basename "$MODEL_PATH")
+VLLM_IMAGE="i-dgx-spark-gb10:vllm0.19.1.dev"
+
+docker run \
+    --rm -it \
+    --gpus all \
+    --name ${MODEL_NAME} \
+    -v ${MODEL_PATH}:/models/${MODEL_NAME} \
+    -p 4321:4321 \
+    --ipc=host \
+    --health-cmd 'curl -sf http://localhost:4321/health || exit 1' \
+    --health-interval 10s \
+    --health-timeout 5s \
+    --health-retries 60 \
+    --health-start-period 900s \
+    --entrypoint vllm ${VLLM_IMAGE} \
+        serve /models/${MODEL_NAME} \
+        --served-model-name ${MODEL_NAME} \
+        --host 0.0.0.0 \
+        --port 4321 \
+        --gpu-memory-utilization 0.8 \
+        --max-model-len 262144 \
+        --max-num-seqs 4 \
+        --max-num-batched-tokens 16384 \
+        --speculative-config '{"method": "mtp", "num_speculative_tokens": 2}' \
+        --reasoning-parser qwen3 \
+        --tool-call-parser qwen3_coder \
+        --load-format instanttensor \
+        --attention-backend flashinfer \
+        --kv-cache-dtype fp8 \
+        --quantization gptq_marlin \
+        --enable-prefix-caching \
+        --enable-chunked-prefill \
+        --enable-auto-tool-choice \
+        --trust-remote-code
+
+HF_HUB_OFFLINE=1 tool-eval-bench \
+    --base-url http://127.0.0.1:4321 \
+    --short --perf \
+    --benchy-args "--tokenizer ./models/Qwen3.5-122B-A10B-INT4-AutoRound-Intel"
+\end{lstlisting}
+
+\begin{table}[H]
+    \centering
+    \renewcommand{\arraystretch}{1.2}
+    \setlength{\tabcolsep}{8pt}
+    \begin{tabular}{ccccccc}
+        \bottomrule[1.5pt]
+        \rowcolor{MorandiLightCyan}\multicolumn{7}{c}{\small
+            GPU \textbf{98.88GiB} $\bullet$ Warm-up \textbf{12355ms} $\bullet$ Quality \textbf{100/100} $\bullet$ Responsiveness \textbf{48/100} $\bullet$ Median turn \textbf{3.1s}
+        } \\
+
+        \midrule[0.75pt]
+        \multicolumn{1}{c}{} & \textbf{Depth} & \textbf{Concurrency} & \textbf{pp t/s} & \textbf{tg t/s} & \textbf{TTFT (ms)} & \textbf{Total (ms)} \\
+
+        \cmidrule(r){1-3}\cmidrule(l){4-7}
+        \multicolumn{7}{l}{\textit{Aggregate throughput\quad(pp2048 / tg128)}} \\
+        \addlinespace[1pt]
+
+        \multirow{3}{*}{\cube{MorandiBlue}} & \multirow{3}{*}{d0} & c1 & 1,457 & 39.4 & \textbf{2,120} & \textbf{4,864} \\
+        ~ & ~ & c2 & 1,435 & 59.4 & 2,941 & 6,510 \\
+        ~ & ~ & c4 & 1,675 & \textbf{79.7} & 5,178 & 10,152 \\
+
+        \cmidrule(lr){1-7}
+
+        \multirow{3}{*}{\cube{MorandiPurple}} & \multirow{3}{*}{d4096} & c1 & \textbf{2,421} & 38.1 & 3,048 & 5,904 \\
+        ~ & ~ & c2 & 2,162 & 59.7 & 5,625 & 9,200 \\
+        ~ & ~ & c4 & 2,205 & 74.4 & 10,827 & 16,069 \\
+
+        \cmidrule(lr){1-7}
+
+        \multirow{3}{*}{\cube{MorandiCyan}} & \multirow{3}{*}{d8192} & c1 & 2,329 & 39.3 & 4,900 & 7,654 \\
+        ~ & ~ & c2 & 2,195 & 61.4 & 9,303 & 12,912 \\
+        ~ & ~ & c4 & 2,217 & 58.2 & 17,696 & 23,413 \\
+
+        \midrule[0.75pt]
+        \multicolumn{7}{l}{\textit{Per-stream\quad(single request, per concurrent client)}} \\
+        \addlinespace[1pt]
+
+        \multirow{3}{*}{\cube{MorandiOrange}} & \multirow{3}{*}{--} & c1 & 2,421 & 39.4 & 2,120 & -- \\
+        ~ & ~ & c2 & 2,195 & 61.4 & -- & -- \\
+        ~ & ~ & c4 & 2,217 & 79.7 & -- & -- \\
+        \toprule[1.5pt]
+    \end{tabular}
+\end{table}
+
+
+
+\subsubsection{vLLM.dev + Qwen3.5-122B-A10B-INT4-AutoRound-Intel + MTP-4}
+\begin{lstlisting}
+MODEL_PATH="./models/Qwen3.5-122B-A10B-INT4-AutoRound-Intel"
+MODEL_NAME=$(basename "$MODEL_PATH")
+VLLM_IMAGE="i-dgx-spark-gb10:vllm0.19.1.dev"
+
+docker run \
+    --rm -it \
+    --gpus all \
+    --name ${MODEL_NAME} \
+    -v ${MODEL_PATH}:/models/${MODEL_NAME} \
+    -p 4321:4321 \
+    --ipc=host \
+    --health-cmd 'curl -sf http://localhost:4321/health || exit 1' \
+    --health-interval 10s \
+    --health-timeout 5s \
+    --health-retries 60 \
+    --health-start-period 900s \
+    --entrypoint vllm ${VLLM_IMAGE} \
+        serve /models/${MODEL_NAME} \
+        --served-model-name ${MODEL_NAME} \
+        --host 0.0.0.0 \
+        --port 4321 \
+        --gpu-memory-utilization 0.8 \
+        --max-model-len 262144 \
+        --max-num-seqs 4 \
+        --max-num-batched-tokens 16384 \
+        --speculative-config '{"method": "mtp", "num_speculative_tokens": 4}' \
+        --reasoning-parser qwen3 \
+        --tool-call-parser qwen3_coder \
+        --load-format instanttensor \
+        --attention-backend flashinfer \
+        --kv-cache-dtype fp8 \
+        --quantization gptq_marlin \
+        --enable-prefix-caching \
+        --enable-chunked-prefill \
+        --enable-auto-tool-choice \
+        --trust-remote-code
+
+HF_HUB_OFFLINE=1 tool-eval-bench \
+    --base-url http://127.0.0.1:4321 \
+    --short --perf \
+    --benchy-args "--tokenizer ./models/Qwen3.5-122B-A10B-INT4-AutoRound-Intel"
+\end{lstlisting}
+
+\begin{table}[H]
+    \centering
+    \renewcommand{\arraystretch}{1.2}
+    \setlength{\tabcolsep}{8pt}
+    \begin{tabular}{ccccccc}
+        \bottomrule[1.5pt]
+        \rowcolor{MorandiLightCyan}\multicolumn{7}{c}{\small
+            GPU \textbf{99.32GiB} $\bullet$ Warm-up \textbf{1366ms} $\bullet$ Quality \textbf{97/100} $\bullet$ Responsiveness \textbf{46/100} $\bullet$ Median turn \textbf{3.3s}
+        } \\
+
+        \midrule[0.75pt]
+        \multicolumn{1}{c}{} & \textbf{Depth} & \textbf{Concurrency} & \textbf{pp t/s} & \textbf{tg t/s} & \textbf{TTFT (ms)} & \textbf{Total (ms)} \\
+
+        \cmidrule(r){1-3}\cmidrule(l){4-7}
+        \multicolumn{7}{l}{\textit{Aggregate throughput\quad(pp2048 / tg128)}} \\
+        \addlinespace[1pt]
+
+        \multirow{3}{*}{\cube{MorandiBlue}} & \multirow{3}{*}{d0} & c1 & 1,896 & 39.1 & \textbf{1,348} & \textbf{4,383} \\
+        ~ & ~ & c2 & 1,407 & 50.8 & 3,087 & 7,299 \\
+        ~ & ~ & c4 & 1,753 & \textbf{74.1} & 4,782 & 10,346 \\
+
+        \cmidrule(lr){1-7}
+
+        \multirow{3}{*}{\cube{MorandiPurple}} & \multirow{3}{*}{d4096} & c1 & \textbf{2,333} & 37.5 & 2,870 & 6,046 \\
+        ~ & ~ & c2 & 2,168 & 53.7 & 5,608 & 9,835 \\
+        ~ & ~ & c4 & 2,160 & 70.5 & 11,009 & 16,894 \\
+
+        \cmidrule(lr){1-7}
+
+        \multirow{3}{*}{\cube{MorandiCyan}} & \multirow{3}{*}{d8192} & c1 & 2,219 & 38.6 & 4,851 & 7,934 \\
+        ~ & ~ & c2 & 2,200 & 59.6 & 9,244 & 13,077 \\
+        ~ & ~ & c4 & 2,195 & 56.5 & 17,846 & 23,926 \\
+
+        \midrule[0.75pt]
+        \multicolumn{7}{l}{\textit{Per-stream\quad(single request, per concurrent client)}} \\
+        \addlinespace[1pt]
+
+        \multirow{3}{*}{\cube{MorandiOrange}} & \multirow{3}{*}{--} & c1 & 2,333 & 39.1 & 1,348 & -- \\
+        ~ & ~ & c2 & 2,200 & 59.6 & -- & -- \\
+        ~ & ~ & c4 & 2,195 & 74.1 & -- & -- \\
+        \toprule[1.5pt]
+    \end{tabular}
+\end{table}
+
+
+
+
+\subsubsection{vLLM.dev + Qwen3.5-122B-A10B-INT4-AutoRound-Intel + MTP-8}
+\begin{lstlisting}
+MODEL_PATH="./models/Qwen3.5-122B-A10B-INT4-AutoRound-Intel"
+MODEL_NAME=$(basename "$MODEL_PATH")
+VLLM_IMAGE="i-dgx-spark-gb10:vllm0.19.1.dev"
+
+docker run \
+    --rm -it \
+    --gpus all \
+    --name ${MODEL_NAME} \
+    -v ${MODEL_PATH}:/models/${MODEL_NAME} \
+    -p 4321:4321 \
+    --ipc=host \
+    --health-cmd 'curl -sf http://localhost:4321/health || exit 1' \
+    --health-interval 10s \
+    --health-timeout 5s \
+    --health-retries 60 \
+    --health-start-period 900s \
+    --entrypoint vllm ${VLLM_IMAGE} \
+        serve /models/${MODEL_NAME} \
+        --served-model-name ${MODEL_NAME} \
+        --host 0.0.0.0 \
+        --port 4321 \
+        --gpu-memory-utilization 0.8 \
+        --max-model-len 262144 \
+        --max-num-seqs 4 \
+        --max-num-batched-tokens 16384 \
+        --speculative-config '{"method": "mtp", "num_speculative_tokens": 8}' \
+        --reasoning-parser qwen3 \
+        --tool-call-parser qwen3_coder \
+        --load-format instanttensor \
+        --attention-backend flashinfer \
+        --kv-cache-dtype fp8 \
+        --quantization gptq_marlin \
+        --enable-prefix-caching \
+        --enable-chunked-prefill \
+        --enable-auto-tool-choice \
+        --trust-remote-code
+
+HF_HUB_OFFLINE=1 tool-eval-bench \
+    --base-url http://127.0.0.1:4321 \
+    --short --perf \
+    --benchy-args "--tokenizer ./models/Qwen3.5-122B-A10B-INT4-AutoRound-Intel"
+\end{lstlisting}
+
+\begin{table}[H]
+    \centering
+    \renewcommand{\arraystretch}{1.2}
+    \setlength{\tabcolsep}{8pt}
+    \begin{tabular}{ccccccc}
+        \bottomrule[1.5pt]
+        \rowcolor{MorandiLightCyan}\multicolumn{7}{c}{\small
+            GPU \textbf{99.13GiB} $\bullet$ Warm-up \textbf{1620ms} $\bullet$ Quality \textbf{73/100} $\bullet$ Responsiveness \textbf{40/100} $\bullet$ Median turn \textbf{4.0s}
+        } \\
+
+        \midrule[0.75pt]
+        \multicolumn{1}{c}{} & \textbf{Depth} & \textbf{Concurrency} & \textbf{pp t/s} & \textbf{tg t/s} & \textbf{TTFT (ms)} & \textbf{Total (ms)} \\
+
+        \cmidrule(r){1-3}\cmidrule(l){4-7}
+        \multicolumn{7}{l}{\textit{Aggregate throughput\quad(pp2048 / tg128)}} \\
+        \addlinespace[1pt]
+
+        \multirow{3}{*}{\cube{MorandiBlue}} & \multirow{3}{*}{d0} & c1 & 1,813 & 33.0 & \textbf{1,435} & \textbf{5,041} \\
+        ~ & ~ & c2 & 1,243 & 47.7 & 3,848 & 8,582 \\
+        ~ & ~ & c4 & 2,027 & \textbf{75.4} & 3,929 & 9,958 \\
+
+        \cmidrule(lr){1-7}
+
+        \multirow{3}{*}{\cube{MorandiPurple}} & \multirow{3}{*}{d4096} & c1 & \textbf{2,327} & 27.4 & 2,915 & 7,315 \\
+        ~ & ~ & c2 & 2,151 & 44.5 & 5,622 & 10,670 \\
+        ~ & ~ & c4 & 2,155 & 58.0 & 10,950 & 17,532 \\
+
+        \cmidrule(lr){1-7}
+
+        \multirow{3}{*}{\cube{MorandiCyan}} & \multirow{3}{*}{d8192} & c1 & 2,157 & 26.3 & 5,024 & 9,610 \\
+        ~ & ~ & c2 & 2,155 & 42.6 & 9,410 & 14,814 \\
+        ~ & ~ & c4 & 2,180 & 49.3 & 17,893 & 24,879 \\
+
+        \midrule[0.75pt]
+        \multicolumn{7}{l}{\textit{Per-stream\quad(single request, per concurrent client)}} \\
+        \addlinespace[1pt]
+
+        \multirow{3}{*}{\cube{MorandiOrange}} & \multirow{3}{*}{--} & c1 & 2,327 & 33.0 & 1,435 & -- \\
+        ~ & ~ & c2 & 2,155 & 47.7 & -- & -- \\
+        ~ & ~ & c4 & 2,180 & 75.4 & -- & -- \\
+        \toprule[1.5pt]
+    \end{tabular}
+\end{table}
+
+
+
+
+\subsubsection{vLLM.dflash + Qwen3.5-122B-A10B-INT4-AutoRound-Intel + DFlash-2}
+\begin{lstlisting}
+TARGET_PATH="./models/Qwen3.5-122B-A10B-INT4-AutoRound-Intel"
+DRAFT_PATH="./models/Qwen3.5-122B-A10B-DFlash"
+TARGET_NAME=$(basename "$TARGET_PATH")
+DRAFT_NAME=$(basename "$DRAFT_PATH")
+VLLM_IMAGE="i-dgx-spark-gb10:vllm.dflash"
+
+docker run \
+    --rm -it \
+    --gpus all \
+    --name ${TARGET_NAME}-dflash \
+    -v $(pwd)/${TARGET_PATH}:/models/${TARGET_NAME} \
+    -v $(pwd)/${DRAFT_PATH}:/models/${DRAFT_NAME} \
+    -p 4321:4321 \
+    --ipc=host \
+    --health-cmd 'curl -sf http://localhost:4321/health || exit 1' \
+    --health-interval 10s \
+    --health-timeout 5s \
+    --health-retries 60 \
+    --health-start-period 900s \
+    --entrypoint vllm ${VLLM_IMAGE} \
+        serve /models/${TARGET_NAME} \
+        --served-model-name ${TARGET_NAME} \
+        --host 0.0.0.0 \
+        --port 4321 \
+        --gpu-memory-utilization 0.8 \
+        --max-model-len 262144 \
+        --max-num-seqs 4 \
+        --max-num-batched-tokens 16384 \
+        --speculative-config '{"model": "/models/'${DRAFT_NAME}'", "method": "dflash", "num_speculative_tokens": 2}' \
+        --reasoning-parser qwen3 \
+        --tool-call-parser qwen3_coder \
+        --attention-backend FLASH_ATTN \
+        --enable-prefix-caching \
+        --enable-chunked-prefill \
+        --enable-auto-tool-choice \
+        --trust-remote-code
+
+HF_HUB_OFFLINE=1 tool-eval-bench \
+    --base-url http://127.0.0.1:4321 \
+    --short --perf \
+    --benchy-args "--tokenizer ./models/Qwen3.5-122B-A10B-INT4-AutoRound-Intel"
+\end{lstlisting}
+
+\begin{table}[H]
+    \centering
+    \renewcommand{\arraystretch}{1.2}
+    \setlength{\tabcolsep}{8pt}
+    \begin{tabular}{ccccccc}
+        \bottomrule[1.5pt]
+        \rowcolor{MorandiLightCyan}\multicolumn{7}{c}{\small
+            GPU \textbf{98.93GiB} $\bullet$ Warm-up \textbf{50594ms} $\bullet$ Quality \textbf{97/100} $\bullet$ Responsiveness \textbf{48/100} $\bullet$ Median turn \textbf{3.1s}
+        } \\
+
+        \midrule[0.75pt]
+        \multicolumn{1}{c}{} & \textbf{Depth} & \textbf{Concurrency} & \textbf{pp t/s} & \textbf{tg t/s} & \textbf{TTFT (ms)} & \textbf{Total (ms)} \\
+
+        \cmidrule(r){1-3}\cmidrule(l){4-7}
+        \multicolumn{7}{l}{\textit{Aggregate throughput\quad(pp2048 / tg128)}} \\
+        \addlinespace[1pt]
+
+        \multirow{3}{*}{\cube{MorandiBlue}} & \multirow{3}{*}{d0} & c1 & 1,631 & 42.5 & \textbf{1,544} & \textbf{4,315} \\
+        ~ & ~ & c2 & 1,636 & 63.5 & 2,568 & 6,193 \\
+        ~ & ~ & c4 & 1,787 & 66.7 & 4,714 & 11,261 \\
+
+        \cmidrule(lr){1-7}
+
+        \multirow{3}{*}{\cube{MorandiPurple}} & \multirow{3}{*}{d4096} & c1 & 2,185 & 40.9 & 3,059 & 5,951 \\
+        ~ & ~ & c2 & 2,187 & 57.5 & 5,586 & 9,653 \\
+        ~ & ~ & c4 & \textbf{2,315} & \textbf{69.4} & 10,556 & 17,492 \\
+
+        \cmidrule(lr){1-7}
+
+        \multirow{3}{*}{\cube{MorandiCyan}} & \multirow{3}{*}{d8192} & c1 & 2,306 & 39.5 & 4,680 & 7,678 \\
+        ~ & ~ & c2 & 2,278 & 58.1 & 8,943 & 12,987 \\
+        ~ & ~ & c4 & 2,301 & 54.5 & 17,265 & 24,703 \\
+
+        \midrule[0.75pt]
+        \multicolumn{7}{l}{\textit{Per-stream\quad(single request, per concurrent client)}} \\
+        \addlinespace[1pt]
+
+        \multirow{3}{*}{\cube{MorandiOrange}} & \multirow{3}{*}{--} & c1 & 2,306 & 42.5 & 1,544 & -- \\
+        ~ & ~ & c2 & 2,278 & 63.5 & -- & -- \\
+        ~ & ~ & c4 & 2,315 & 69.4 & -- & -- \\
+        \toprule[1.5pt]
+    \end{tabular}
+\end{table}
+
+
+
+\subsubsection{vLLM.dflash + Qwen3.5-122B-A10B-INT4-AutoRound-Intel + DFlash-8}
+\begin{lstlisting}
+TARGET_PATH="./models/Qwen3.5-122B-A10B-INT4-AutoRound-Intel"
+DRAFT_PATH="./models/Qwen3.5-122B-A10B-DFlash"
+TARGET_NAME=$(basename "$TARGET_PATH")
+DRAFT_NAME=$(basename "$DRAFT_PATH")
+VLLM_IMAGE="i-dgx-spark-gb10:vllm.dflash"
+
+docker run \
+    --rm -it \
+    --gpus all \
+    --name ${TARGET_NAME}-dflash \
+    -v $(pwd)/${TARGET_PATH}:/models/${TARGET_NAME} \
+    -v $(pwd)/${DRAFT_PATH}:/models/${DRAFT_NAME} \
+    -p 4321:4321 \
+    --ipc=host \
+    --health-cmd 'curl -sf http://localhost:4321/health || exit 1' \
+    --health-interval 10s \
+    --health-timeout 5s \
+    --health-retries 60 \
+    --health-start-period 900s \
+    --entrypoint vllm ${VLLM_IMAGE} \
+        serve /models/${TARGET_NAME} \
+        --served-model-name ${TARGET_NAME} \
+        --host 0.0.0.0 \
+        --port 4321 \
+        --gpu-memory-utilization 0.8 \
+        --max-model-len 262144 \
+        --max-num-seqs 4 \
+        --max-num-batched-tokens 16384 \
+        --speculative-config '{"model": "/models/'${DRAFT_NAME}'", "method": "dflash", "num_speculative_tokens": 8}' \
+        --reasoning-parser qwen3 \
+        --tool-call-parser qwen3_coder \
+        --attention-backend FLASH_ATTN \
+        --enable-prefix-caching \
+        --enable-chunked-prefill \
+        --enable-auto-tool-choice \
+        --trust-remote-code
+
+HF_HUB_OFFLINE=1 tool-eval-bench \
+    --base-url http://127.0.0.1:4321 \
+    --short --perf \
+    --benchy-args "--tokenizer ./models/Qwen3.5-122B-A10B-INT4-AutoRound-Intel"
+\end{lstlisting}
+
+\begin{table}[H]
+    \centering
+    \renewcommand{\arraystretch}{1.2}
+    \setlength{\tabcolsep}{8pt}
+    \begin{tabular}{ccccccc}
+        \bottomrule[1.5pt]
+        \rowcolor{MorandiLightCyan}\multicolumn{7}{c}{\small
+            GPU \textbf{100.20GiB} $\bullet$ Warm-up \textbf{52185ms} $\bullet$ Quality \textbf{100/100} $\bullet$ Responsiveness \textbf{46/100} $\bullet$ Median turn \textbf{3.3s}
+        } \\
+
+        \midrule[0.75pt]
+        \multicolumn{1}{c}{} & \textbf{Depth} & \textbf{Concurrency} & \textbf{pp t/s} & \textbf{tg t/s} & \textbf{TTFT (ms)} & \textbf{Total (ms)} \\
+
+        \cmidrule(r){1-3}\cmidrule(l){4-7}
+        \multicolumn{7}{l}{\textit{Aggregate throughput\quad(pp2048 / tg128)}} \\
+        \addlinespace[1pt]
+
+        \multirow{3}{*}{\cube{MorandiBlue}} & \multirow{3}{*}{d0} & c1 & 2,279 & 52.5 & \textbf{1,128} & \textbf{3,335} \\
+        ~ & ~ & c2 & 1,860 & 63.8 & 2,150 & 5,628 \\
+        ~ & ~ & c4 & 2,176 & \textbf{91.7} & 3,707 & 8,533 \\
+
+        \cmidrule(lr){1-7}
+
+        \multirow{3}{*}{\cube{MorandiPurple}} & \multirow{3}{*}{d4096} & c1 & 2,245 & 49.1 & 2,965 & 5,345 \\
+        ~ & ~ & c2 & 2,178 & 54.3 & 5,593 & 9,608 \\
+        ~ & ~ & c4 & \textbf{2,336} & 80.0 & 10,481 & 16,184 \\
+
+        \cmidrule(lr){1-7}
+
+        \multirow{3}{*}{\cube{MorandiCyan}} & \multirow{3}{*}{d8192} & c1 & 2,316 & 44.8 & 4,650 & 7,278 \\
+        ~ & ~ & c2 & 2,093 & 43.2 & 9,768 & 15,021 \\
+        ~ & ~ & c4 & 2,090 & 52.1 & 17,098 & 23,500 \\
+
+        \midrule[0.75pt]
+        \multicolumn{7}{l}{\textit{Per-stream\quad(single request, per concurrent client)}} \\
+        \addlinespace[1pt]
+
+        \multirow{3}{*}{\cube{MorandiOrange}} & \multirow{3}{*}{--} & c1 & 2,306 & 51.9 & 1,660 & -- \\
+        ~ & ~ & c2 & 2,281 & 60.4 & -- & -- \\
+        ~ & ~ & c4 & 2,304 & 95.3 & -- & -- \\
+        \toprule[1.5pt]
+    \end{tabular}
+\end{table}
+
+
+
+\subsubsection{vLLM.dflash + Qwen3.5-122B-A10B-INT4-AutoRound-Intel + DFlash-15}
+\begin{lstlisting}
+TARGET_PATH="./models/Qwen3.5-122B-A10B-INT4-AutoRound-Intel"
+DRAFT_PATH="./models/Qwen3.5-122B-A10B-DFlash"
+TARGET_NAME=$(basename "$TARGET_PATH")
+DRAFT_NAME=$(basename "$DRAFT_PATH")
+VLLM_IMAGE="i-dgx-spark-gb10:vllm.dflash"
+
+docker run \
+    --rm -it \
+    --gpus all \
+    --name ${TARGET_NAME}-dflash \
+    -v $(pwd)/${TARGET_PATH}:/models/${TARGET_NAME} \
+    -v $(pwd)/${DRAFT_PATH}:/models/${DRAFT_NAME} \
+    -p 4321:4321 \
+    --ipc=host \
+    --health-cmd 'curl -sf http://localhost:4321/health || exit 1' \
+    --health-interval 10s \
+    --health-timeout 5s \
+    --health-retries 60 \
+    --health-start-period 900s \
+    --entrypoint vllm ${VLLM_IMAGE} \
+        serve /models/${TARGET_NAME} \
+        --served-model-name ${TARGET_NAME} \
+        --host 0.0.0.0 \
+        --port 4321 \
+        --gpu-memory-utilization 0.8 \
+        --max-model-len 262144 \
+        --max-num-seqs 4 \
+        --max-num-batched-tokens 16384 \
+        --speculative-config '{"model": "/models/'${DRAFT_NAME}'", "method": "dflash", "num_speculative_tokens": 15}' \
+        --reasoning-parser qwen3 \
+        --tool-call-parser qwen3_coder \
+        --attention-backend FLASH_ATTN \
+        --enable-prefix-caching \
+        --enable-chunked-prefill \
+        --enable-auto-tool-choice \
+        --trust-remote-code
+
+HF_HUB_OFFLINE=1 tool-eval-bench \
+    --base-url http://127.0.0.1:4321 \
+    --short --perf \
+    --benchy-args "--tokenizer ./models/Qwen3.5-122B-A10B-INT4-AutoRound-Intel"
+\end{lstlisting}
+
+\begin{table}[H]
+    \centering
+    \renewcommand{\arraystretch}{1.2}
+    \setlength{\tabcolsep}{8pt}
+    \begin{tabular}{ccccccc}
+        \bottomrule[1.5pt]
+        \rowcolor{MorandiLightCyan}\multicolumn{7}{c}{\small
+            GPU \textbf{100.10GiB} $\bullet$ Warm-up \textbf{55349ms} $\bullet$ Quality \textbf{100/100} $\bullet$ Responsiveness \textbf{40/100} $\bullet$ Median turn \textbf{3.9s}
+        } \\
+
+        \midrule[0.75pt]
+        \multicolumn{1}{c}{} & \textbf{Depth} & \textbf{Concurrency} & \textbf{pp t/s} & \textbf{tg t/s} & \textbf{TTFT (ms)} & \textbf{Total (ms)} \\
+
+        \cmidrule(r){1-3}\cmidrule(l){4-7}
+        \multicolumn{7}{l}{\textit{Aggregate throughput\quad(pp2048 / tg128)}} \\
+        \addlinespace[1pt]
+
+        \multirow{3}{*}{\cube{MorandiBlue}} & \multirow{3}{*}{d0} & c1 & 2,131 & 35.9 & \textbf{1,155} & \textbf{4,529} \\
+        ~ & ~ & c2 & 1,782 & 55.9 & 2,228 & 6,245 \\
+        ~ & ~ & c4 & 2,060 & \textbf{73.4} & 3,908 & 10,146 \\
+
+        \cmidrule(lr){1-7}
+
+        \multirow{3}{*}{\cube{MorandiPurple}} & \multirow{3}{*}{d4096} & c1 & 2,180 & 39.3 & 3,013 & 6,072 \\
+        ~ & ~ & c2 & 2,149 & 50.5 & 5,641 & 10,288 \\
+        ~ & ~ & c4 & \textbf{2,267} & 68.6 & 10,778 & 17,259 \\
+
+        \cmidrule(lr){1-7}
+
+        \multirow{3}{*}{\cube{MorandiCyan}} & \multirow{3}{*}{d8192} & c1 & 2,248 & 36.9 & 4,749 & 8,028 \\
+        ~ & ~ & c2 & 2,250 & 48.7 & 9,025 & 13,703 \\
+        ~ & ~ & c4 & 2,231 & 57.4 & 17,936 & 25,038 \\
+
+        \midrule[0.75pt]
+        \multicolumn{7}{l}{\textit{Per-stream\quad(single request, per concurrent client)}} \\
+        \addlinespace[1pt]
+
+        \multirow{3}{*}{\cube{MorandiOrange}} & \multirow{3}{*}{--} & c1 & 2,248 & 39.3 & 3,013 & -- \\
+        ~ & ~ & c2 & 2,250 & 55.9 & -- & -- \\
+        ~ & ~ & c4 & 2,267 & 73.4 & -- & -- \\
+        \toprule[1.5pt]
+    \end{tabular}
+\end{table}
+
+
+
+\subsubsection{vLLM.dev + Qwen3.5-122B-Hybrid-INT4FP8 + MTP-2}
+\begin{lstlisting}
+HYBRID_PATH="./models/Qwen3.5-122B-Hybrid-INT4FP8"
+HYBRID_NAME=$(basename "$HYBRID_PATH")
+
+VLLM_IMAGE="i-dgx-spark-gb10:vllm0.19.1.dev"
+
+docker run \
+    --rm -it \
+    --gpus all \
+    --name ${HYBRID_NAME} \
+    -v $(pwd)/${HYBRID_PATH}:/models/${HYBRID_NAME} \
+    -p 4321:4321 \
+    --ipc=host \
+    --health-cmd 'curl -sf http://localhost:4321/health || exit 1' \
+    --health-interval 10s \
+    --health-timeout 5s \
+    --health-retries 60 \
+    --health-start-period 900s \
+    --entrypoint vllm ${VLLM_IMAGE} \
+        serve /models/${HYBRID_NAME} \
+        --served-model-name ${HYBRID_NAME} \
+        --host 0.0.0.0 \
+        --port 4321 \
+        --gpu-memory-utilization 0.8 \
+        --max-model-len 262144 \
+        --max-num-seqs 4 \
+        --max-num-batched-tokens 16384 \
+        --speculative-config '{"method": "mtp", "num_speculative_tokens": 2}' \
+        --reasoning-parser qwen3 \
+        --tool-call-parser qwen3_coder \
+        --load-format instanttensor \
+        --attention-backend flashinfer \
+        --kv-cache-dtype fp8 \
+        --enable-prefix-caching \
+        --enable-chunked-prefill \
+        --enable-auto-tool-choice \
+        --trust-remote-code
+
+HF_HUB_OFFLINE=1 tool-eval-bench \
+    --base-url http://127.0.0.1:4321 \
+    --short --perf \
+    --benchy-args "--tokenizer ./models/Qwen3.5-122B-Hybrid-INT4FP8"
+\end{lstlisting}
+
+\begin{table}[H]
+    \centering
+    \renewcommand{\arraystretch}{1.2}
+    \setlength{\tabcolsep}{8pt}
+    \begin{tabular}{ccccccc}
+        \bottomrule[1.5pt]
+        \rowcolor{MorandiLightCyan}\multicolumn{7}{c}{\small
+            GPU \textbf{99.22GiB} $\bullet$ Warm-up \textbf{1449ms} $\bullet$ Quality \textbf{100/100} $\bullet$ Responsiveness \textbf{48/100} $\bullet$ Median turn \textbf{3.1s}
+        } \\
+
+        \midrule[0.75pt]
+        \multicolumn{1}{c}{} & \textbf{Depth} & \textbf{Concurrency} & \textbf{pp t/s} & \textbf{tg t/s} & \textbf{TTFT (ms)} & \textbf{Total (ms)} \\
+
+        \cmidrule(r){1-3}\cmidrule(l){4-7}
+        \multicolumn{7}{l}{\textit{Aggregate throughput\quad(pp2048 / tg128)}} \\
+        \addlinespace[1pt]
+
+        \multirow{3}{*}{\cube{MorandiBlue}} & \multirow{3}{*}{d0} & c1 & 2,006 & 40.0 & \textbf{1,245} & \textbf{4,263} \\
+        ~ & ~ & c2 & 1,718 & 59.7 & 2,357 & 6,249 \\
+        ~ & ~ & c4 & 1,827 & \textbf{80.5} & 4,359 & 9,892 \\
+
+        \cmidrule(lr){1-7}
+
+        \multirow{3}{*}{\cube{MorandiPurple}} & \multirow{3}{*}{d4096} & c1 & \textbf{2,421} & 39.9 & 2,725 & 5,748 \\
+        ~ & ~ & c2 & 2,241 & 62.3 & 5,456 & 9,242 \\
+        ~ & ~ & c4 & 2,175 & 75.7 & 10,955 & 16,419 \\
+
+        \cmidrule(lr){1-7}
+
+        \multirow{3}{*}{\cube{MorandiCyan}} & \multirow{3}{*}{d8192} & c1 & 2,255 & 38.7 & 4,728 & 7,853 \\
+        ~ & ~ & c2 & 2,228 & 60.4 & 9,144 & 13,014 \\
+        ~ & ~ & c4 & 2,127 & 59.9 & 18,482 & 24,253 \\
+
+        \midrule[0.75pt]
+        \multicolumn{7}{l}{\textit{Per-stream\quad(single request, per concurrent client)}} \\
+        \addlinespace[1pt]
+
+        \multirow{3}{*}{\cube{MorandiOrange}} & \multirow{3}{*}{--} & c1 & 2,421 & 40.0 & 1,245 & -- \\
+        ~ & ~ & c2 & 2,241 & 62.3 & -- & -- \\
+        ~ & ~ & c4 & 2,175 & 80.5 & -- & -- \\
+        \toprule[1.5pt]
+    \end{tabular}
+\end{table}
+
+
+
+\subsubsection{vLLM.dev + Qwen3.5-122B-Hybrid-INT4FP8 + MTP-4}
+\begin{lstlisting}
+HYBRID_PATH="./models/Qwen3.5-122B-Hybrid-INT4FP8"
+HYBRID_NAME=$(basename "$HYBRID_PATH")
+
+VLLM_IMAGE="i-dgx-spark-gb10:vllm0.19.1.dev"
+
+docker run \
+    --rm -it \
+    --gpus all \
+    --name ${HYBRID_NAME} \
+    -v $(pwd)/${HYBRID_PATH}:/models/${HYBRID_NAME} \
+    -p 4321:4321 \
+    --ipc=host \
+    --health-cmd 'curl -sf http://localhost:4321/health || exit 1' \
+    --health-interval 10s \
+    --health-timeout 5s \
+    --health-retries 60 \
+    --health-start-period 900s \
+    --entrypoint vllm ${VLLM_IMAGE} \
+        serve /models/${HYBRID_NAME} \
+        --served-model-name ${HYBRID_NAME} \
+        --host 0.0.0.0 \
+        --port 4321 \
+        --gpu-memory-utilization 0.8 \
+        --max-model-len 262144 \
+        --max-num-seqs 4 \
+        --max-num-batched-tokens 16384 \
+        --speculative-config '{"method": "mtp", "num_speculative_tokens": 4}' \
+        --reasoning-parser qwen3 \
+        --tool-call-parser qwen3_coder \
+        --load-format instanttensor \
+        --attention-backend flashinfer \
+        --kv-cache-dtype fp8 \
+        --enable-prefix-caching \
+        --enable-chunked-prefill \
+        --enable-auto-tool-choice \
+        --trust-remote-code
+
+HF_HUB_OFFLINE=1 tool-eval-bench \
+    --base-url http://127.0.0.1:4321 \
+    --short --perf \
+    --benchy-args "--tokenizer ./models/Qwen3.5-122B-Hybrid-INT4FP8"
+\end{lstlisting}
+
+\begin{table}[H]
+    \centering
+    \renewcommand{\arraystretch}{1.2}
+    \setlength{\tabcolsep}{8pt}
+    \begin{tabular}{ccccccc}
+        \bottomrule[1.5pt]
+        \rowcolor{MorandiLightCyan}\multicolumn{7}{c}{\small
+            GPU \textbf{99.27GiB} $\bullet$ Warm-up \textbf{1455ms} $\bullet$ Quality \textbf{97/100} $\bullet$ Responsiveness \textbf{47/100} $\bullet$ Median turn \textbf{3.3s}
+        } \\
+
+        \midrule[0.75pt]
+        \multicolumn{1}{c}{} & \textbf{Depth} & \textbf{Concurrency} & \textbf{pp t/s} & \textbf{tg t/s} & \textbf{TTFT (ms)} & \textbf{Total (ms)} \\
+
+        \cmidrule(r){1-3}\cmidrule(l){4-7}
+        \multicolumn{7}{l}{\textit{Aggregate throughput\quad(pp2048 / tg128)}} \\
+        \addlinespace[1pt]
+
+        \multirow{3}{*}{\cube{MorandiBlue}} & \multirow{3}{*}{d0} & c1 & 1,965 & 40.3 & \textbf{1,278} & \textbf{4,256} \\
+        ~ & ~ & c2 & 1,422 & 49.5 & 3,065 & 7,370 \\
+        ~ & ~ & c4 & 1,772 & \textbf{79.2} & 4,766 & 10,129 \\
+
+        \cmidrule(lr){1-7}
+
+        \multirow{3}{*}{\cube{MorandiPurple}} & \multirow{3}{*}{d4096} & c1 & \textbf{2,317} & 38.4 & 2,853 & 5,989 \\
+        ~ & ~ & c2 & 2,204 & 56.6 & 5,520 & 9,610 \\
+        ~ & ~ & c4 & 2,155 & 71.8 & 11,018 & 16,755 \\
+
+        \cmidrule(lr){1-7}
+
+        \multirow{3}{*}{\cube{MorandiCyan}} & \multirow{3}{*}{d8192} & c1 & 2,216 & 40.3 & 4,823 & 7,797 \\
+        ~ & ~ & c2 & 2,169 & 61.3 & 9,387 & 13,159 \\
+        ~ & ~ & c4 & 2,108 & 56.4 & 18,593 & 24,845 \\
+
+        \midrule[0.75pt]
+        \multicolumn{7}{l}{\textit{Per-stream\quad(single request, per concurrent client)}} \\
+        \addlinespace[1pt]
+
+        \multirow{3}{*}{\cube{MorandiOrange}} & \multirow{3}{*}{--} & c1 & 2,317 & 40.3 & 4,823 & -- \\
+        ~ & ~ & c2 & 2,204 & 61.3 & -- & -- \\
+        ~ & ~ & c4 & 2,155 & 79.2 & -- & -- \\
+        \toprule[1.5pt]
+    \end{tabular}
+\end{table}
+
+
+
+\subsubsection{vLLM.dev + Qwen3.5-122B-Hybrid-INT4FP8 + MTP-8}
+\begin{lstlisting}
+HYBRID_PATH="./models/Qwen3.5-122B-Hybrid-INT4FP8"
+HYBRID_NAME=$(basename "$HYBRID_PATH")
+
+VLLM_IMAGE="i-dgx-spark-gb10:vllm0.19.1.dev"
+
+docker run \
+    --rm -it \
+    --gpus all \
+    --name ${HYBRID_NAME} \
+    -v $(pwd)/${HYBRID_PATH}:/models/${HYBRID_NAME} \
+    -p 4321:4321 \
+    --ipc=host \
+    --health-cmd 'curl -sf http://localhost:4321/health || exit 1' \
+    --health-interval 10s \
+    --health-timeout 5s \
+    --health-retries 60 \
+    --health-start-period 900s \
+    --entrypoint vllm ${VLLM_IMAGE} \
+        serve /models/${HYBRID_NAME} \
+        --served-model-name ${HYBRID_NAME} \
+        --host 0.0.0.0 \
+        --port 4321 \
+        --gpu-memory-utilization 0.8 \
+        --max-model-len 262144 \
+        --max-num-seqs 4 \
+        --max-num-batched-tokens 16384 \
+        --speculative-config '{"method": "mtp", "num_speculative_tokens": 8}' \
+        --reasoning-parser qwen3 \
+        --tool-call-parser qwen3_coder \
+        --load-format instanttensor \
+        --attention-backend flashinfer \
+        --kv-cache-dtype fp8 \
+        --enable-prefix-caching \
+        --enable-chunked-prefill \
+        --enable-auto-tool-choice \
+        --trust-remote-code
+
+HF_HUB_OFFLINE=1 tool-eval-bench \
+    --base-url http://127.0.0.1:4321 \
+    --short --perf \
+    --benchy-args "--tokenizer ./models/Qwen3.5-122B-Hybrid-INT4FP8"
+\end{lstlisting}
+
+\begin{table}[H]
+    \centering
+    \renewcommand{\arraystretch}{1.2}
+    \setlength{\tabcolsep}{8pt}
+    \begin{tabular}{ccccccc}
+        \bottomrule[1.5pt]
+        \rowcolor{MorandiLightCyan}\multicolumn{7}{c}{\small
+            GPU \textbf{99.44GiB} $\bullet$ Warm-up \textbf{1580ms} $\bullet$ Quality \textbf{73/100} $\bullet$ Responsiveness \textbf{44/100} $\bullet$ Median turn \textbf{3.5s}
+        } \\
+
+        \midrule[0.75pt]
+        \multicolumn{1}{c}{} & \textbf{Depth} & \textbf{Concurrency} & \textbf{pp t/s} & \textbf{tg t/s} & \textbf{TTFT (ms)} & \textbf{Total (ms)} \\
+
+        \cmidrule(r){1-3}\cmidrule(l){4-7}
+        \multicolumn{7}{l}{\textit{Aggregate throughput\quad(pp2048 / tg128)}} \\
+        \addlinespace[1pt]
+
+        \multirow{3}{*}{\cube{MorandiBlue}} & \multirow{3}{*}{d0} & c1 & 1,875 & 31.8 & \textbf{1,361} & \textbf{5,149} \\
+        ~ & ~ & c2 & 1,297 & 48.6 & 3,708 & 8,616 \\
+        ~ & ~ & c4 & 2,051 & \textbf{77.7} & 3,911 & 9,633 \\
+
+        \cmidrule(lr){1-7}
+
+        \multirow{3}{*}{\cube{MorandiPurple}} & \multirow{3}{*}{d4096} & c1 & \textbf{2,337} & 29.4 & 2,864 & 6,986 \\
+        ~ & ~ & c2 & 2,165 & 48.4 & 5,585 & 10,294 \\
+        ~ & ~ & c4 & 2,112 & 60.5 & 11,192 & 17,965 \\
+
+        \cmidrule(lr){1-7}
+
+        \multirow{3}{*}{\cube{MorandiCyan}} & \multirow{3}{*}{d8192} & c1 & 2,181 & 28.6 & 4,931 & 9,177 \\
+        ~ & ~ & c2 & 2,152 & 47.2 & 9,423 & 14,196 \\
+        ~ & ~ & c4 & 2,093 & 50.8 & 18,673 & 25,235 \\
+
+        \midrule[0.75pt]
+        \multicolumn{7}{l}{\textit{Per-stream\quad(single request, per concurrent client)}} \\
+        \addlinespace[1pt]
+
+        \multirow{3}{*}{\cube{MorandiOrange}} & \multirow{3}{*}{--} & c1 & 2,337 & 31.8 & 1,361 & -- \\
+        ~ & ~ & c2 & 2,165 & 48.6 & -- & -- \\
+        ~ & ~ & c4 & 2,112 & 77.7 & -- & -- \\
+        \toprule[1.5pt]
+    \end{tabular}
+\end{table}
+
+
+
+\subsection{补充测试}
+\subsubsection{vLLM.dev + Qwen3.6-27B}
+\begin{lstlisting}
+MODEL_PATH="./models/Qwen3.6-27B"
+MODEL_NAME=$(basename "$MODEL_PATH")
+VLLM_IMAGE="i-dgx-spark-gb10:vllm0.19.1.dev"
+
+docker run \
+    --rm -it \
+    --gpus all \
+    --name ${MODEL_NAME} \
+    -v ${MODEL_PATH}:/models/${MODEL_NAME} \
+    -p 4321:4321 \
+    --ipc=host \
+    --health-cmd 'curl -sf http://localhost:4321/health || exit 1' \
+    --health-interval 10s \
+    --health-timeout 5s \
+    --health-retries 60 \
+    --health-start-period 900s \
+    --entrypoint vllm ${VLLM_IMAGE} \
+        serve /models/${MODEL_NAME} \
+        --served-model-name ${MODEL_NAME} \
+        --host 0.0.0.0 \
+        --port 4321 \
+        --gpu-memory-utilization 0.8 \
+        --max-model-len 262144 \
+        --max-num-seqs 4 \
+        --max-num-batched-tokens 16384 \
+        --reasoning-parser qwen3 \
+        --tool-call-parser qwen3_coder \
+        --load-format instanttensor \
+        --attention-backend flashinfer \
+        --kv-cache-dtype fp8 \
+        --enable-prefix-caching \
+        --enable-chunked-prefill \
+        --enable-auto-tool-choice \
+        --trust-remote-code
+
+HF_HUB_OFFLINE=1 tool-eval-bench \
+    --base-url http://127.0.0.1:4321 \
+    --short --perf \
+    --benchy-args "--tokenizer ./models/Qwen3.6-27B"
+\end{lstlisting}
+
+\begin{table}[H]
+    \centering
+    \renewcommand{\arraystretch}{1.2}
+    \setlength{\tabcolsep}{8pt}
+    \begin{tabular}{ccccccc}
+        \bottomrule[1.5pt]
+        \rowcolor{MorandiLightCyan}\multicolumn{7}{c}{\small
+            GPU \textbf{96.49GiB} $\bullet$ Warm-up \textbf{1282ms} $\bullet$ Quality \textbf{93/100} $\bullet$ Responsiveness \textbf{4/100} $\bullet$ Median turn \textbf{26.5s}
+        } \\
+
+        \midrule[0.75pt]
+        \multicolumn{1}{c}{} & \textbf{Depth} & \textbf{Concurrency} & \textbf{pp t/s} & \textbf{tg t/s} & \textbf{TTFT (ms)} & \textbf{Total (ms)} \\
+
+        \cmidrule(r){1-3}\cmidrule(l){4-7}
+        \multicolumn{7}{l}{\textit{Aggregate throughput\quad(pp2048 / tg128)}} \\
+        \addlinespace[1pt]
+
+        \multirow{3}{*}{\cube{MorandiBlue}} & \multirow{3}{*}{d0} & c1 & 1,339 & 4.4 & \textbf{1,841} & \textbf{30,399} \\
+        ~ & ~ & c2 & 1,209 & 8.6 & 3,264 & 32,563 \\
+        ~ & ~ & c4 & 1,311 & \textbf{16.7} & 6,095 & 35,952 \\
+
+        \cmidrule(lr){1-7}
+
+        \multirow{3}{*}{\cube{MorandiPurple}} & \multirow{3}{*}{d4096} & c1 & \textbf{1,374} & 4.4 & 4,778 & 33,372 \\
+        ~ & ~ & c2 & 1,338 & 8.4 & 8,871 & 38,500 \\
+        ~ & ~ & c4 & 1,367 & 16.0 & 17,479 & 47,922 \\
+
+        \cmidrule(lr){1-7}
+
+        \multirow{3}{*}{\cube{MorandiCyan}} & \multirow{3}{*}{d8192} & c1 & 1,358 & 4.4 & 7,846 & 36,498 \\
+        ~ & ~ & c2 & 1,331 & 8.5 & 15,188 & 44,846 \\
+        ~ & ~ & c4 & 1,348 & 13.5 & 28,343 & 60,318 \\
+
+        \midrule[0.75pt]
+        \multicolumn{7}{l}{\textit{Per-stream\quad(single request, per concurrent client)}} \\
+        \addlinespace[1pt]
+
+        \multirow{3}{*}{\cube{MorandiOrange}} & \multirow{3}{*}{--} & c1 & 1,374 & 4.4 & 1,841 & -- \\
+        ~ & ~ & c2 & 1,338 & 8.6 & -- & -- \\
+        ~ & ~ & c4 & 1,367 & 16.7 & -- & -- \\
+        \toprule[1.5pt]
+    \end{tabular}
+\end{table}
+
+
+
+\subsubsection{vLLM.dflash + Qwen3.6-27B-NVFP4 + DFlash-8}
+\begin{lstlisting}
+TARGET_PATH="./models/Qwen3.6-27B-NVFP4"
+DRAFT_PATH="./models/Qwen3.6-27B-DFlash"
+TARGET_NAME=$(basename "$TARGET_PATH")
+DRAFT_NAME=$(basename "$DRAFT_PATH")
+VLLM_IMAGE="i-dgx-spark-gb10:vllm.dflash"
+
+docker run \
+    --rm -it \
+    --gpus all \
+    --name ${TARGET_NAME}-dflash \
+    -v $(pwd)/${TARGET_PATH}:/models/${TARGET_NAME} \
+    -v $(pwd)/${DRAFT_PATH}:/models/${DRAFT_NAME} \
+    -p 4321:4321 \
+    --ipc=host \
+    --health-cmd 'curl -sf http://localhost:4321/health || exit 1' \
+    --health-interval 10s \
+    --health-timeout 5s \
+    --health-retries 60 \
+    --health-start-period 900s \
+    --entrypoint vllm ${VLLM_IMAGE} \
+        serve /models/${TARGET_NAME} \
+        --served-model-name ${TARGET_NAME} \
+        --host 0.0.0.0 \
+        --port 4321 \
+        --gpu-memory-utilization 0.8 \
+        --max-model-len 262144 \
+        --max-num-seqs 4 \
+        --max-num-batched-tokens 16384 \
+        --speculative-config '{"model": "/models/'${DRAFT_NAME}'", "method": "dflash", "num_speculative_tokens": 8}' \
+        --reasoning-parser qwen3 \
+        --tool-call-parser qwen3_coder \
+        --attention-backend FLASH_ATTN \
+        --enable-prefix-caching \
+        --enable-chunked-prefill \
+        --enable-auto-tool-choice \
+        --trust-remote-code
+
+HF_HUB_OFFLINE=1 tool-eval-bench \
+    --base-url http://127.0.0.1:4321 \
+    --short --perf \
+    --benchy-args "--tokenizer ./models/Qwen3.6-27B-NVFP4"
+\end{lstlisting}
+
+\begin{table}[H]
+    \centering
+    \renewcommand{\arraystretch}{1.2}
+    \setlength{\tabcolsep}{8pt}
+    \begin{tabular}{ccccccc}
+        \bottomrule[1.5pt]
+        \rowcolor{MorandiLightCyan}\multicolumn{7}{c}{\small
+            GPU \textbf{96.19GiB} $\bullet$ Warm-up \textbf{52326ms} $\bullet$ Quality \textbf{97/100} $\bullet$ Responsiveness \textbf{37/100} $\bullet$ Median turn \textbf{4.3s}
+        } \\
+
+        \midrule[0.75pt]
+        \multicolumn{1}{c}{} & \textbf{Depth} & \textbf{Concurrency} & \textbf{pp t/s} & \textbf{tg t/s} & \textbf{TTFT (ms)} & \textbf{Total (ms)} \\
+
+        \cmidrule(r){1-3}\cmidrule(l){4-7}
+        \multicolumn{7}{l}{\textit{Aggregate throughput\quad(pp2048 / tg128)}} \\
+        \addlinespace[1pt]
+
+        \multirow{3}{*}{\cube{MorandiBlue}} & \multirow{3}{*}{d0} & c1 & 1,942 & 29.6 & \textbf{1,337} & \textbf{5,425} \\
+        ~ & ~ & c2 & 1,437 & 49.3 & 3,482 & 7,983 \\
+        ~ & ~ & c4 & 1,991 & \textbf{87.5} & 4,043 & 8,877 \\
+
+        \cmidrule(lr){1-7}
+
+        \multirow{3}{*}{\cube{MorandiPurple}} & \multirow{3}{*}{d4096} & c1 & \textbf{2,037} & 30.1 & 3,248 & 7,268 \\
+        ~ & ~ & c2 & 1,896 & 60.4 & 6,440 & 10,190 \\
+        ~ & ~ & c4 & 1,815 & 84.0 & 13,454 & 18,418 \\
+
+        \cmidrule(lr){1-7}
+
+        \multirow{3}{*}{\cube{MorandiCyan}} & \multirow{3}{*}{d8192} & c1 & 1,912 & 30.8 & 5,586 & 9,507 \\
+        ~ & ~ & c2 & 1,871 & 47.6 & 10,854 & 15,621 \\
+        ~ & ~ & c4 & 1,746 & 73.5 & 23,245 & 28,507 \\
+
+        \midrule[0.75pt]
+        \multicolumn{7}{l}{\textit{Per-stream\quad(single request, per concurrent client)}} \\
+        \addlinespace[1pt]
+
+        \multirow{3}{*}{\cube{MorandiOrange}} & \multirow{3}{*}{--} & c1 & 2,037 & 30.8 & 5,586 & -- \\
+        ~ & ~ & c2 & 1,896 & 60.4 & -- & -- \\
+        ~ & ~ & c4 & 1,991 & 87.5 & -- & -- \\
+        \toprule[1.5pt]
+    \end{tabular}
+\end{table}
+
+
+
+\subsubsection{vLLM.dflash + Qwen3.6-27B-NVFP4 + DFlash-15}
+\begin{lstlisting}
+TARGET_PATH="./models/Qwen3.6-27B-NVFP4"
+DRAFT_PATH="./models/Qwen3.6-27B-DFlash"
+TARGET_NAME=$(basename "$TARGET_PATH")
+DRAFT_NAME=$(basename "$DRAFT_PATH")
+VLLM_IMAGE="i-dgx-spark-gb10:vllm.dflash"
+
+docker run \
+    --rm -it \
+    --gpus all \
+    --name ${TARGET_NAME}-dflash \
+    -v $(pwd)/${TARGET_PATH}:/models/${TARGET_NAME} \
+    -v $(pwd)/${DRAFT_PATH}:/models/${DRAFT_NAME} \
+    -p 4321:4321 \
+    --ipc=host \
+    --health-cmd 'curl -sf http://localhost:4321/health || exit 1' \
+    --health-interval 10s \
+    --health-timeout 5s \
+    --health-retries 60 \
+    --health-start-period 900s \
+    --entrypoint vllm ${VLLM_IMAGE} \
+        serve /models/${TARGET_NAME} \
+        --served-model-name ${TARGET_NAME} \
+        --host 0.0.0.0 \
+        --port 4321 \
+        --gpu-memory-utilization 0.8 \
+        --max-model-len 262144 \
+        --max-num-seqs 4 \
+        --max-num-batched-tokens 16384 \
+        --speculative-config '{"model": "/models/'${DRAFT_NAME}'", "method": "dflash", "num_speculative_tokens": 15}' \
+        --reasoning-parser qwen3 \
+        --tool-call-parser qwen3_coder \
+        --attention-backend FLASH_ATTN \
+        --enable-prefix-caching \
+        --enable-chunked-prefill \
+        --enable-auto-tool-choice \
+        --trust-remote-code
+
+HF_HUB_OFFLINE=1 tool-eval-bench \
+    --base-url http://127.0.0.1:4321 \
+    --short --perf \
+    --benchy-args "--tokenizer ./models/Qwen3.6-27B-NVFP4"
+\end{lstlisting}
+
+\begin{table}[H]
+    \centering
+    \renewcommand{\arraystretch}{1.2}
+    \setlength{\tabcolsep}{8pt}
+    \begin{tabular}{ccccccc}
+        \bottomrule[1.5pt]
+        \rowcolor{MorandiLightCyan}\multicolumn{7}{c}{\small
+            GPU \textbf{96.86GiB} $\bullet$ Warm-up \textbf{46755ms} $\bullet$ Quality \textbf{90/100} $\bullet$ Responsiveness \textbf{33/100} $\bullet$ Median turn \textbf{4.8s}
+        } \\
+
+        \midrule[0.75pt]
+        \multicolumn{1}{c}{} & \textbf{Depth} & \textbf{Concurrency} & \textbf{pp t/s} & \textbf{tg t/s} & \textbf{TTFT (ms)} & \textbf{Total (ms)} \\
+
+        \cmidrule(r){1-3}\cmidrule(l){4-7}
+        \multicolumn{7}{l}{\textit{Aggregate throughput\quad(pp2048 / tg128)}} \\
+        \addlinespace[1pt]
+
+        \multirow{3}{*}{\cube{MorandiBlue}} & \multirow{3}{*}{d0} & c1 & 1,492 & 33.0 & \textbf{1,699} & \textbf{5,309} \\
+        ~ & ~ & c2 & 1,734 & 49.3 & 2,289 & 6,756 \\
+        ~ & ~ & c4 & \textbf{1,943} & 69.0 & 4,118 & 9,603 \\
+
+        \cmidrule(lr){1-7}
+
+        \multirow{3}{*}{\cube{MorandiPurple}} & \multirow{3}{*}{d4096} & c1 & 1,852 & 35.3 & 3,593 & 6,941 \\
+        ~ & ~ & c2 & 1,751 & 55.4 & 7,005 & 10,947 \\
+        ~ & ~ & c4 & 1,701 & \textbf{71.0} & 14,305 & 19,412 \\
+
+        \cmidrule(lr){1-7}
+
+        \multirow{3}{*}{\cube{MorandiCyan}} & \multirow{3}{*}{d8192} & c1 & 1,938 & 26.2 & 5,558 & 10,171 \\
+        ~ & ~ & c2 & 1,873 & 42.8 & 10,845 & 15,536 \\
+        ~ & ~ & c4 & 1,750 & 63.9 & 23,097 & 28,586 \\
+
+        \midrule[0.75pt]
+        \multicolumn{7}{l}{\textit{Per-stream\quad(single request, per concurrent client)}} \\
+        \addlinespace[1pt]
+
+        \multirow{3}{*}{\cube{MorandiOrange}} & \multirow{3}{*}{--} & c1 & 1,938 & 35.3 & 3,593 & -- \\
+        ~ & ~ & c2 & 1,873 & 55.4 & -- & -- \\
+        ~ & ~ & c4 & 1,943 & 71.0 & -- & -- \\
+        \toprule[1.5pt]
+    \end{tabular}
+\end{table}
+
+
+
+\subsubsection{vLLM.dflash + Qwen3.6-27B-AWQ-INT4 + DFlash-15}
+\begin{lstlisting}
+TARGET_PATH="./models/Qwen3.6-27B-AWQ-INT4"
+DRAFT_PATH="./models/Qwen3.6-27B-DFlash"
+TARGET_NAME=$(basename "$TARGET_PATH")
+DRAFT_NAME=$(basename "$DRAFT_PATH")
+VLLM_IMAGE="i-dgx-spark-gb10:vllm.dflash"
+
+docker run \
+    --rm -it \
+    --gpus all \
+    --name ${TARGET_NAME}-dflash \
+    -v $(pwd)/${TARGET_PATH}:/models/${TARGET_NAME} \
+    -v $(pwd)/${DRAFT_PATH}:/models/${DRAFT_NAME} \
+    -p 4321:4321 \
+    --ipc=host \
+    --health-cmd 'curl -sf http://localhost:4321/health || exit 1' \
+    --health-interval 10s \
+    --health-timeout 5s \
+    --health-retries 60 \
+    --health-start-period 900s \
+    --entrypoint vllm ${VLLM_IMAGE} \
+        serve /models/${TARGET_NAME} \
+        --served-model-name ${TARGET_NAME} \
+        --host 0.0.0.0 \
+        --port 4321 \
+        --gpu-memory-utilization 0.8 \
+        --max-model-len 262144 \
+        --max-num-seqs 4 \
+        --max-num-batched-tokens 16384 \
+        --speculative-config '{"model": "/models/'${DRAFT_NAME}'", "method": "dflash", "num_speculative_tokens": 15}' \
+        --reasoning-parser qwen3 \
+        --tool-call-parser qwen3_coder \
+        --attention-backend FLASH_ATTN \
+        --enable-prefix-caching \
+        --enable-chunked-prefill \
+        --enable-auto-tool-choice \
+        --trust-remote-code
+
+HF_HUB_OFFLINE=1 tool-eval-bench \
+    --base-url http://127.0.0.1:4321 \
+    --short --perf \
+    --benchy-args "--tokenizer ./models/Qwen3.6-27B-AWQ-INT4"
+\end{lstlisting}
+
+\begin{table}[H]
+    \centering
+    \renewcommand{\arraystretch}{1.2}
+    \setlength{\tabcolsep}{8pt}
+    \begin{tabular}{ccccccc}
+        \bottomrule[1.5pt]
+        \rowcolor{MorandiLightCyan}\multicolumn{7}{c}{\small
+            GPU \textbf{96.43GiB} $\bullet$ Warm-up \textbf{53867ms} $\bullet$ Quality \textbf{100/100} $\bullet$ Responsiveness \textbf{35/100} $\bullet$ Median turn \textbf{4.5s}
+        } \\
+
+        \midrule[0.75pt]
+        \multicolumn{1}{c}{} & \textbf{Depth} & \textbf{Concurrency} & \textbf{pp t/s} & \textbf{tg t/s} & \textbf{TTFT (ms)} & \textbf{Total (ms)} \\
+
+        \cmidrule(r){1-3}\cmidrule(l){4-7}
+        \multicolumn{7}{l}{\textit{Aggregate throughput\quad(pp2048 / tg128)}} \\
+        \addlinespace[1pt]
+
+        \multirow{3}{*}{\cube{MorandiBlue}} & \multirow{3}{*}{d0} & c1 & 757 & 38.9 & \textbf{2,999} & \textbf{6,022} \\
+        ~ & ~ & c2 & 783 & 53.0 & 5,203 & 9,144 \\
+        ~ & ~ & c4 & 895 & 80.0 & 9,110 & 14,260 \\
+
+        \cmidrule(lr){1-7}
+
+        \multirow{3}{*}{\cube{MorandiPurple}} & \multirow{3}{*}{d4096} & c1 & 924 & 42.2 & 6,913 & 9,684 \\
+        ~ & ~ & c2 & 909 & 54.5 & 13,441 & 17,638 \\
+        ~ & ~ & c4 & 905 & \textbf{90.9} & 26,930 & 31,410 \\
+
+        \cmidrule(lr){1-7}
+
+        \multirow{3}{*}{\cube{MorandiCyan}} & \multirow{3}{*}{d8192} & c1 & \textbf{929} & 32.9 & 11,291 & 14,923 \\
+        ~ & ~ & c2 & 912 & 54.2 & 22,381 & 26,246 \\
+        ~ & ~ & c4 & 920 & 65.7 & 44,008 & 49,078 \\
+
+        \midrule[0.75pt]
+        \multicolumn{7}{l}{\textit{Per-stream\quad(single request, per concurrent client)}} \\
+        \addlinespace[1pt]
+
+        \multirow{3}{*}{\cube{MorandiOrange}} & \multirow{3}{*}{--} & c1 & 929 & 42.2 & 6,913 & -- \\
+        ~ & ~ & c2 & 912 & 54.5 & -- & -- \\
+        ~ & ~ & c4 & 920 & 90.9 & -- & -- \\
+        \toprule[1.5pt]
+    \end{tabular}
+\end{table}
+
+
+
+\subsubsection{vLLM.dflash + Qwen3.6-27B-GPTQ-INT4 + DFlash-15}
+\begin{lstlisting}
+TARGET_PATH="./models/Qwen3.6-27B-GPTQ-INT4"
+DRAFT_PATH="./models/Qwen3.6-27B-DFlash"
+TARGET_NAME=$(basename "$TARGET_PATH")
+DRAFT_NAME=$(basename "$DRAFT_PATH")
+VLLM_IMAGE="i-dgx-spark-gb10:vllm.dflash"
+
+docker run \
+    --rm -it \
+    --gpus all \
+    --name ${TARGET_NAME}-dflash \
+    -v $(pwd)/${TARGET_PATH}:/models/${TARGET_NAME} \
+    -v $(pwd)/${DRAFT_PATH}:/models/${DRAFT_NAME} \
+    -p 4321:4321 \
+    --ipc=host \
+    --health-cmd 'curl -sf http://localhost:4321/health || exit 1' \
+    --health-interval 10s \
+    --health-timeout 5s \
+    --health-retries 60 \
+    --health-start-period 900s \
+    --entrypoint vllm ${VLLM_IMAGE} \
+        serve /models/${TARGET_NAME} \
+        --served-model-name ${TARGET_NAME} \
+        --host 0.0.0.0 \
+        --port 4321 \
+        --gpu-memory-utilization 0.8 \
+        --max-model-len 262144 \
+        --max-num-seqs 4 \
+        --max-num-batched-tokens 16384 \
+        --speculative-config '{"model": "/models/'${DRAFT_NAME}'", "method": "dflash", "num_speculative_tokens": 15}' \
+        --reasoning-parser qwen3 \
+        --tool-call-parser qwen3_coder \
+        --attention-backend FLASH_ATTN \
+        --enable-prefix-caching \
+        --enable-chunked-prefill \
+        --enable-auto-tool-choice \
+        --trust-remote-code
+
+HF_HUB_OFFLINE=1 tool-eval-bench \
+    --base-url http://127.0.0.1:4321 \
+    --short --perf \
+    --benchy-args "--tokenizer ./models/Qwen3.6-27B-GPTQ-INT4"
+\end{lstlisting}
+
+\begin{table}[H]
+    \centering
+    \renewcommand{\arraystretch}{1.2}
+    \setlength{\tabcolsep}{8pt}
+    \begin{tabular}{ccccccc}
+        \bottomrule[1.5pt]
+        \rowcolor{MorandiLightCyan}\multicolumn{7}{c}{\small
+            GPU \textbf{96.57GiB} $\bullet$ Warm-up \textbf{52788ms} $\bullet$ Quality \textbf{97/100} $\bullet$ Responsiveness \textbf{39/100} $\bullet$ Median turn \textbf{4.0s}
+        } \\
+
+        \midrule[0.75pt]
+        \multicolumn{1}{c}{} & \textbf{Depth} & \textbf{Concurrency} & \textbf{pp t/s} & \textbf{tg t/s} & \textbf{TTFT (ms)} & \textbf{Total (ms)} \\
+
+        \cmidrule(r){1-3}\cmidrule(l){4-7}
+        \multicolumn{7}{l}{\textit{Aggregate throughput\quad(pp2048 / tg128)}} \\
+        \addlinespace[1pt]
+
+        \multirow{3}{*}{\cube{MorandiBlue}} & \multirow{3}{*}{d0} & c1 & 939 & 26.4 & \textbf{2,401} & \textbf{7,035} \\
+        ~ & ~ & c2 & 875 & 52.5 & 4,653 & 8,547 \\
+        ~ & ~ & c4 & 972 & 84.3 & 8,366 & 12,854 \\
+
+        \cmidrule(lr){1-7}
+
+        \multirow{3}{*}{\cube{MorandiPurple}} & \multirow{3}{*}{d4096} & c1 & 1,005 & 36.2 & 6,323 & 9,655 \\
+        ~ & ~ & c2 & 984 & 62.7 & 12,445 & 15,944 \\
+        ~ & ~ & c4 & 1,000 & \textbf{86.6} & 24,440 & 28,837 \\
+
+        \cmidrule(lr){1-7}
+
+        \multirow{3}{*}{\cube{MorandiCyan}} & \multirow{3}{*}{d8192} & c1 & \textbf{1,006} & 32.9 & 10,385 & 14,069 \\
+        ~ & ~ & c2 & 996 & 48.1 & 20,486 & 24,218 \\
+        ~ & ~ & c4 & 994 & 75.0 & 40,761 & 45,777 \\
+
+        \midrule[0.75pt]
+        \multicolumn{7}{l}{\textit{Per-stream\quad(single request, per concurrent client)}} \\
+        \addlinespace[1pt]
+
+        \multirow{3}{*}{\cube{MorandiOrange}} & \multirow{3}{*}{--} & c1 & 1,006 & 36.2 & 6,323 & -- \\
+        ~ & ~ & c2 & 996 & 62.7 & -- & -- \\
+        ~ & ~ & c4 & 1,000 & 86.6 & -- & -- \\
+        \toprule[1.5pt]
+    \end{tabular}
+\end{table}
+
+
+
+\subsubsection{vLLM.dflash + Qwen3.6-27B-FP8 + DFlash-15}
+\begin{lstlisting}
+TARGET_PATH="./models/Qwen3.6-27B-FP8"
+DRAFT_PATH="./models/Qwen3.6-27B-DFlash"
+TARGET_NAME=$(basename "$TARGET_PATH")
+DRAFT_NAME=$(basename "$DRAFT_PATH")
+VLLM_IMAGE="i-dgx-spark-gb10:vllm.dflash"
+
+docker run \
+    --rm -it \
+    --gpus all \
+    --name ${TARGET_NAME}-dflash \
+    -v $(pwd)/${TARGET_PATH}:/models/${TARGET_NAME} \
+    -v $(pwd)/${DRAFT_PATH}:/models/${DRAFT_NAME} \
+    -p 4321:4321 \
+    --ipc=host \
+    --health-cmd 'curl -sf http://localhost:4321/health || exit 1' \
+    --health-interval 10s \
+    --health-timeout 5s \
+    --health-retries 60 \
+    --health-start-period 900s \
+    --entrypoint vllm ${VLLM_IMAGE} \
+        serve /models/${TARGET_NAME} \
+        --served-model-name ${TARGET_NAME} \
+        --host 0.0.0.0 \
+        --port 4321 \
+        --gpu-memory-utilization 0.8 \
+        --max-model-len 262144 \
+        --max-num-seqs 4 \
+        --max-num-batched-tokens 16384 \
+        --speculative-config '{"model": "/models/'${DRAFT_NAME}'", "method": "dflash", "num_speculative_tokens": 15}' \
+        --reasoning-parser qwen3 \
+        --tool-call-parser qwen3_coder \
+        --attention-backend FLASH_ATTN \
+        --enable-prefix-caching \
+        --enable-chunked-prefill \
+        --enable-auto-tool-choice \
+        --trust-remote-code
+
+HF_HUB_OFFLINE=1 tool-eval-bench \
+    --base-url http://127.0.0.1:4321 \
+    --short --perf \
+    --benchy-args "--tokenizer ./models/Qwen3.6-27B-FP8"
+\end{lstlisting}
+
+\begin{table}[H]
+    \centering
+    \renewcommand{\arraystretch}{1.2}
+    \setlength{\tabcolsep}{8pt}
+    \begin{tabular}{ccccccc}
+        \bottomrule[1.5pt]
+        \rowcolor{MorandiLightCyan}\multicolumn{7}{c}{\small
+            GPU \textbf{97.02GiB} $\bullet$ Warm-up \textbf{49748ms} $\bullet$ Quality \textbf{100/100} $\bullet$ Responsiveness \textbf{27/100} $\bullet$ Median turn \textbf{5.7s}
+        } \\
+
+        \midrule[0.75pt]
+        \multicolumn{1}{c}{} & \textbf{Depth} & \textbf{Concurrency} & \textbf{pp t/s} & \textbf{tg t/s} & \textbf{TTFT (ms)} & \textbf{Total (ms)} \\
+
+        \cmidrule(r){1-3}\cmidrule(l){4-7}
+        \multicolumn{7}{l}{\textit{Aggregate throughput\quad(pp2048 / tg128)}} \\
+        \addlinespace[1pt]
+
+        \multirow{3}{*}{\cube{MorandiBlue}} & \multirow{3}{*}{d0} & c1 & \textbf{1,746} & 23.0 & \textbf{1,439} & \textbf{6,742} \\
+        ~ & ~ & c2 & 1,014 & 46.8 & 4,348 & 9,130 \\
+        ~ & ~ & c4 & 636 & 63.7 & 12,927 & 19,434 \\
+
+        \cmidrule(lr){1-7}
+
+        \multirow{3}{*}{\cube{MorandiPurple}} & \multirow{3}{*}{d4096} & c1 & 871 & 31.3 & 7,311 & 11,153 \\
+        ~ & ~ & c2 & 559 & 45.6 & 21,902 & 26,833 \\
+        ~ & ~ & c4 & 366 & \textbf{64.3} & 66,974 & 72,823 \\
+
+        \cmidrule(lr){1-7}
+
+        \multirow{3}{*}{\cube{MorandiCyan}} & \multirow{3}{*}{d8192} & c1 & 918 & 29.6 & 11,408 & 15,478 \\
+        ~ & ~ & c2 & 429 & 45.0 & 47,600 & 52,530 \\
+        ~ & ~ & c4 & 342 & 49.0 & 118,998 & 125,535 \\
+
+        \midrule[0.75pt]
+        \multicolumn{7}{l}{\textit{Per-stream\quad(single request, per concurrent client)}} \\
+        \addlinespace[1pt]
+
+        \multirow{3}{*}{\cube{MorandiOrange}} & \multirow{3}{*}{--} & c1 & 1,746 & 31.3 & 7,311 & -- \\
+        ~ & ~ & c2 & 1,014 & 46.8 & -- & -- \\
+        ~ & ~ & c4 & 636 & 64.3 & -- & -- \\
+        \toprule[1.5pt]
+    \end{tabular}
+\end{table}
+
+
+
+\subsubsection{vLLM.dflash + Qwen3.6-27B-AEON-NVFP4-MTP-XS + DFlash-15}
+\begin{lstlisting}
+TARGET_PATH="./models/Qwen3.6-27B-AEON-Ultimate-Uncensored-Multimodal-NVFP4-MTP-XS"
+DRAFT_PATH="./models/Qwen3.6-27B-DFlash"
+TARGET_NAME=$(basename "$TARGET_PATH")
+DRAFT_NAME=$(basename "$DRAFT_PATH")
+VLLM_IMAGE="i-dgx-spark-gb10:vllm.dflash"
+
+docker run \
+    --rm -it \
+    --gpus all \
+    --ulimit memlock=-1 \
+    --name ${TARGET_NAME}-DFlash \
+    -p 4321:4321 \
+    --ipc host \
+    -v $(pwd)/${TARGET_PATH}:/models/${TARGET_NAME} \
+    -v $(pwd)/${DRAFT_PATH}:/models/${DRAFT_NAME} \
+    -e VLLM_ALLOW_LONG_MAX_MODEL_LEN=1 \
+    -e TORCH_CUDA_ARCH_LIST=12.1a \
+    -e PYTORCH_CUDA_ALLOC_CONF=expandable_segments:True \
+    -e TORCH_MATMUL_PRECISION=high \
+    -e NVIDIA_FORWARD_COMPAT=1 \
+    -e NVIDIA_DISABLE_REQUIRE=1 \
+    -e ENABLE_NVFP4_SM100=0 \
+    -e VLLM_USE_FLASHINFER_MOE_FP4=0 \
+    -e VLLM_TEST_FORCE_FP8_MARLIN=0 \
+    -e VLLM_USE_FLASHINFER_SAMPLER=1 \
+    -e VLLM_NVFP4_GEMM_BACKEND=flashinfer-cutlass \
+    --health-cmd 'curl -sf http://localhost:4321/health || exit 1' \
+    --health-interval 30s \
+    --health-timeout 10s \
+    --health-retries 3 \
+    --health-start-period 600s \
+    ${VLLM_IMAGE} vllm \
+        serve /models/${TARGET_NAME} \
+        --served-model-name ${TARGET_NAME} \
+        --host 0.0.0.0 \
+        --port 4321 \
+        --tensor-parallel-size 1 \
+        --dtype auto \
+        --quantization modelopt \
+        --kv-cache-dtype auto \
+        --max-model-len 262144 \
+        --max-num-seqs 64 \
+        --max-num-batched-tokens 32768 \
+        --gpu-memory-utilization 0.75 \
+        --enable-chunked-prefill \
+        --no-enable-prefix-caching \
+        --generation-config vllm \
+        --load-format safetensors \
+        --trust-remote-code \
+        --enable-auto-tool-choice \
+        --tool-call-parser qwen3_coder \
+        --reasoning-parser qwen3 \
+        --attention-backend flash_attn \
+        --limit-mm-per-prompt '{"image": 4, "video": 2}' \
+        --mm-encoder-tp-mode data \
+        --mm-processor-cache-type shm \
+        --mm-shm-cache-max-object-size-mb 256 \
+        --speculative-config '{"model": "/models/'${DRAFT_NAME}'", "method": "dflash", "num_speculative_tokens": 15}'
+
+HF_HUB_OFFLINE=1 tool-eval-bench \
+    --base-url http://127.0.0.1:4321 \
+    --short --perf \
+    --benchy-args "--tokenizer ./models/Qwen3.6-27B-AEON-Ultimate-Uncensored-Multimodal-NVFP4-MTP-XS"
+\end{lstlisting}
+
+\begin{table}[H]
+    \centering
+    \renewcommand{\arraystretch}{1.2}
+    \setlength{\tabcolsep}{8pt}
+    \begin{tabular}{ccccccc}
+        \bottomrule[1.5pt]
+        \rowcolor{MorandiLightCyan}\multicolumn{7}{c}{\small
+            GPU \textbf{92.45GiB} $\bullet$ Warm-up \textbf{87219ms} $\bullet$ Quality \textbf{83/100} $\bullet$ Responsiveness \textbf{13/100} $\bullet$ Median turn \textbf{10.7s}
+        } \\
+
+        \midrule[0.75pt]
+        \multicolumn{1}{c}{} & \textbf{Depth} & \textbf{Concurrency} & \textbf{pp t/s} & \textbf{tg t/s} & \textbf{TTFT (ms)} & \textbf{Total (ms)} \\
+
+        \cmidrule(r){1-3}\cmidrule(l){4-7}
+        \multicolumn{7}{l}{\textit{Aggregate throughput\quad(pp2048 / tg128)}} \\
+        \addlinespace[1pt]
+
+        \multirow{3}{*}{\cube{MorandiBlue}} & \multirow{3}{*}{d0} & c1 & 990 & 16.7 & \textbf{2,832} & \textbf{10,078} \\
+        ~ & ~ & c2 & 976 & 21.1 & 4,266 & 14,219 \\
+        ~ & ~ & c4 & \textbf{1,165} & \textbf{32.1} & 7,034 & 19,525 \\
+
+        \cmidrule(lr){1-7}
+
+        \multirow{3}{*}{\cube{MorandiPurple}} & \multirow{3}{*}{d4096} & c1 & 741 & 17.3 & 9,774 & 16,756 \\
+        ~ & ~ & c2 & 956 & 16.1 & 13,212 & 27,208 \\
+        ~ & ~ & c4 & 973 & 27.3 & 25,737 & 39,939 \\
+
+        \cmidrule(lr){1-7}
+
+        \multirow{3}{*}{\cube{MorandiCyan}} & \multirow{3}{*}{d8192} & c1 & 987 & 7.1 & 11,019 & 28,707 \\
+        ~ & ~ & c2 & 1,057 & 19.5 & 19,362 & 31,970 \\
+        ~ & ~ & c4 & 943 & 13.4 & 41,352 & 70,297 \\
+
+        \midrule[0.75pt]
+        \multicolumn{7}{l}{\textit{Per-stream\quad(single request, per concurrent client)}} \\
+        \addlinespace[1pt]
+
+        \multirow{3}{*}{\cube{MorandiOrange}} & \multirow{3}{*}{--} & c1 & 1,249 & 17.3 & 9,774 & -- \\
+        ~ & ~ & c2 & 1,072 & 21.1 & -- & -- \\
+        ~ & ~ & c4 & 1,165 & 32.1 & -- & -- \\
+        \toprule[1.5pt]
+    \end{tabular}
+\end{table}
+
+
+
+
+\subsubsection{LLaMA.cpp + Qwen3.6-27B-UD-Q4\_K\_XL + MTP-2}
+\begin{lstlisting}
+llama-server \
+    -m ./models/Qwen3.6-27B-UD-Q4_K_XL.gguf \
+    --alias Qwen3.6-27B-UD-Q4_K_XL.gguf \
+    --host 127.0.0.1 \
+    --port 4321 \
+    -ngl 99 \
+    -c 262144 \
+    -b 8192 \
+    -ub 4096 \
+    -np 1 \
+    -t -1 \
+    --cache-ram 0 \
+    --cache-reuse 512 \
+    -fa on \
+    --reasoning on \
+    --spec-type draft-mtp \
+    --spec-draft-n-max 2 \
+    --jinja
+
+HF_HUB_OFFLINE=1 tool-eval-bench \
+    --base-url http://127.0.0.1:4321 \
+    --short --perf \
+    --benchy-args "--tokenizer ./models/Qwen3.6-27B"
+\end{lstlisting}
+
+\begin{table}[H]
+    \centering
+    \renewcommand{\arraystretch}{1.2}
+    \setlength{\tabcolsep}{8pt}
+    \begin{tabular}{ccccccc}
+        \bottomrule[1.5pt]
+        \rowcolor{MorandiLightCyan}\multicolumn{7}{c}{\small
+            GPU \textbf{39.32GiB} $\bullet$ Warm-up \textbf{1529ms} $\bullet$ Quality \textbf{93/100} $\bullet$ Responsiveness \textbf{12/100} $\bullet$ Median turn \textbf{11.2s}
+        } \\
+
+        \midrule[0.75pt]
+        \multicolumn{1}{c}{} & \textbf{Depth} & \textbf{Concurrency} & \textbf{pp t/s} & \textbf{tg t/s} & \textbf{TTFT (ms)} & \textbf{Total (ms)} \\
+
+        \cmidrule(r){1-3}\cmidrule(l){4-7}
+        \multicolumn{7}{l}{\textit{Aggregate throughput\quad(pp2048 / tg128)}} \\
+        \addlinespace[1pt]
+
+        \multirow{3}{*}{\cube{MorandiBlue}} & \multirow{3}{*}{d0} & c1 & \textbf{290} & 14.5 & \textbf{7,508} & \textbf{15,889} \\
+        ~ & ~ & c2 & 177 & 10.4 & 15,321 & 23,488 \\
+        ~ & ~ & c4 & 149 & 9.0 & 31,359 & 39,471 \\
+
+        \cmidrule(lr){1-7}
+
+        \multirow{3}{*}{\cube{MorandiPurple}} & \multirow{3}{*}{d4096} & c1 & 279 & 15.4 & 22,458 & 30,302 \\
+        ~ & ~ & c2 & 233 & 6.5 & 37,590 & 45,602 \\
+        ~ & ~ & c4 & 215 & 5.0 & 68,362 & 76,473 \\
+
+        \cmidrule(lr){1-7}
+
+        \multirow{3}{*}{\cube{MorandiCyan}} & \multirow{3}{*}{d8192} & c1 & 274 & \textbf{15.9} & 37,824 & 45,449 \\
+        ~ & ~ & c2 & 236 & 4.6 & 62,347 & 64,508 \\
+        ~ & ~ & c4 & 233 & 3.5 & 106,886 & 114,957 \\
+
+        \midrule[0.75pt]
+        \multicolumn{7}{l}{\textit{Per-stream\quad(single request, per concurrent client)}} \\
+        \addlinespace[1pt]
+
+        \multirow{3}{*}{\cube{MorandiOrange}} & \multirow{3}{*}{--} & c1 & 290 & 15.9 & 37,824 & -- \\
+        ~ & ~ & c2 & 236 & 10.4 & -- & -- \\
+        ~ & ~ & c4 & 233 & 9.0 & -- & -- \\
+        \toprule[1.5pt]
+    \end{tabular}
+\end{table}
+
+
+
+\subsubsection{Qwen3.6-27B-ParoQuant + NVFP4}
+
+
+
+\subsubsection{Qwen3.6-27B-TQ3\_4S + MTP}
+
+
+
+\subsubsection{vLLM.dev + Qwen3.5-122B-A10B-INT4-AutoRound-Intel + MTP-2 + Long-Text}
+
+
+
+\subsubsection{vLLM.dev + Qwen3.5-122B-Hybrid-INT4FP8 + MTP-2 + Long-Text}
+
+
+
+\end{document}

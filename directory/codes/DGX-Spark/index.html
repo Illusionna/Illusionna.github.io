@@ -1,0 +1,246 @@
+<!DOCTYPE html>
+<html lang="zh-cn">
+    <head>
+        <meta charset="utf-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+        <title>DGX Spark GB10 SM121 大模型推理部署测试</title>
+
+        <link rel="preload" href="https://cdnjs.cloudflare.com/ajax/libs/lxgw-wenkai-webfont/1.7.0/lxgwwenkai-regular.min.css" as="style" onload="this.onload=null;this.rel='stylesheet'">
+        <link rel="stylesheet" href="../../../assets/css/style.css"/>
+        <link rel="stylesheet" href="../../../assets/css/main.css" />
+        <link href="../../../assets/css/aos.css" rel="stylesheet">
+        <link rel="stylesheet" href="../../../assets/css/customBMPI.css" />
+        <noscript><link rel="stylesheet" href="../../../assets/css/lxgwwenkai-regular.min.css"></noscript>
+        <noscript><link rel="stylesheet" href="../../../assets/css/tagcloud.css"></noscript>
+        <script src="../../../assets/js/lazysizes.min.js" async></script>
+        <script src="../../../assets/js/aos.js"></script>
+        <link href="../../../assets/css/prism.css" rel="stylesheet" />
+    	<script src="../../../assets/js/prism.js"></script>
+        <script>
+            MathJax = {
+                tex: {
+                    inlineMath: [['$', '$'], ['\\(', '\\)']]
+                }
+            };
+        </script>
+        <script id="MathJax-script" async src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-chtml.js"></script>
+    </head>
+
+    <body class="colorscheme-auto">
+        <main class="wrapper">
+            <div id="loader" class="loader">
+                <div class="text" style="font-size: 48px; font-family:courier;">Loading...</div>
+                <div class="horizontal">
+                  <div class="circlesup">
+                        <div class="circle"></div>
+                        <div class="circle"></div>
+                        <div class="circle"></div>
+                        <div class="circle"></div>
+                        <div class="circle"></div>
+                  </div>
+                  <div class="circlesdwn">
+                        <div class="circle"></div>
+                        <div class="circle"></div>
+                        <div class="circle"></div>
+                        <div class="circle"></div>
+                        <div class="circle"></div>
+                  </div>
+                </div>
+                <div class="vertical">
+                  <div class="circlesup">
+                        <div class="circle"></div>
+                        <div class="circle"></div>
+                        <div class="circle"></div>
+                        <div class="circle"></div>
+                        <div class="circle"></div>
+                  </div>
+                  <div class="circlesdwn">
+                        <div class="circle"></div>
+                        <div class="circle"></div>
+                        <div class="circle"></div>
+                        <div class="circle"></div>
+                        <div class="circle"></div>
+                  </div>
+                </div>
+            </div>
+
+            <div class="content" id="normal-page" style="display: none;">
+                <section class="container post">
+                    <article>
+                        <header>
+                            <nav class="navigation">
+                                <section class="container" align="center">
+                                    <a id="site-title" class="navigation-title" href="/" target="_blank" style="font-size: 32px;">
+                                        orzzz.net
+                                    </a>
+                                </section>
+                            </nav>
+
+<div class="post-title heti">
+    <h1 class="title">DGX Spark GB10 大模型推理部署测试</h1>
+</div>
+
+<div class="post-meta">
+    <div class="date">
+        <span class="posted-on">
+            <i class="fas fa-calendar"></i>
+            <time>2026-06-30</time>
+        </span>
+        <span class="reading-time">
+            <i class="fas fa-clock"></i>
+            <time>21:42</time>
+        </span>
+        <span style="margin-left: 20px">
+            <i class="fas fa-tag"></i>
+            <a href="./blade-llm-main.zip" download="blade-llm-main.zip" target="_blank"><strong>Download</strong></a>
+        </span>
+    </div>
+
+    <p></p>
+
+    <div class="article">
+        <div class="article-content heti" data-aos="fade-up" data-aos-duration="1500" data-aos-anchor-placement="top-bottom">
+            <h2>1. 环境依赖</h2>
+            <table>
+                <thead>
+                    <tr>
+                        <th style="text-align:center;">环境</th>
+                        <th style="text-align:center;">信息</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr><td style="text-align:center;">OS</td><td style="text-align:center;">Linux Ubuntu aarch64</td></tr>
+                    <tr><td style="text-align:center;">CPU</td><td style="text-align:center;">Cortex-X925 + Cortex-A725</td></tr>
+                    <tr><td style="text-align:center;">GPU</td><td style="text-align:center;">DGX-Spark-GB10</td></tr>
+                    <tr><td style="text-align:center;">RAM</td><td style="text-align:center;">128GB</td></tr>
+                    <tr><td style="text-align:center;">推理框架</td><td style="text-align:center;"><code>vLLM</code> + <code>LLaMA.cpp</code> + <code>SGLang</code></td></tr>
+                    <tr><td style="text-align:center;">Docker Version</td><td style="text-align:center;">29.1.3</td></tr>
+                    <tr><td style="text-align:center;">NVIDIA Driver</td><td style="text-align:center;">580.126.09</td></tr>
+                    <tr><td style="text-align:center;">CUDA Toolkit</td><td style="text-align:center;">13.0</td></tr>
+                </tbody>
+            </table>
+
+            <h2>2. 安装测试工具</h2>
+            <pre id="code"><code class="language-python">uv tool install --python 3.12.0 'tool-eval-bench[perf] @ git+https://github.com/SeraphimSerapis/tool-eval-bench.git'</code></pre>
+
+            <h2>3. 测试目标</h2>
+            <ul>
+                <li>对比大模型参数规模对推理性能的影响（如 <code>27B / 122B-A10B</code> 等）</li>
+                <li>对比精度、量化、推理策略等影响（如 <code>BF16 / FP8 / AWQ-INT4 bit / NVFP4 / MTP / DFlash</code> 等）</li>
+                <li>对比并发批处理超参数对时延的影响（如 <code>pp = 512 | 2048</code> 或 <code>tg = 256 | 1024</code> 等）</li>
+            </ul>
+
+            <blockquote>
+                <p>统一对比不同参数规模、不同精度、不同并发等配置下大模型等推理性能，参考指标涵盖 <code>token/s</code>、<code>e2e_ttft</code>、<code>GPU</code> 等。</p>
+            </blockquote>
+
+            <h2>4. 指标定义</h2>
+            <table>
+                <thead>
+                    <tr>
+                        <th style="text-align:center;">维度</th>
+                        <th style="text-align:center;">定义</th>
+                        <th style="text-align:center;">单位</th>
+                        <th style="text-align:center;">期望</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr><td style="text-align:center;"><code>t/s</code></td><td style="text-align:center;">每秒生成的 token 数量</td><td style="text-align:center;">-</td><td style="text-align:center;">&uarr;</td></tr>
+                    <tr><td style="text-align:center;"><code>ttfr</code></td><td style="text-align:center;">请求发出到收到首个流式响应片段的时间</td><td style="text-align:center;">ms</td><td style="text-align:center;">&darr;</td></tr>
+                    <tr><td style="text-align:center;"><code>tpot</code></td><td style="text-align:center;">首 token 之后生成每个 token 所需的平均时间</td><td style="text-align:center;">ms</td><td style="text-align:center;">&darr;</td></tr>
+                    <tr><td style="text-align:center;"><code>e2e_ttft</code></td><td style="text-align:center;">端到端首个 token 响应时间</td><td style="text-align:center;">ms</td><td style="text-align:center;">&darr;</td></tr>
+                    <tr><td style="text-align:center;"><code>est_ppt</code></td><td style="text-align:center;">预估提示词处理时间（预填充阶段）</td><td style="text-align:center;">ms</td><td style="text-align:center;">&darr;</td></tr>
+                    <tr><td style="text-align:center;"><code>peak t/s</code></td><td style="text-align:center;">峰值每秒生成 token 数</td><td style="text-align:center;">-</td><td style="text-align:center;">&uarr;</td></tr>
+                    <tr><td style="text-align:center;"><code>GPU</code></td><td style="text-align:center;">显存占用</td><td style="text-align:center;">GB</td><td style="text-align:center;">&darr;</td></tr>
+                    <tr><td style="text-align:center;"><code>Disk</code></td><td style="text-align:center;">模型磁盘占用</td><td style="text-align:center;">GB</td><td style="text-align:center;">&darr;</td></tr>
+                    <tr><td style="text-align:center;"><code>pp</code></td><td style="text-align:center;">提示词处理输入 token 数量</td><td style="text-align:center;">-</td><td style="text-align:center;">-</td></tr>
+                    <tr><td style="text-align:center;"><code>tg</code></td><td style="text-align:center;">生成的 token 数量</td><td style="text-align:center;">-</td><td style="text-align:center;">-</td></tr>
+                    <tr><td style="text-align:center;"><code>depth</code></td><td style="text-align:center;">历史上下文 token 数量（预填充长度）</td><td style="text-align:center;">-</td><td style="text-align:center;">-</td></tr>
+                    <tr><td style="text-align:center;"><code>runs</code></td><td style="text-align:center;">重复测试次数取平均值</td><td style="text-align:center;">-</td><td style="text-align:center;">-</td></tr>
+                    <tr><td style="text-align:center;"><code>Avg</code></td><td style="text-align:center;">请求耗时总和的平均</td><td style="text-align:center;">ms</td><td style="text-align:center;">&darr;</td></tr>
+                    <tr><td style="text-align:center;"><code>P90</code></td><td style="text-align:center;">队列 90% 位的请求耗时</td><td style="text-align:center;">ms</td><td style="text-align:center;">&darr;</td></tr>
+                    <tr><td style="text-align:center;"><code>P99</code></td><td style="text-align:center;">队列 99% 位的请求耗时</td><td style="text-align:center;">ms</td><td style="text-align:center;">&darr;</td></tr>
+                    <tr><td style="text-align:center;"><code>flash-attn</code></td><td style="text-align:center;">是否开启</td><td style="text-align:center;">-</td><td style="text-align:center;">&radic;</td></tr>
+                    <tr><td style="text-align:center;"><code>np</code></td><td style="text-align:center;">并发数量</td><td style="text-align:center;">-</td><td style="text-align:center;">-</td></tr>
+                    <tr><td style="text-align:center;"><code>c</code></td><td style="text-align:center;">最大上下文窗口容量</td><td style="text-align:center;">-</td><td style="text-align:center;">&uarr;</td></tr>
+                    <tr><td style="text-align:center;"><code>AWQ-4bit</code></td><td style="text-align:center;">仅权重量化</td><td style="text-align:center;">-</td><td style="text-align:center;">AutoAWQ</td></tr>
+                    <tr><td style="text-align:center;"><code>FP8</code></td><td style="text-align:center;">权重和激活量化</td><td style="text-align:center;">-</td><td style="text-align:center;">llm-compressor</td></tr>
+                    <tr><td style="text-align:center;"><code>NVFP4</code></td><td style="text-align:center;">全量化</td><td style="text-align:center;">-</td><td style="text-align:center;"><a href="https://docs.vllm.ai/en/stable/features/quantization/modelopt">TensorRT Model Optimizer</a></td></tr>
+                    <tr><td style="text-align:center;"><code>EXL2-2bit</code></td><td style="text-align:center;">仅权重量化</td><td style="text-align:center;">-</td><td style="text-align:center;">exllamav2</td></tr>
+                    <tr><td style="text-align:center;"><code>GPTQ-4bit</code></td><td style="text-align:center;">仅权重量化</td><td style="text-align:center;">-</td><td style="text-align:center;">AutoGPTQ</td></tr>
+                    <tr><td style="text-align:center;"><code>INT8</code></td><td style="text-align:center;">全量化</td><td style="text-align:center;">-</td><td style="text-align:center;">llm-compressor</td></tr>
+                </tbody>
+            </table>
+
+            <h2>5. 文件解释</h2>
+            <ul>
+                <li>性能报告 <a href="./main.pdf" target="_blank"><code>main.pdf</code></a></li>
+                <li>模型推理部署 shell 脚本位于 <a href="./main.tex" target="_blank"><code>main.tex</code></a></li>
+                <li>Qwen3.5-122B-A10B 最优部署推理脚本 <a href="./Qwen3.5-122B-A10B.sh"><code>Qwen3.5-122B-A10B.sh</code></a></li>
+                <li>Qwen3.6-27B 最优部署推理脚本 <a href="./Qwen3.6-27B.sh" target="_blank"><code>Qwen3.6-27B.sh</code></a></li>
+            </ul>
+
+            <h2>6. 预览图</h2>
+            <img id="demo" alt="Oops?" class="lazyload" width="100%" loading="lazy">
+            <figcaption>
+                <p>GitHub SeraphimSerapis tool-eval-bench</p>
+            </figcaption>
+        </div>
+    </div>
+</div>
+
+<section class="container" align="center">
+    <a id="site-title" class="navigation-title" href="#">Top</a>
+</section>
+                        </header>
+                    </article>
+                </section>
+            </div>
+        </main>
+    </body>
+
+    <script src="../../../assets/js/heti-addon.min.js"></script>
+
+    <script>
+        const heti = new Heti('.heti h4, h5, h6');
+        heti.autoSpacing(); 
+        AOS.init({disable: 'mobile'});
+    </script>
+
+    <script>
+        let imagesToLoad = [
+            { id: 'demo', src: './demo.png' }
+        ];
+
+        function loadImage(imgId, src, callback) {
+            let img = new Image();
+            img.src = src;
+            img.onload = function() {
+                document.getElementById(imgId).src = src;
+                callback();
+            };
+        }
+
+        function loadImages(imgIdsAndSrcs, callback) {
+            let loadedCount = 0;
+            let totalCount = imgIdsAndSrcs.length;
+            imgIdsAndSrcs.forEach(function(imgInfo) {
+                loadImage(imgInfo.id, imgInfo.src, function() {
+                    loadedCount++;
+                    if (loadedCount === totalCount) {
+                        callback();
+                    }
+                });
+            });
+        }
+
+        let loader = document.getElementById('loader');
+        let normalPage = document.getElementById('normal-page');
+
+        loadImages(imagesToLoad, function() {
+            loader.style.display = 'none';
+            normalPage.style.display = 'block';
+        });
+    </script>
+</html>
