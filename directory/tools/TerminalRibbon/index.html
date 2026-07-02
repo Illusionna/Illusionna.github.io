@@ -618,6 +618,38 @@ int main(int argc, char *argv[], char *envs[]) {
 \end{tabular}
 
 \end{document}</code></pre>
+
+            <h2>10. Ziglang 编译优化指令</h2>
+<pre id="code"><code class="language-zig">zig build-exe src/main.zig \
+    -femit-bin=main-small \
+    --cache-dir ./zig-cache/local \
+    --global-cache-dir ./zig-cache/global \
+    -O ReleaseSmall \
+    -fstrip \
+    -fno-unwind-tables \
+    -fno-error-tracing \
+    -ffunction-sections \
+    -fdata-sections \
+    --gc-sections \
+    -fno-stack-protector \
+    -fno-stack-check
+
+zig build-exe src/main.zig \
+    -femit-bin=main-fast \
+    --cache-dir ./zig-cache/local \
+    --global-cache-dir ./zig-cache/global \
+    -O ReleaseFast \
+    -mcpu native \
+    -fstrip \
+    -fomit-frame-pointer \
+    -fno-stack-protector \
+    -fno-stack-check \
+    -fno-error-tracing \
+    -fno-unwind-tables \
+    -fno-sanitize-c \
+    -fno-sanitize-thread \
+    -fno-fuzz
+</code></pre>
         
 
         </div>
